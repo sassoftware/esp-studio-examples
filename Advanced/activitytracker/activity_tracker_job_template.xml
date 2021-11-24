@@ -1,0 +1,45 @@
+<job-template description-localization-id="jobDescription" id="ActivityTracker" localization-id="jobName">
+    <localization-strings default-language="en-us">
+        <language id="en-us">
+            <string id="jobName">ActivityTracker</string>
+            <string id="jobDescription">Deploy the ActivityTracker project</string>
+            <string id="project">Project</string>
+			<string id="server">ESP server</string>
+            <string id="load-project">Load Project</string>
+			<string id="edge_id">Device ID</string>
+			<string id="accde822">accde822</string>
+            <string id="15189327">15189327</string>
+            <string id="cc7cf418">cc7cf418</string>
+        </language>
+    </localization-strings>
+	
+	<enumerations>
+        <enumeration id="edge_ids_list">
+            <enumeration-value id="accde822" localization-id="accde822"/>
+            <enumeration-value id="15189327" localization-id="15189327"/>
+            <enumeration-value id="cc7cf418" localization-id="cc7cf418"/>
+        </enumeration>
+    </enumerations>
+	
+	<parameters>
+        <project-selector id="project" localization-id="project" required="true"/>
+		<server-selector id="server" localization-id="server" required="true"/>
+		<enum-selector id="edge_id" localization-id="edge_id" required="true" source="edge_ids_list"/>
+	</parameters>
+	
+	<initialization>
+        <project-transformations>
+            <project-transformation id="transformed-project" project-id="{project.id}" project-version="{project.version}">
+                <placeholder id="edge_id">{edge_id}</placeholder>
+            </project-transformation>
+        </project-transformations>
+    </initialization>
+        
+	<server-filters>
+		<server-filter filter-expression="(objectId='{server.id}')" id="filter1"/>
+	</server-filters>
+
+	<instructions>
+		<load-project id="load-project" localization-id="load-project" project-id="{transformed-project.id}" project-version="{project.version}" running-project-name="{edge_id}_{project.version}" server-filter="filter1" start="true"/>
+    </instructions>
+</job-template>

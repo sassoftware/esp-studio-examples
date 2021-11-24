@@ -1,0 +1,40 @@
+<project name="unionExample" pubsub="auto" threads="3" heartbeat-interval="1">
+  <description><![CDATA[A Union window unites two or more event streams using a strict policy or a loose policy. This model contains a Union window that uses a strict policy to merge three event streams of stock market trades together. Input windows that stream events to a Union window must have the same schema.]]></description>
+  <metadata>
+
+  </metadata>
+  <contqueries>
+    <contquery name="contquery_01" trace="unionWindow">
+      <windows>
+        <window-source index="pi_HASH" pubsub="true" name="sourceWindow_01">
+          <description><![CDATA[The first Source window in this model receives input data from two CSV files each containing a list of stock market trades. The input data specifies a unique ID for the trade, the company's stock market symbol, and the price paid for the stock.]]></description>
+          <schema>
+            <fields>
+              <field name="ID" type="int32" key="true"/>
+              <field name="symbol" type="string"/>
+              <field name="price" type="double"/>
+            </fields>
+          </schema>
+        </window-source>
+        <window-source index="pi_HASH" pubsub="true" name="sourceWindow_02">
+          <description><![CDATA[The second Source window in this model receives input data from a CSV file containing a list of stock market trades. The input data specifies a unique ID for the trade, the company's stock market symbol, and the price paid for the stock.]]></description>
+          <schema>
+            <fields>
+              <field name="ID" type="int32" key="true"/>
+              <field name="symbol" type="string"/>
+              <field name="price" type="double"/>
+            </fields>
+          </schema>
+        </window-source>
+        <window-union index="pi_HASH" strict="true" pubsub="true" name="unionWindow">
+          <description><![CDATA[The Union window in this model merges the three event streams of stock market trades.  As strict policy is enabled, the key merge from each window must semantically merge cleanly.]]></description>
+        </window-union>
+      </windows>
+      <edges>
+        <description/>
+        <edge source="sourceWindow_01" target="unionWindow"/>
+        <edge source="sourceWindow_02" target="unionWindow"/>
+      </edges>
+    </contquery>
+  </contqueries>
+</project>

@@ -1,0 +1,152 @@
+<project name="FilAStore" threads="1" pubsub="auto" heartbeat-interval="1">  
+<description> 
+	This project is a basic demonstration of using a Model Reader window to facilitate the scoring
+	of an input data set using a pre-trained ASTORE model. A Model Reader window receives request
+	events that include the location and type of an offline analytic store (ASTORE) model, and
+	publishes a model event that contains the ASTORE model to a Score window. It should be noted
+	that the request the Model Reader window will receive can either come from a preceding Source
+	window, or can be specified in the schema of the Model Reader Window. For this example, the 
+	request itself will come from a preceding Source window. 
+
+	In this example, the ASTORE model SODFIL.sasast is a Digital Filter ASTORE of Butterworth
+	filter type. The ASTORE was created using CAS. 
+
+	This project contains a single continuous query consisting of the following: 
+	1.	A Source window, named Source1, that receives the input data set to be analyzed 
+	2.	A Source window, named w_request, which receives a request event to load the ASTORE
+	3.	A Model Reader window, named w_reader, that receives request events that include
+		the location and type of model, and publishes a model event that contains the ASTORE
+		model to a score window 
+	4.	A Score window, named Score1, which uses the model it receives from the Model Reader
+		window to perform scoring of the input data set 
+</description>  
+  <metadata>
+    <meta id="layout">{"cq1":{"Score1":{"x":-137.5,"y":-244},"Source1":{"x":-135.5,"y":-375}}}</meta>
+  </metadata>
+  <contqueries>
+    <contquery name="cq1" trace="Score1">
+      <windows>
+        <window-source pubsub="true" name="Source1" insert-only='true'> 
+        <description> 
+		This Source window receives the included example input data file via a file socket
+		connector. The input data stream is placed into two fields for each observation:
+		a key called datetime, and a signal called signal. 
+        </description>
+	  <schema>
+	    <fields>
+              <field name='datetime' type='double' key='true'/>
+              <field name='signal' type='double'/>
+	    </fields>
+	  </schema> 
+	  <connectors> 
+	    <connector class='fs' name='pub'> 
+	      <properties> 
+	        <property name='type'>pub</property> 
+		<property name='fstype'>csv</property> 
+		<property name='fsname'>signal-sas.csv</property> 
+		<property name='transactional'>true</property> 
+		<property name='blocksize'>1</property> 
+		<property name='header'>1</property> 
+		<property name='addcsvopcode'>true</property> 
+		<property name='addcsvflags'>normal</property> 
+	      </properties> 
+	    </connector> 
+	  </connectors>
+        </window-source>
+
+
+
+
+        <window-source name='w_request' insert-only='true' index='pi_EMPTY'> 
+        <description> 
+     		This Source window receives the included request file via a file socket connector. 
+		This request file contains instructions to load the included ASTORE model, SODFIL.sasast.
+		The instructions and loaded model will be used by the Model Reader window. 
+        </description>
+          <schema>
+            <fields>
+              <field name='req_id'  type='int64' key='true'/>
+              <field name='req_key' type='string'/>
+              <field name='req_val' type='string'/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class='fs' name='pub'>
+              <properties>
+                <property name='type'>pub</property>
+                <property name='fstype'>csv</property>
+                <property name='fsname'>reader_request.csv</property>
+                <property name='transactional'>true</property>
+                <property name='blocksize'>1</property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+
+
+
+        <window-model-reader name='w_reader' model-type='astore'>
+	<description> 
+		This Model Reader window specifies that the type of model to be used in scoring the
+		input data set is an ASTORE model. Additionally, as described in the edges for this
+		project, this Model Reader window will send the ASTORE model to the Score window, so
+		that scoring can take place. 
+	</description> 
+	</window-model-reader>
+
+        <window-score name="Score1"> 
+        <description> 
+		This scoring window applies the Butterworth Digital Filter contained in the ASTORE 
+		model SODFIL.sasast to perform scoring on the input data set. The resulting output
+		is then written to the file result.out via a file socket connector.  
+        </description>
+	  <schema>
+	    <fields>
+              <field name='datetime' type='double' key='true'/>
+              <field name='output' type='double'/>
+	    </fields>
+	  </schema>
+          <models>
+            <offline model-type='astore'/> 
+	  </models> 
+	  <connectors> 
+	    <connector class='fs' name='sub'> 
+	      <properties> 
+	        <property name='type'>sub</property> 
+		<property name='fstype'>csv</property>
+		<property name='fsname'>result.out</property> 
+		<property name='snapshot'>true</property> 
+		<property name='header'>true</property> 
+	      </properties> 
+	    </connector> 
+	  </connectors> 
+	</window-score>
+
+
+
+      </windows> 
+      <edges> 
+        <edge source='Source1' target='Score1' role='data'/> 
+	<edge source='w_reader' target='Score1' role='model'/> 
+	<edge source='w_request' target='w_reader' role='request'/> 
+      </edges> 
+    </contquery> 
+  </contqueries> 
+  <project-connectors> 
+    <connector-groups> 
+      <connector-group name='sub'> 
+        <connector-entry connector='cq1/Score1/sub' state='running'/> 
+      </connector-group> 
+      <connector-group name='pub1'> 
+        <connector-entry connector='cq1/w_request/pub' state='finished'/> 
+      </connector-group> 
+      <connector-group name='pub2'> 
+        <connector-entry connector='cq1/Source1/pub' state='finished'/> 
+      </connector-group> 
+    </connector-groups> 
+    <edges> 
+      <edge source='sub' target='pub1'/> 
+      <edge source='pub1' target='pub2'/> 
+    </edges> 
+  </project-connectors> 
+</project> 

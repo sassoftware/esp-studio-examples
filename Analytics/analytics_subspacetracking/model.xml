@@ -1,0 +1,133 @@
+<project name='project_01' pubsub='auto' threads='1' use-tagged-token='true'> 
+    <description> 
+	This project is a basic demonstration of using the Subspace Tracking (SST)
+	algorithm. If a data set contains a sequence of nx1 vectors: x(t), subspace
+	tracking estimates the covariance matrix for each vector x(t) and then computes
+	the first p principal eigenvectors of the covariance matrix. For each iteration
+	at time t, the covariance matrix C(t) is obtained. SST can be applied to industrial
+	data to detect outliers and results can be used to identify potential errors before
+	they occur. 
+
+	This project contains a single continuous query consisting of the following: 
+	1.	A source window that receives the data to analyze
+	2.	A calculate window that performs subspace tracking on the data
+    </description>
+      <contqueries>
+        <contquery name='cq_01' trace='w_calculate'>
+          <windows>
+            <window-source insert-only="true" name='w_data'> 
+            <description> 
+		This source window receives the included example input file via a file socket
+		connector. The input data stream is placed into seven fields for each observation: 
+		an ID that acts as the data stream's key, named id; and a series of six different
+		x coordinate fields (x1, x2, x3, x4, x5, x6).
+            </description>
+              <schema>
+                <fields>
+                  <field name='id'  type='int64' key='true'/>
+                  <field name='x1' type='double'/>
+                  <field name='x2' type='double'/>
+                  <field name='x3' type='double'/>
+		  <field name='x4' type='double'/>
+                  <field name='x5' type='double'/>
+                  <field name='x6' type='double'/>
+                </fields>
+              </schema>
+              <connectors>
+                <connector class='fs' name='publisher'>
+                  <properties>
+                    <property name='type'>pub</property>
+                    <property name='fstype'>csv</property>
+                    <property name='fsname'>input.csv</property>
+                    <property name='transactional'>true</property>
+                    <property name='blocksize'>1</property>
+                  </properties>
+                </connector>
+              </connectors>
+            </window-source>
+
+            <window-calculate name='w_calculate' algorithm='SST'>
+            <description> 
+		This calculate window receives data events and publishes the computed principal
+		eigenvectors. In this example, the following algorithm parameters govern the 
+		SST algorithm: 
+
+		maxPrincipal:		Specifies the maximum number of the principal eigenvectors. 
+					This should be a value greater than 0 and less than or equal
+					to the number of input variables. 
+		meanForgetFactor:	Specifies the value of the forgetting factor used to
+					update the mean. This should be a value between 0 and 1. 
+		covForgetFactor:	Specifies the forgetting factor that is used to update the 
+					covariance matrix. This should be a value between 0 and 1.
+		eigvalTolCumulative:	Specifies the threshold on the cumulative rate of eigenvalues.
+					This should be a positive value less than or equal to 1. 
+
+		Additionally, the following input-map and output-map define this calculate window: 
+
+		inputs:			Specifies the list of variable names used to compute the 
+					principal subspace. 
+
+		projAngleOut:		Specifies the name of the projection angle. 
+		residualOut:		Specifies the variable name for the output residual. 
+		numRankOut:		Specifies the name of the rank of the principal subspace.
+		principalVecOut:	Specifies a list of variable names that correspond to the 
+					elements of each principal eigenvector. 
+		
+		The resulting output is written to the file result.out via a file socket connector. 
+            </description>             
+              <schema>
+                <fields>
+                  <field name='id' type='int64' key='true'/>
+                  <field name='projAngle' type='double'/>
+                  <field name='residualRate' type='double'/>
+                  <field name='numRank' type='int32'/>
+                  <field name='prin1_x1' type='double'/>
+                  <field name='prin1_x2' type='double'/>
+                  <field name='prin1_x3' type='double'/>
+                  <field name='prin1_x4' type='double'/>
+                  <field name='prin1_x5' type='double'/>
+                  <field name='prin1_x6' type='double'/>
+
+                </fields>
+              </schema>
+              <parameters>
+                <properties>
+                  <property name="maxPrincipal">2</property>
+                  <property name="meanForgetFactor">0.1</property>
+                  <property name="covForgetFactor">0.5</property>
+                  <property name="eigvalTolCumulative">1</property>
+                </properties>
+              </parameters>
+              <input-map>
+                <properties>
+                  <property name="inputs">x1, x2, x3, x4, x5, x6</property>
+                </properties>
+              </input-map>
+              <output-map>
+                 <properties>
+                  <property name="projAngleOut">projAngle</property>
+                  <property name="residualOut">residualRate</property>
+                  <property name="numRankOut">numRank</property>
+                  <property name="principalVecOut">prin1_x1, prin1_x2, prin1_x3, prin1_x4, prin1_x5, prin1_x6</property>
+                </properties>
+              </output-map>
+              <connectors>
+                <connector class='fs' name='sub'>
+                  <properties>
+                    <property name='type'>sub</property>
+                    <property name='fstype'>csv</property>
+                    <property name='header'>false</property>
+                    <property name='fsname'>result.out</property>
+                    <property name='snapshot'>true</property> 
+                    <property name='header'>true</property>
+                  </properties>
+                </connector>
+              </connectors>
+            </window-calculate>
+          </windows>
+          <edges>
+            <edge source='w_data'    target='w_calculate' role='data'/>
+          </edges>
+        </contquery>
+      </contqueries>
+    </project>

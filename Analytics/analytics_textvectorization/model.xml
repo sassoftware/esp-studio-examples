@@ -1,0 +1,116 @@
+    <project name='project' pubsub='auto' threads='1' use-tagged-token='true'> 
+    <description> 
+	This project is a basic demonstration of using the TextVectorization algorithm.
+	Vectorizing text creates maps from words or n-grams to vector space. A vector
+	space is an algebraic model to represent text documents as vectors of identifiers 
+	(for example, index terms). 
+
+	This project contains a single continuous query consisting of the following: 
+	1.	A source window that receives the text data to analyze 
+	2.	A calculate window that vectorizes text in incoming data events and 
+		publishes the results.
+    </description>
+      <contqueries>
+        <contquery name='contquery' trace='w_data w_calculate'>
+          <windows>
+            <window-source name='w_data'> 
+            <description> 
+		This source window receives the included example input data file via a 
+		file socket connector. The input data stream is placed in three fields 
+		for each observation: docId, tokenId, and word.
+            </description>
+              <schema>
+                <fields>
+                  <field name='docId'   type='int64' key='true'/>
+                  <field name='tokenId' type='int64' key='true'/>
+                  <field name='word'    type='string'/>
+                </fields>
+              </schema>
+              <connectors>
+                <connector class='fs' name='publisher'>
+                  <properties>
+                    <property name='type'>pub</property>
+                    <property name='fstype'>csv</property>
+                    <property name='fsname'>input.csv</property>
+                    <property name='transactional'>true</property>
+                    <property name='blocksize'>1</property>
+                    <property name='rate'>1</property>
+                  </properties>
+                </connector>
+              </connectors>
+            </window-source>
+            <window-calculate name='w_calculate' algorithm='TextVectorization'> 
+	    <description> 
+		This calculate window receives data events and publishes word vectors
+		created with the TextVectorization algorith. In this example, the following
+		algorithm parameters govern the TextVectorization algorithm: 
+
+		wordVec:		Specifies the word vector filename. 
+		outputDocVec:		Specifies whether or not to return a document vector
+					 or not. If it is set to 0, then word vectors are 
+					returned. Otherwise, document vectors are returned. 
+		wordVecDelimiter:	Specifies the delimiter of the word vector file.
+					Legal values are "COMMA", "TAB", or "SPACE". 
+
+		Additionally, the following input-map and output-map properties define this
+		calculate window: 
+
+		docId:			Specifies the input variable name of a document ID.
+					It is required when the outputDocVec is set to nonzero. 
+		token:			Specifies the input variable name of a token. 
+
+		docIdOut:		Specifies the output variable name of a document ID. 
+					It is required when outputDocVec is set to nonzero. 
+		vectorOut:		Specifies a list of output variable names for word or
+					document vectors. 
+
+		The resulting output is written to the file result.out via a file socket connector.
+            </description>
+              <schema>
+                <fields>
+                  <field name='docId'   type='int64' key='true'/>
+                  <field name='tokenId' type='int64' key='true'/>
+                  <field name='word'    type='string'/>
+                  <field name='v1' type='double'/>
+                  <field name='v2' type='double'/>
+                  <field name='v3' type='double'/>
+                </fields>
+              </schema>
+              <parameters>
+                <properties>
+                  <property name="wordVec">wordVec1.csv</property>
+                  <property name='outputDocVec'>0</property>
+                  <property name="wordVecDelimiter">COMMA</property>
+                </properties>
+              </parameters>
+              <input-map>
+                <properties>
+                  <property name='docId'>docId</property>
+                  <property name='token'>word</property>
+                </properties>
+              </input-map>
+              <output-map>
+                <properties>
+                  <property name='docIdOut'>docId</property>
+                  <property name='vectorOut'>v1,v2,v3</property>
+                </properties>
+              </output-map>
+              <connectors>
+                <connector class='fs' name='sub'>
+                  <properties>
+                    <property name='type'>sub</property>
+                    <property name='fstype'>csv</property>
+                    <property name='fsname'>result.out</property>
+                    <property name='snapshot'>true</property> 
+                    <property name='header'>true</property>
+                  </properties>
+                </connector>
+              </connectors>
+            </window-calculate>
+          </windows>
+          <edges>
+            <edge source='w_data' target='w_calculate' role='data'/>
+          </edges>
+        </contquery>
+      </contqueries>
+    </project>

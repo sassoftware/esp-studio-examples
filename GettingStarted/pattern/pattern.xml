@@ -1,0 +1,70 @@
+<project name="patternExample" pubsub="auto" threads="1" heartbeat-interval="1">
+  <description><![CDATA[Pattern windows are used to detect events of interest (EOI) as the events are streamed through the model. This model specifies a list of EOIs relating to stock market trading activity. The EOIs are assembled into an expression that uses logical operators. When publishing events from the model's CSV file, this model requires you to configure a date format of %Y-%m-%d %H:%M:%S. Select this date format from the Date Format drop-down list in the Publish Date from a File window.]]></description>
+  <metadata>
+    
+  </metadata>
+  <contqueries>
+    <contquery name="contquery_01" trace="patternWindow">
+      <windows>
+        <window-source index="pi_EMPTY" insert-only="true" pubsub="true" name="sourceWindow">
+          <description><![CDATA[The Source window in this model receives input data from a CSV file each containing stock market trades. The input data specifies the trade ID, the stock market symbol of the purchased stock, the quantity of stock purchased per trade, and the cost of purchasing the stock per trade, the currency ID, the date and time of the trade, the stockbroker ID, the buyer ID, and the seller ID.]]></description>
+          <schema>
+            <fields>
+              <field name="ID" type="int32" key="true"/>
+              <field name="symbol" type="string"/>
+              <field name="currency" type="int32"/>
+              <field name="udate" type="int64"/>
+              <field name="msecs" type="int32"/>
+              <field name="price" type="double"/>
+              <field name="quant" type="int32"/>
+              <field name="venue" type="int32"/>
+              <field name="broker" type="int32"/>
+              <field name="buyer" type="int32"/>
+              <field name="seller" type="int32"/>
+              <field name="buysellflg" type="int32"/>
+              <field name="trade_time" type="stamp"/>
+            </fields>
+          </schema>
+        </window-source>
+        <window-pattern name="patternWindow">
+          <description><![CDATA[The Pattern window in this model detects three events of interest (EOI). The first EOI is defined as the occurrence of the stock symbol "GMTC". The unification variables s==symbol, p0=price, and q0=quant are also declared.
+
+The second EOI is defined as the occurrence of the stock symbol "GMTC". In addition, this stock's price and the share purchase quantity must have increased by 50%. The unification variables p1 and q1 are assigned to the price and quantity of the event that matches this second EOI.
+
+The third EOI is defined as the occurrence of the stock symbol "GMTC". In addition, this stock's price and share purchase quantity must have increased by 50% from the price and share purchase quantity of the second EOI. Event 1 must be followed by event 2 which in turn, must be followed by event 3. This events must occur in sequence and be within 200 milliseconds of each other.
+
+Timings for the pattern are derived from the values in the trade_time field in the Source window. The Pattern window in this model is set not to retain data. Therefore, the index type is set to pi_EMPTY. This is to avoid limitless event growth.]]></description>
+          <schema>
+            <fields>
+              <field name="ID" type="int64" key="true"/>
+              <field name="ID1" type="int32"/>
+              <field name="ID2" type="int32"/>
+              <field name="ID3" type="int32"/>
+            </fields>
+          </schema>
+          <patterns>
+            <pattern name="pattern1">
+              <events>
+                <event source="sourceWindow" name="e1"><![CDATA[symbol=="GMTC" and s==symbol and p0==price and q0==quant]]></event>
+                <event source="sourceWindow" name="e2"><![CDATA[s==symbol and p0<price*1.5 and q0<quant*1.5 and p1==price and q1==quant]]></event>
+                <event source="sourceWindow" name="e3"><![CDATA[s==symbol and p1<price*1.5 and q1<quant*1.5]]></event>
+              </events>
+              <logic>fby{200 milliseconds}(e1, e2, e3)</logic>
+              <output>
+                <field-selection name="ID" node="e1"/>
+                <field-selection name="ID" node="e2"/>
+                <field-selection name="ID" node="e3"/>
+              </output>
+              <timefields>
+                <timefield source="sourceWindow" field="trade_time"/>
+              </timefields>
+            </pattern>
+          </patterns>
+        </window-pattern>
+      </windows>
+      <edges>
+        <edge source="sourceWindow" target="patternWindow"/>
+      </edges>
+    </contquery>
+  </contqueries>
+</project>

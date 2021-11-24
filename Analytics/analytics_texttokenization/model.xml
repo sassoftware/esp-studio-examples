@@ -1,0 +1,97 @@
+<project name='project' pubsub='auto' threads='1' use-tagged-token='true'> 
+<description> 
+	This example is a basic demonstrtation of using the tokenization algorithm to
+	perform text tokenization on streaming input. The project contains a single 
+	continuous query consisting of the following: 
+	1.	A source window that receives the text data to be analyzed 
+	2.	A calculate window that tokenizes the text in incoming data events
+		and publishes the results
+</description>
+<contqueries>
+  <contquery name='contquery' include-singletons='true' trace='w_source w_calculate'>
+   <windows>
+    <window-source name='w_source' insert-only='true'> 
+    <description> 
+	This source window receives the included example input data file via a file
+	socket connector. The input stream is placed into two fields for each observation:
+	a document ID that acts as the data stream's key, named docId; and a string of 
+	incoming text, named doc.
+    </description>
+     <schema>
+      <fields>
+       <field name='docId'  type='int64' key='true'/>
+       <field name='doc' type='string'/>
+      </fields>
+     </schema>
+     <connectors>
+      <connector class='fs' name='publisher'>
+       <properties>
+        <property name='type'>pub</property>
+        <property name='fstype'>csv</property>
+        <property name='fsname'>input.csv</property>
+        <property name='transactional'>true</property>
+        <property name='blocksize'>1</property>
+       </properties>
+      </connector>
+     </connectors>
+    </window-source>
+    <window-calculate name="w_calculate" algorithm="Tokenization"> 
+    <description> 
+	This calculate window receives data events from the source window, and publishes 
+	word tokens created by the Tokenization algorithm.In this example, the following
+	input-map and output-map properties govern the calculate window: 
+
+	docId:		Specifies the input variable for the unique docID. 
+	doc:		Specifies the input variable for the input doc from the source window. 
+
+	docIdOut:	Specifies the output variable for the unique doc ID. 
+	tokenIdOut:	Specifies the output variable for the unique ID of the token. 
+	wordOut:	Specifies the output variable for the word content in the token. 
+	startPosOut:	Specifies the output variable for the starting position of the token word. 
+	endPosOut:	Specifies the output variable for the ending position of the word. 
+
+	The resulting output is written to the file result.out via a file socket connector.
+    </description>
+      <schema>
+        <fields>
+          <field name='docId' type='int64' key='true'/>
+          <field name='tokenId' type='int64' key='true'/>
+          <field name='word' type='string'/>
+          <field name='startPos' type='int32'/>
+          <field name='endPos' type='int32'/>
+        </fields>
+      </schema>
+        <input-map>
+          <properties>
+           <property name="docId">docId</property>
+           <property name="doc">doc</property>
+          </properties>
+        </input-map>
+        <output-map>
+          <properties>
+           <property name="docIdOut">docId</property>
+           <property name="tokenIdOut">tokenId</property>
+           <property name="wordOut">word</property>
+           <property name="startPosOut">startPos</property>
+           <property name="endPosOut">endPos</property>
+          </properties>
+        </output-map>
+     <connectors>
+      <connector class='fs' name='sub'>
+       <properties>
+        <property name='type'>sub</property>
+        <property name='fstype'>csv</property>
+        <property name='fsname'>result.out</property>
+        <property name='snapshot'>true</property> 
+        <property name='header'>true</property>
+       </properties>
+      </connector>
+     </connectors>
+    </window-calculate>
+   </windows>
+   <edges>
+    <edge source='w_source' target='w_calculate' role='data'/>
+   </edges>
+  </contquery>
+</contqueries>
+</project>

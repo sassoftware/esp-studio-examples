@@ -1,0 +1,28 @@
+<?xml version="1.0"?><job-template id="clean-server" localization-id="jobName" description-localization-id="jobDescription">
+    <localization-strings default-language="en-us">
+        <language id="en-us">
+            <string id="jobName">Remove a Running Project</string>
+            <string id="jobDescription">Unload a project from a specified ESP server</string>
+            <string id="target-server">ESP server</string>
+			<string id="project-to-stop">Project to unload</string>
+            <string id="stop-project">Stop Project</string>
+            <string id="unload-project">Unload Project</string>
+        </language>
+    </localization-strings>
+
+    <parameters>
+		<server-selector id="server" localization-id="target-server">
+			<running-project-selector id="project-to-stop" localization-id="project-to-stop" required="true" />
+        </server-selector>
+    </parameters>
+
+    
+	<server-filters>
+		<server-filter id="filter1" filter-expression="(objectId='{server.id}')" />
+	</server-filters>
+
+	<instructions>
+			<stop-project id="stop-project" localization-id="stop-project" server-filter="filter1" running-project-name="{project-to-stop.name}" />
+			<unload-project id="unload-project" localization-id="unload-project" server-filter="filter1" depends-on="stop-project" running-project-name="{project-to-stop.name}" />
+    </instructions>
+</job-template>

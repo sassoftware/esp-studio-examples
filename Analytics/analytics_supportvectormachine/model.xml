@@ -1,0 +1,946 @@
+    <project name='project_01' pubsub='auto' threads='1' use-tagged-token='true'> 
+      <description> 
+        Support vector machines are supervised learning models with associated algorithms. They apply classification
+	and regression analysis on incoming data. A user supplies training examples and marks them as belonging to
+	a category. A support vector machine builds a model that assigns new examples to that category. 
+
+	This project contains a single continuous query that is composed of the following: 
+	1.	A source window that receives data events that stream the data to score 
+	2.	A train window that generates and periodically updates the vector machine model
+	3. 	A score window that performs the scoring
+      </description>
+      <contqueries>
+        <contquery name='cq_01' trace='w_score w_train'>
+          <windows>
+            <window-source name='w_data' insert-only='true'> 
+              <description> 
+		This source window receives the included example data via a file socket connector. The input stream
+		is placed into the following fields for each observation: an ID that acts as the data stream's key,
+		named id;, a y coordinate of data named y;, and 784 x coordinates.
+              </description>
+              <schema>
+                <fields>
+                    <field name='id'  type='int64' key='true'/>
+                    <field name='y'  type='double'/>
+					<field name='x1' type='double'/>
+					<field name='x2' type='double'/>
+					<field name='x3' type='double'/>
+					<field name='x4' type='double'/>
+					<field name='x5' type='double'/>
+					<field name='x6' type='double'/>
+					<field name='x7' type='double'/>
+					<field name='x8' type='double'/>
+					<field name='x9' type='double'/>
+					<field name='x10' type='double'/>
+					<field name='x11' type='double'/>
+					<field name='x12' type='double'/>
+					<field name='x13' type='double'/>
+					<field name='x14' type='double'/>
+					<field name='x15' type='double'/>
+					<field name='x16' type='double'/>
+					<field name='x17' type='double'/>
+					<field name='x18' type='double'/>
+					<field name='x19' type='double'/>
+					<field name='x20' type='double'/>
+					<field name='x21' type='double'/>
+					<field name='x22' type='double'/>
+					<field name='x23' type='double'/>
+					<field name='x24' type='double'/>
+					<field name='x25' type='double'/>
+					<field name='x26' type='double'/>
+					<field name='x27' type='double'/>
+					<field name='x28' type='double'/>
+					<field name='x29' type='double'/>
+					<field name='x30' type='double'/>
+					<field name='x31' type='double'/>
+					<field name='x32' type='double'/>
+					<field name='x33' type='double'/>
+					<field name='x34' type='double'/>
+					<field name='x35' type='double'/>
+					<field name='x36' type='double'/>
+					<field name='x37' type='double'/>
+					<field name='x38' type='double'/>
+					<field name='x39' type='double'/>
+					<field name='x40' type='double'/>
+					<field name='x41' type='double'/>
+					<field name='x42' type='double'/>
+					<field name='x43' type='double'/>
+					<field name='x44' type='double'/>
+					<field name='x45' type='double'/>
+					<field name='x46' type='double'/>
+					<field name='x47' type='double'/>
+					<field name='x48' type='double'/>
+					<field name='x49' type='double'/>
+					<field name='x50' type='double'/>
+					<field name='x51' type='double'/>
+					<field name='x52' type='double'/>
+					<field name='x53' type='double'/>
+					<field name='x54' type='double'/>
+					<field name='x55' type='double'/>
+					<field name='x56' type='double'/>
+					<field name='x57' type='double'/>
+					<field name='x58' type='double'/>
+					<field name='x59' type='double'/>
+					<field name='x60' type='double'/>
+					<field name='x61' type='double'/>
+					<field name='x62' type='double'/>
+					<field name='x63' type='double'/>
+					<field name='x64' type='double'/>
+					<field name='x65' type='double'/>
+					<field name='x66' type='double'/>
+					<field name='x67' type='double'/>
+					<field name='x68' type='double'/>
+					<field name='x69' type='double'/>
+					<field name='x70' type='double'/>
+					<field name='x71' type='double'/>
+					<field name='x72' type='double'/>
+					<field name='x73' type='double'/>
+					<field name='x74' type='double'/>
+					<field name='x75' type='double'/>
+					<field name='x76' type='double'/>
+					<field name='x77' type='double'/>
+					<field name='x78' type='double'/>
+					<field name='x79' type='double'/>
+					<field name='x80' type='double'/>
+					<field name='x81' type='double'/>
+					<field name='x82' type='double'/>
+					<field name='x83' type='double'/>
+					<field name='x84' type='double'/>
+					<field name='x85' type='double'/>
+					<field name='x86' type='double'/>
+					<field name='x87' type='double'/>
+					<field name='x88' type='double'/>
+					<field name='x89' type='double'/>
+					<field name='x90' type='double'/>
+					<field name='x91' type='double'/>
+					<field name='x92' type='double'/>
+					<field name='x93' type='double'/>
+					<field name='x94' type='double'/>
+					<field name='x95' type='double'/>
+					<field name='x96' type='double'/>
+					<field name='x97' type='double'/>
+					<field name='x98' type='double'/>
+					<field name='x99' type='double'/>
+					<field name='x100' type='double'/>
+					<field name='x101' type='double'/>
+					<field name='x102' type='double'/>
+					<field name='x103' type='double'/>
+					<field name='x104' type='double'/>
+					<field name='x105' type='double'/>
+					<field name='x106' type='double'/>
+					<field name='x107' type='double'/>
+					<field name='x108' type='double'/>
+					<field name='x109' type='double'/>
+					<field name='x110' type='double'/>
+					<field name='x111' type='double'/>
+					<field name='x112' type='double'/>
+					<field name='x113' type='double'/>
+					<field name='x114' type='double'/>
+					<field name='x115' type='double'/>
+					<field name='x116' type='double'/>
+					<field name='x117' type='double'/>
+					<field name='x118' type='double'/>
+					<field name='x119' type='double'/>
+					<field name='x120' type='double'/>
+					<field name='x121' type='double'/>
+					<field name='x122' type='double'/>
+					<field name='x123' type='double'/>
+					<field name='x124' type='double'/>
+					<field name='x125' type='double'/>
+					<field name='x126' type='double'/>
+					<field name='x127' type='double'/>
+					<field name='x128' type='double'/>
+					<field name='x129' type='double'/>
+					<field name='x130' type='double'/>
+					<field name='x131' type='double'/>
+					<field name='x132' type='double'/>
+					<field name='x133' type='double'/>
+					<field name='x134' type='double'/>
+					<field name='x135' type='double'/>
+					<field name='x136' type='double'/>
+					<field name='x137' type='double'/>
+					<field name='x138' type='double'/>
+					<field name='x139' type='double'/>
+					<field name='x140' type='double'/>
+					<field name='x141' type='double'/>
+					<field name='x142' type='double'/>
+					<field name='x143' type='double'/>
+					<field name='x144' type='double'/>
+					<field name='x145' type='double'/>
+					<field name='x146' type='double'/>
+					<field name='x147' type='double'/>
+					<field name='x148' type='double'/>
+					<field name='x149' type='double'/>
+					<field name='x150' type='double'/>
+					<field name='x151' type='double'/>
+					<field name='x152' type='double'/>
+					<field name='x153' type='double'/>
+					<field name='x154' type='double'/>
+					<field name='x155' type='double'/>
+					<field name='x156' type='double'/>
+					<field name='x157' type='double'/>
+					<field name='x158' type='double'/>
+					<field name='x159' type='double'/>
+					<field name='x160' type='double'/>
+					<field name='x161' type='double'/>
+					<field name='x162' type='double'/>
+					<field name='x163' type='double'/>
+					<field name='x164' type='double'/>
+					<field name='x165' type='double'/>
+					<field name='x166' type='double'/>
+					<field name='x167' type='double'/>
+					<field name='x168' type='double'/>
+					<field name='x169' type='double'/>
+					<field name='x170' type='double'/>
+					<field name='x171' type='double'/>
+					<field name='x172' type='double'/>
+					<field name='x173' type='double'/>
+					<field name='x174' type='double'/>
+					<field name='x175' type='double'/>
+					<field name='x176' type='double'/>
+					<field name='x177' type='double'/>
+					<field name='x178' type='double'/>
+					<field name='x179' type='double'/>
+					<field name='x180' type='double'/>
+					<field name='x181' type='double'/>
+					<field name='x182' type='double'/>
+					<field name='x183' type='double'/>
+					<field name='x184' type='double'/>
+					<field name='x185' type='double'/>
+					<field name='x186' type='double'/>
+					<field name='x187' type='double'/>
+					<field name='x188' type='double'/>
+					<field name='x189' type='double'/>
+					<field name='x190' type='double'/>
+					<field name='x191' type='double'/>
+					<field name='x192' type='double'/>
+					<field name='x193' type='double'/>
+					<field name='x194' type='double'/>
+					<field name='x195' type='double'/>
+					<field name='x196' type='double'/>
+					<field name='x197' type='double'/>
+					<field name='x198' type='double'/>
+					<field name='x199' type='double'/>
+					<field name='x200' type='double'/>
+					<field name='x201' type='double'/>
+					<field name='x202' type='double'/>
+					<field name='x203' type='double'/>
+					<field name='x204' type='double'/>
+					<field name='x205' type='double'/>
+					<field name='x206' type='double'/>
+					<field name='x207' type='double'/>
+					<field name='x208' type='double'/>
+					<field name='x209' type='double'/>
+					<field name='x210' type='double'/>
+					<field name='x211' type='double'/>
+					<field name='x212' type='double'/>
+					<field name='x213' type='double'/>
+					<field name='x214' type='double'/>
+					<field name='x215' type='double'/>
+					<field name='x216' type='double'/>
+					<field name='x217' type='double'/>
+					<field name='x218' type='double'/>
+					<field name='x219' type='double'/>
+					<field name='x220' type='double'/>
+					<field name='x221' type='double'/>
+					<field name='x222' type='double'/>
+					<field name='x223' type='double'/>
+					<field name='x224' type='double'/>
+					<field name='x225' type='double'/>
+					<field name='x226' type='double'/>
+					<field name='x227' type='double'/>
+					<field name='x228' type='double'/>
+					<field name='x229' type='double'/>
+					<field name='x230' type='double'/>
+					<field name='x231' type='double'/>
+					<field name='x232' type='double'/>
+					<field name='x233' type='double'/>
+					<field name='x234' type='double'/>
+					<field name='x235' type='double'/>
+					<field name='x236' type='double'/>
+					<field name='x237' type='double'/>
+					<field name='x238' type='double'/>
+					<field name='x239' type='double'/>
+					<field name='x240' type='double'/>
+					<field name='x241' type='double'/>
+					<field name='x242' type='double'/>
+					<field name='x243' type='double'/>
+					<field name='x244' type='double'/>
+					<field name='x245' type='double'/>
+					<field name='x246' type='double'/>
+					<field name='x247' type='double'/>
+					<field name='x248' type='double'/>
+					<field name='x249' type='double'/>
+					<field name='x250' type='double'/>
+					<field name='x251' type='double'/>
+					<field name='x252' type='double'/>
+					<field name='x253' type='double'/>
+					<field name='x254' type='double'/>
+					<field name='x255' type='double'/>
+					<field name='x256' type='double'/>
+					<field name='x257' type='double'/>
+					<field name='x258' type='double'/>
+					<field name='x259' type='double'/>
+					<field name='x260' type='double'/>
+					<field name='x261' type='double'/>
+					<field name='x262' type='double'/>
+					<field name='x263' type='double'/>
+					<field name='x264' type='double'/>
+					<field name='x265' type='double'/>
+					<field name='x266' type='double'/>
+					<field name='x267' type='double'/>
+					<field name='x268' type='double'/>
+					<field name='x269' type='double'/>
+					<field name='x270' type='double'/>
+					<field name='x271' type='double'/>
+					<field name='x272' type='double'/>
+					<field name='x273' type='double'/>
+					<field name='x274' type='double'/>
+					<field name='x275' type='double'/>
+					<field name='x276' type='double'/>
+					<field name='x277' type='double'/>
+					<field name='x278' type='double'/>
+					<field name='x279' type='double'/>
+					<field name='x280' type='double'/>
+					<field name='x281' type='double'/>
+					<field name='x282' type='double'/>
+					<field name='x283' type='double'/>
+					<field name='x284' type='double'/>
+					<field name='x285' type='double'/>
+					<field name='x286' type='double'/>
+					<field name='x287' type='double'/>
+					<field name='x288' type='double'/>
+					<field name='x289' type='double'/>
+					<field name='x290' type='double'/>
+					<field name='x291' type='double'/>
+					<field name='x292' type='double'/>
+					<field name='x293' type='double'/>
+					<field name='x294' type='double'/>
+					<field name='x295' type='double'/>
+					<field name='x296' type='double'/>
+					<field name='x297' type='double'/>
+					<field name='x298' type='double'/>
+					<field name='x299' type='double'/>
+					<field name='x300' type='double'/>
+					<field name='x301' type='double'/>
+					<field name='x302' type='double'/>
+					<field name='x303' type='double'/>
+					<field name='x304' type='double'/>
+					<field name='x305' type='double'/>
+					<field name='x306' type='double'/>
+					<field name='x307' type='double'/>
+					<field name='x308' type='double'/>
+					<field name='x309' type='double'/>
+					<field name='x310' type='double'/>
+					<field name='x311' type='double'/>
+					<field name='x312' type='double'/>
+					<field name='x313' type='double'/>
+					<field name='x314' type='double'/>
+					<field name='x315' type='double'/>
+					<field name='x316' type='double'/>
+					<field name='x317' type='double'/>
+					<field name='x318' type='double'/>
+					<field name='x319' type='double'/>
+					<field name='x320' type='double'/>
+					<field name='x321' type='double'/>
+					<field name='x322' type='double'/>
+					<field name='x323' type='double'/>
+					<field name='x324' type='double'/>
+					<field name='x325' type='double'/>
+					<field name='x326' type='double'/>
+					<field name='x327' type='double'/>
+					<field name='x328' type='double'/>
+					<field name='x329' type='double'/>
+					<field name='x330' type='double'/>
+					<field name='x331' type='double'/>
+					<field name='x332' type='double'/>
+					<field name='x333' type='double'/>
+					<field name='x334' type='double'/>
+					<field name='x335' type='double'/>
+					<field name='x336' type='double'/>
+					<field name='x337' type='double'/>
+					<field name='x338' type='double'/>
+					<field name='x339' type='double'/>
+					<field name='x340' type='double'/>
+					<field name='x341' type='double'/>
+					<field name='x342' type='double'/>
+					<field name='x343' type='double'/>
+					<field name='x344' type='double'/>
+					<field name='x345' type='double'/>
+					<field name='x346' type='double'/>
+					<field name='x347' type='double'/>
+					<field name='x348' type='double'/>
+					<field name='x349' type='double'/>
+					<field name='x350' type='double'/>
+					<field name='x351' type='double'/>
+					<field name='x352' type='double'/>
+					<field name='x353' type='double'/>
+					<field name='x354' type='double'/>
+					<field name='x355' type='double'/>
+					<field name='x356' type='double'/>
+					<field name='x357' type='double'/>
+					<field name='x358' type='double'/>
+					<field name='x359' type='double'/>
+					<field name='x360' type='double'/>
+					<field name='x361' type='double'/>
+					<field name='x362' type='double'/>
+					<field name='x363' type='double'/>
+					<field name='x364' type='double'/>
+					<field name='x365' type='double'/>
+					<field name='x366' type='double'/>
+					<field name='x367' type='double'/>
+					<field name='x368' type='double'/>
+					<field name='x369' type='double'/>
+					<field name='x370' type='double'/>
+					<field name='x371' type='double'/>
+					<field name='x372' type='double'/>
+					<field name='x373' type='double'/>
+					<field name='x374' type='double'/>
+					<field name='x375' type='double'/>
+					<field name='x376' type='double'/>
+					<field name='x377' type='double'/>
+					<field name='x378' type='double'/>
+					<field name='x379' type='double'/>
+					<field name='x380' type='double'/>
+					<field name='x381' type='double'/>
+					<field name='x382' type='double'/>
+					<field name='x383' type='double'/>
+					<field name='x384' type='double'/>
+					<field name='x385' type='double'/>
+					<field name='x386' type='double'/>
+					<field name='x387' type='double'/>
+					<field name='x388' type='double'/>
+					<field name='x389' type='double'/>
+					<field name='x390' type='double'/>
+					<field name='x391' type='double'/>
+					<field name='x392' type='double'/>
+					<field name='x393' type='double'/>
+					<field name='x394' type='double'/>
+					<field name='x395' type='double'/>
+					<field name='x396' type='double'/>
+					<field name='x397' type='double'/>
+					<field name='x398' type='double'/>
+					<field name='x399' type='double'/>
+					<field name='x400' type='double'/>
+					<field name='x401' type='double'/>
+					<field name='x402' type='double'/>
+					<field name='x403' type='double'/>
+					<field name='x404' type='double'/>
+					<field name='x405' type='double'/>
+					<field name='x406' type='double'/>
+					<field name='x407' type='double'/>
+					<field name='x408' type='double'/>
+					<field name='x409' type='double'/>
+					<field name='x410' type='double'/>
+					<field name='x411' type='double'/>
+					<field name='x412' type='double'/>
+					<field name='x413' type='double'/>
+					<field name='x414' type='double'/>
+					<field name='x415' type='double'/>
+					<field name='x416' type='double'/>
+					<field name='x417' type='double'/>
+					<field name='x418' type='double'/>
+					<field name='x419' type='double'/>
+					<field name='x420' type='double'/>
+					<field name='x421' type='double'/>
+					<field name='x422' type='double'/>
+					<field name='x423' type='double'/>
+					<field name='x424' type='double'/>
+					<field name='x425' type='double'/>
+					<field name='x426' type='double'/>
+					<field name='x427' type='double'/>
+					<field name='x428' type='double'/>
+					<field name='x429' type='double'/>
+					<field name='x430' type='double'/>
+					<field name='x431' type='double'/>
+					<field name='x432' type='double'/>
+					<field name='x433' type='double'/>
+					<field name='x434' type='double'/>
+					<field name='x435' type='double'/>
+					<field name='x436' type='double'/>
+					<field name='x437' type='double'/>
+					<field name='x438' type='double'/>
+					<field name='x439' type='double'/>
+					<field name='x440' type='double'/>
+					<field name='x441' type='double'/>
+					<field name='x442' type='double'/>
+					<field name='x443' type='double'/>
+					<field name='x444' type='double'/>
+					<field name='x445' type='double'/>
+					<field name='x446' type='double'/>
+					<field name='x447' type='double'/>
+					<field name='x448' type='double'/>
+					<field name='x449' type='double'/>
+					<field name='x450' type='double'/>
+					<field name='x451' type='double'/>
+					<field name='x452' type='double'/>
+					<field name='x453' type='double'/>
+					<field name='x454' type='double'/>
+					<field name='x455' type='double'/>
+					<field name='x456' type='double'/>
+					<field name='x457' type='double'/>
+					<field name='x458' type='double'/>
+					<field name='x459' type='double'/>
+					<field name='x460' type='double'/>
+					<field name='x461' type='double'/>
+					<field name='x462' type='double'/>
+					<field name='x463' type='double'/>
+					<field name='x464' type='double'/>
+					<field name='x465' type='double'/>
+					<field name='x466' type='double'/>
+					<field name='x467' type='double'/>
+					<field name='x468' type='double'/>
+					<field name='x469' type='double'/>
+					<field name='x470' type='double'/>
+					<field name='x471' type='double'/>
+					<field name='x472' type='double'/>
+					<field name='x473' type='double'/>
+					<field name='x474' type='double'/>
+					<field name='x475' type='double'/>
+					<field name='x476' type='double'/>
+					<field name='x477' type='double'/>
+					<field name='x478' type='double'/>
+					<field name='x479' type='double'/>
+					<field name='x480' type='double'/>
+					<field name='x481' type='double'/>
+					<field name='x482' type='double'/>
+					<field name='x483' type='double'/>
+					<field name='x484' type='double'/>
+					<field name='x485' type='double'/>
+					<field name='x486' type='double'/>
+					<field name='x487' type='double'/>
+					<field name='x488' type='double'/>
+					<field name='x489' type='double'/>
+					<field name='x490' type='double'/>
+					<field name='x491' type='double'/>
+					<field name='x492' type='double'/>
+					<field name='x493' type='double'/>
+					<field name='x494' type='double'/>
+					<field name='x495' type='double'/>
+					<field name='x496' type='double'/>
+					<field name='x497' type='double'/>
+					<field name='x498' type='double'/>
+					<field name='x499' type='double'/>
+					<field name='x500' type='double'/>
+					<field name='x501' type='double'/>
+					<field name='x502' type='double'/>
+					<field name='x503' type='double'/>
+					<field name='x504' type='double'/>
+					<field name='x505' type='double'/>
+					<field name='x506' type='double'/>
+					<field name='x507' type='double'/>
+					<field name='x508' type='double'/>
+					<field name='x509' type='double'/>
+					<field name='x510' type='double'/>
+					<field name='x511' type='double'/>
+					<field name='x512' type='double'/>
+					<field name='x513' type='double'/>
+					<field name='x514' type='double'/>
+					<field name='x515' type='double'/>
+					<field name='x516' type='double'/>
+					<field name='x517' type='double'/>
+					<field name='x518' type='double'/>
+					<field name='x519' type='double'/>
+					<field name='x520' type='double'/>
+					<field name='x521' type='double'/>
+					<field name='x522' type='double'/>
+					<field name='x523' type='double'/>
+					<field name='x524' type='double'/>
+					<field name='x525' type='double'/>
+					<field name='x526' type='double'/>
+					<field name='x527' type='double'/>
+					<field name='x528' type='double'/>
+					<field name='x529' type='double'/>
+					<field name='x530' type='double'/>
+					<field name='x531' type='double'/>
+					<field name='x532' type='double'/>
+					<field name='x533' type='double'/>
+					<field name='x534' type='double'/>
+					<field name='x535' type='double'/>
+					<field name='x536' type='double'/>
+					<field name='x537' type='double'/>
+					<field name='x538' type='double'/>
+					<field name='x539' type='double'/>
+					<field name='x540' type='double'/>
+					<field name='x541' type='double'/>
+					<field name='x542' type='double'/>
+					<field name='x543' type='double'/>
+					<field name='x544' type='double'/>
+					<field name='x545' type='double'/>
+					<field name='x546' type='double'/>
+					<field name='x547' type='double'/>
+					<field name='x548' type='double'/>
+					<field name='x549' type='double'/>
+					<field name='x550' type='double'/>
+					<field name='x551' type='double'/>
+					<field name='x552' type='double'/>
+					<field name='x553' type='double'/>
+					<field name='x554' type='double'/>
+					<field name='x555' type='double'/>
+					<field name='x556' type='double'/>
+					<field name='x557' type='double'/>
+					<field name='x558' type='double'/>
+					<field name='x559' type='double'/>
+					<field name='x560' type='double'/>
+					<field name='x561' type='double'/>
+					<field name='x562' type='double'/>
+					<field name='x563' type='double'/>
+					<field name='x564' type='double'/>
+					<field name='x565' type='double'/>
+					<field name='x566' type='double'/>
+					<field name='x567' type='double'/>
+					<field name='x568' type='double'/>
+					<field name='x569' type='double'/>
+					<field name='x570' type='double'/>
+					<field name='x571' type='double'/>
+					<field name='x572' type='double'/>
+					<field name='x573' type='double'/>
+					<field name='x574' type='double'/>
+					<field name='x575' type='double'/>
+					<field name='x576' type='double'/>
+					<field name='x577' type='double'/>
+					<field name='x578' type='double'/>
+					<field name='x579' type='double'/>
+					<field name='x580' type='double'/>
+					<field name='x581' type='double'/>
+					<field name='x582' type='double'/>
+					<field name='x583' type='double'/>
+					<field name='x584' type='double'/>
+					<field name='x585' type='double'/>
+					<field name='x586' type='double'/>
+					<field name='x587' type='double'/>
+					<field name='x588' type='double'/>
+					<field name='x589' type='double'/>
+					<field name='x590' type='double'/>
+					<field name='x591' type='double'/>
+					<field name='x592' type='double'/>
+					<field name='x593' type='double'/>
+					<field name='x594' type='double'/>
+					<field name='x595' type='double'/>
+					<field name='x596' type='double'/>
+					<field name='x597' type='double'/>
+					<field name='x598' type='double'/>
+					<field name='x599' type='double'/>
+					<field name='x600' type='double'/>
+					<field name='x601' type='double'/>
+					<field name='x602' type='double'/>
+					<field name='x603' type='double'/>
+					<field name='x604' type='double'/>
+					<field name='x605' type='double'/>
+					<field name='x606' type='double'/>
+					<field name='x607' type='double'/>
+					<field name='x608' type='double'/>
+					<field name='x609' type='double'/>
+					<field name='x610' type='double'/>
+					<field name='x611' type='double'/>
+					<field name='x612' type='double'/>
+					<field name='x613' type='double'/>
+					<field name='x614' type='double'/>
+					<field name='x615' type='double'/>
+					<field name='x616' type='double'/>
+					<field name='x617' type='double'/>
+					<field name='x618' type='double'/>
+					<field name='x619' type='double'/>
+					<field name='x620' type='double'/>
+					<field name='x621' type='double'/>
+					<field name='x622' type='double'/>
+					<field name='x623' type='double'/>
+					<field name='x624' type='double'/>
+					<field name='x625' type='double'/>
+					<field name='x626' type='double'/>
+					<field name='x627' type='double'/>
+					<field name='x628' type='double'/>
+					<field name='x629' type='double'/>
+					<field name='x630' type='double'/>
+					<field name='x631' type='double'/>
+					<field name='x632' type='double'/>
+					<field name='x633' type='double'/>
+					<field name='x634' type='double'/>
+					<field name='x635' type='double'/>
+					<field name='x636' type='double'/>
+					<field name='x637' type='double'/>
+					<field name='x638' type='double'/>
+					<field name='x639' type='double'/>
+					<field name='x640' type='double'/>
+					<field name='x641' type='double'/>
+					<field name='x642' type='double'/>
+					<field name='x643' type='double'/>
+					<field name='x644' type='double'/>
+					<field name='x645' type='double'/>
+					<field name='x646' type='double'/>
+					<field name='x647' type='double'/>
+					<field name='x648' type='double'/>
+					<field name='x649' type='double'/>
+					<field name='x650' type='double'/>
+					<field name='x651' type='double'/>
+					<field name='x652' type='double'/>
+					<field name='x653' type='double'/>
+					<field name='x654' type='double'/>
+					<field name='x655' type='double'/>
+					<field name='x656' type='double'/>
+					<field name='x657' type='double'/>
+					<field name='x658' type='double'/>
+					<field name='x659' type='double'/>
+					<field name='x660' type='double'/>
+					<field name='x661' type='double'/>
+					<field name='x662' type='double'/>
+					<field name='x663' type='double'/>
+					<field name='x664' type='double'/>
+					<field name='x665' type='double'/>
+					<field name='x666' type='double'/>
+					<field name='x667' type='double'/>
+					<field name='x668' type='double'/>
+					<field name='x669' type='double'/>
+					<field name='x670' type='double'/>
+					<field name='x671' type='double'/>
+					<field name='x672' type='double'/>
+					<field name='x673' type='double'/>
+					<field name='x674' type='double'/>
+					<field name='x675' type='double'/>
+					<field name='x676' type='double'/>
+					<field name='x677' type='double'/>
+					<field name='x678' type='double'/>
+					<field name='x679' type='double'/>
+					<field name='x680' type='double'/>
+					<field name='x681' type='double'/>
+					<field name='x682' type='double'/>
+					<field name='x683' type='double'/>
+					<field name='x684' type='double'/>
+					<field name='x685' type='double'/>
+					<field name='x686' type='double'/>
+					<field name='x687' type='double'/>
+					<field name='x688' type='double'/>
+					<field name='x689' type='double'/>
+					<field name='x690' type='double'/>
+					<field name='x691' type='double'/>
+					<field name='x692' type='double'/>
+					<field name='x693' type='double'/>
+					<field name='x694' type='double'/>
+					<field name='x695' type='double'/>
+					<field name='x696' type='double'/>
+					<field name='x697' type='double'/>
+					<field name='x698' type='double'/>
+					<field name='x699' type='double'/>
+					<field name='x700' type='double'/>
+					<field name='x701' type='double'/>
+					<field name='x702' type='double'/>
+					<field name='x703' type='double'/>
+					<field name='x704' type='double'/>
+					<field name='x705' type='double'/>
+					<field name='x706' type='double'/>
+					<field name='x707' type='double'/>
+					<field name='x708' type='double'/>
+					<field name='x709' type='double'/>
+					<field name='x710' type='double'/>
+					<field name='x711' type='double'/>
+					<field name='x712' type='double'/>
+					<field name='x713' type='double'/>
+					<field name='x714' type='double'/>
+					<field name='x715' type='double'/>
+					<field name='x716' type='double'/>
+					<field name='x717' type='double'/>
+					<field name='x718' type='double'/>
+					<field name='x719' type='double'/>
+					<field name='x720' type='double'/>
+					<field name='x721' type='double'/>
+					<field name='x722' type='double'/>
+					<field name='x723' type='double'/>
+					<field name='x724' type='double'/>
+					<field name='x725' type='double'/>
+					<field name='x726' type='double'/>
+					<field name='x727' type='double'/>
+					<field name='x728' type='double'/>
+					<field name='x729' type='double'/>
+					<field name='x730' type='double'/>
+					<field name='x731' type='double'/>
+					<field name='x732' type='double'/>
+					<field name='x733' type='double'/>
+					<field name='x734' type='double'/>
+					<field name='x735' type='double'/>
+					<field name='x736' type='double'/>
+					<field name='x737' type='double'/>
+					<field name='x738' type='double'/>
+					<field name='x739' type='double'/>
+					<field name='x740' type='double'/>
+					<field name='x741' type='double'/>
+					<field name='x742' type='double'/>
+					<field name='x743' type='double'/>
+					<field name='x744' type='double'/>
+					<field name='x745' type='double'/>
+					<field name='x746' type='double'/>
+					<field name='x747' type='double'/>
+					<field name='x748' type='double'/>
+					<field name='x749' type='double'/>
+					<field name='x750' type='double'/>
+					<field name='x751' type='double'/>
+					<field name='x752' type='double'/>
+					<field name='x753' type='double'/>
+					<field name='x754' type='double'/>
+					<field name='x755' type='double'/>
+					<field name='x756' type='double'/>
+					<field name='x757' type='double'/>
+					<field name='x758' type='double'/>
+					<field name='x759' type='double'/>
+					<field name='x760' type='double'/>
+					<field name='x761' type='double'/>
+					<field name='x762' type='double'/>
+					<field name='x763' type='double'/>
+					<field name='x764' type='double'/>
+					<field name='x765' type='double'/>
+					<field name='x766' type='double'/>
+					<field name='x767' type='double'/>
+					<field name='x768' type='double'/>
+					<field name='x769' type='double'/>
+					<field name='x770' type='double'/>
+					<field name='x771' type='double'/>
+					<field name='x772' type='double'/>
+					<field name='x773' type='double'/>
+					<field name='x774' type='double'/>
+					<field name='x775' type='double'/>
+					<field name='x776' type='double'/>
+					<field name='x777' type='double'/>
+					<field name='x778' type='double'/>
+					<field name='x779' type='double'/>
+					<field name='x780' type='double'/>
+					<field name='x781' type='double'/>
+					<field name='x782' type='double'/>
+					<field name='x783' type='double'/>
+					<field name='x784' type='double'/>
+                </fields>
+              </schema>
+              <connectors>
+                <connector class='fs' name='publisher'>
+                  <properties>
+                    <property name='type'>pub</property>
+                    <property name='fstype'>csv</property>
+                    <property name='fsname'>input.csv</property>
+                    <property name='transactional'>true</property>
+                    <property name='blocksize'>1</property>
+                  </properties>
+                </connector>
+              </connectors>
+            </window-source>
+
+            <window-train name='w_train' algorithm='SVM'> 
+              <description> 
+                This train window looks at all observations and periodically generates a new model using the
+		support vector machines algorithm. Model events are published to the score window. 
+
+		The following properties govern the vector machine algorithm in the train window for this example: 
+		nInit:		specifies the number of data events used during initialization. 
+		commitInterval:	specifies the number of data events to process before triggering a commitment
+				of the model to downstream scoring. 
+		dampingFactor:	specifies the damping factor alpha for old data points.
+		c:		specifies the regularization parameter for vector machines.
+		centerFlag:	specifies whether to center the data (dense part) based on the first batchSize
+				data events of the initialization. Specifically, the mean is computed with the 
+				first bufferSize data events of the initialization, and each data event is
+				subtracted with the computed mean. 
+		scaleFlag:	specifies whether to scale the data (dense part) based on the first batchSize
+				data events of the initialization. 
+		numC:		specifies the number of regularization parameters to try.
+		ratioC:		specifies the ratio in setting the set of regularization parameters.
+		choose:		specifies the criterion in selecting the best regularization parameter. If c=-2,
+				then the c that achieves the smallest misclassification error is used. If choose=-1,
+				then the c that achieves the smallest hinge loss is used. If choose is nonnegative,
+				then the c that achieves the largest choose score is used.
+		randSeed:	specifies the random seed in reshuffling data events. If randSeed=0, the data in the
+				buffer is not reshuffled. If randSeed>0, the data in the buffer is implicitly reshuffled
+				with the corresponding random seed. 
+		positiveClass:	specifies the value of the response that is treated as the positive class. 
+		augmentedValue:	specifies the augmented value for handling the intercept. 
+		outerIterMax:	specifies the number of outer iterations used in coordinate descent for non-initialization
+				data events.
+
+		There are three properties within the input-map for this window: 
+		inputs:		specifies the list of variable names used in classification. Variable names are defined in 
+				the input schema, and they are separated by a comma in the list. 
+		target:		specifies the target response variable. 
+		sparse:		specifies the name of the sparse variable.		
+              </description>
+              <parameters>
+                <properties>
+                  <property name="nInit">60000</property>
+                  <property name="commitInterval">10000</property>
+                  <property name="dampingFactor">1</property>	
+                  <property name="c">1</property>	
+                  <property name="centerFlag">0</property>
+                  <property name="scaleFlag">0</property>
+                  <property name="numC">5</property>
+                  <property name="ratioC">4</property>
+                  <property name="choose">-1</property>
+                  <property name="randSeed">123</property>				  
+                  <property name="positiveClass">8</property>
+                  <property name="augmentedValue">1</property>
+                  <property name="outerIterMax">10</property>
+                </properties>
+              </parameters>
+              <input-map>
+				  
+                  <properties>
+                  <property name="inputs">y,x1,x2,x3,x4,x5,x6,x7,x8,x9,x10,x11,x12,x13,x14,x15,x16,x17,x18,x19,x20,x21,x22,x23,x24,x25,x26,x27,x28,x29,x30,x31,x32,x33,x34,x35,x36,x37,x38,x39,x40,x41,x42,x43,x44,x45,x46,x47,x48,x49,x50,x51,x52,x53,x54,x55,x56,x57,x58,x59,x60,x61,x62,x63,x64,x65,x66,x67,x68,x69,x70,x71,x72,x73,x74,x75,x76,x77,x78,x79,x80,x81,x82,x83,x84,x85,x86,x87,x88,x89,x90,x91,x92,x93,x94,x95,x96,x97,x98,x99,x100,x101,x102,x103,x104,x105,x106,x107,x108,x109,x110,x111,x112,x113,x114,x115,x116,x117,x118,x119,x120,x121,x122,x123,x124,x125,x126,x127,x128,x129,x130,x131,x132,x133,x134,x135,x136,x137,x138,x139,x140,x141,x142,x143,x144,x145,x146,x147,x148,x149,x150,x151,x152,x153,x154,x155,x156,x157,x158,x159,x160,x161,x162,x163,x164,x165,x166,x167,x168,x169,x170,x171,x172,x173,x174,x175,x176,x177,x178,x179,x180,x181,x182,x183,x184,x185,x186,x187,x188,x189,x190,x191,x192,x193,x194,x195,x196,x197,x198,x199,x200,x201,x202,x203,x204,x205,x206,x207,x208,x209,x210,x211,x212,x213,x214,x215,x216,x217,x218,x219,x220,x221,x222,x223,x224,x225,x226,x227,x228,x229,x230,x231,x232,x233,x234,x235,x236,x237,x238,x239,x240,x241,x242,x243,x244,x245,x246,x247,x248,x249,x250,x251,x252,x253,x254,x255,x256,x257,x258,x259,x260,x261,x262,x263,x264,x265,x266,x267,x268,x269,x270,x271,x272,x273,x274,x275,x276,x277,x278,x279,x280,x281,x282,x283,x284,x285,x286,x287,x288,x289,x290,x291,x292,x293,x294,x295,x296,x297,x298,x299,x300,x301,x302,x303,x304,x305,x306,x307,x308,x309,x310,x311,x312,x313,x314,x315,x316,x317,x318,x319,x320,x321,x322,x323,x324,x325,x326,x327,x328,x329,x330,x331,x332,x333,x334,x335,x336,x337,x338,x339,x340,x341,x342,x343,x344,x345,x346,x347,x348,x349,x350,x351,x352,x353,x354,x355,x356,x357,x358,x359,x360,x361,x362,x363,x364,x365,x366,x367,x368,x369,x370,x371,x372,x373,x374,x375,x376,x377,x378,x379,x380,x381,x382,x383,x384,x385,x386,x387,x388,x389,x390,x391,x392,x393,x394,x395,x396,x397,x398,x399,x400,x401,x402,x403,x404,x405,x406,x407,x408,x409,x410,x411,x412,x413,x414,x415,x416,x417,x418,x419,x420,x421,x422,x423,x424,x425,x426,x427,x428,x429,x430,x431,x432,x433,x434,x435,x436,x437,x438,x439,x440,x441,x442,x443,x444,x445,x446,x447,x448,x449,x450,x451,x452,x453,x454,x455,x456,x457,x458,x459,x460,x461,x462,x463,x464,x465,x466,x467,x468,x469,x470,x471,x472,x473,x474,x475,x476,x477,x478,x479,x480,x481,x482,x483,x484,x485,x486,x487,x488,x489,x490,x491,x492,x493,x494,x495,x496,x497,x498,x499,x500,x501,x502,x503,x504,x505,x506,x507,x508,x509,x510,x511,x512,x513,x514,x515,x516,x517,x518,x519,x520,x521,x522,x523,x524,x525,x526,x527,x528,x529,x530,x531,x532,x533,x534,x535,x536,x537,x538,x539,x540,x541,x542,x543,x544,x545,x546,x547,x548,x549,x550,x551,x552,x553,x554,x555,x556,x557,x558,x559,x560,x561,x562,x563,x564,x565,x566,x567,x568,x569,x570,x571,x572,x573,x574,x575,x576,x577,x578,x579,x580,x581,x582,x583,x584,x585,x586,x587,x588,x589,x590,x591,x592,x593,x594,x595,x596,x597,x598,x599,x600,x601,x602,x603,x604,x605,x606,x607,x608,x609,x610,x611,x612,x613,x614,x615,x616,x617,x618,x619,x620,x621,x622,x623,x624,x625,x626,x627,x628,x629,x630,x631,x632,x633,x634,x635,x636,x637,x638,x639,x640,x641,x642,x643,x644,x645,x646,x647,x648,x649,x650,x651,x652,x653,x654,x655,x656,x657,x658,x659,x660,x661,x662,x663,x664,x665,x666,x667,x668,x669,x670,x671,x672,x673,x674,x675,x676,x677,x678,x679,x680,x681,x682,x683,x684,x685,x686,x687,x688,x689,x690,x691,x692,x693,x694,x695,x696,x697,x698,x699,x700,x701,x702,x703,x704,x705,x706,x707,x708,x709,x710,x711,x712,x713,x714,x715,x716,x717,x718,x719,x720,x721,x722,x723,x724,x725,x726,x727,x728,x729,x730,x731,x732,x733,x734,x735,x736,x737,x738,x739,x740,x741,x742,x743,x744,x745,x746,x747,x748,x749,x750,x751,x752,x753,x754,x755,x756,x757,x758,x759,x760,x761,x762,x763,x764,x765,x766,x767,x768,x769,x770,x771,x772,x773,x774,x775,x776,x777,x778,x779,x780,x781,x782,x783,x784</property>
+				  
+                  <property name="target">y</property>
+                  <property name="sparse">y</property>
+
+                </properties>
+              </input-map>
+            </window-train>
+
+            <window-score name='w_score'> 
+              <description> 
+		This scoring window scores the data from the source window, using the model produced by the train window.
+		The following properties within the input-map and output-map govern the support vector machine algorithm
+		in the score window:
+
+		inputs:		specifies the list of variable names used in classification. Variable names are defined 
+				in the input schema, and they are separated by commas in a list. The mapping should be 
+				identical to what was used in the train window.
+		yPredictOut:	specifies the predicted response.  
+		modelIdOut:	specifies the column or field name in the output schema that stores the ID of the model
+				from which the score is computed.
+              </description>
+              <schema>
+                <fields>
+                    <field name='id'  type='int64' key='true'/>
+                    <field name='y'   type='double'/>
+		    <field name='yPredictOut'    type='double'/>
+                    <field name='modelIdOut'     type='int64'/>
+                </fields>
+              </schema>
+              <models>
+                <online algorithm='SVM'>
+                  <input-map> 
+                    <properties>
+                  <property name="inputs">y,x1,x2,x3,x4,x5,x6,x7,x8,x9,x10,x11,x12,x13,x14,x15,x16,x17,x18,x19,x20,x21,x22,x23,x24,x25,x26,x27,x28,x29,x30,x31,x32,x33,x34,x35,x36,x37,x38,x39,x40,x41,x42,x43,x44,x45,x46,x47,x48,x49,x50,x51,x52,x53,x54,x55,x56,x57,x58,x59,x60,x61,x62,x63,x64,x65,x66,x67,x68,x69,x70,x71,x72,x73,x74,x75,x76,x77,x78,x79,x80,x81,x82,x83,x84,x85,x86,x87,x88,x89,x90,x91,x92,x93,x94,x95,x96,x97,x98,x99,x100,x101,x102,x103,x104,x105,x106,x107,x108,x109,x110,x111,x112,x113,x114,x115,x116,x117,x118,x119,x120,x121,x122,x123,x124,x125,x126,x127,x128,x129,x130,x131,x132,x133,x134,x135,x136,x137,x138,x139,x140,x141,x142,x143,x144,x145,x146,x147,x148,x149,x150,x151,x152,x153,x154,x155,x156,x157,x158,x159,x160,x161,x162,x163,x164,x165,x166,x167,x168,x169,x170,x171,x172,x173,x174,x175,x176,x177,x178,x179,x180,x181,x182,x183,x184,x185,x186,x187,x188,x189,x190,x191,x192,x193,x194,x195,x196,x197,x198,x199,x200,x201,x202,x203,x204,x205,x206,x207,x208,x209,x210,x211,x212,x213,x214,x215,x216,x217,x218,x219,x220,x221,x222,x223,x224,x225,x226,x227,x228,x229,x230,x231,x232,x233,x234,x235,x236,x237,x238,x239,x240,x241,x242,x243,x244,x245,x246,x247,x248,x249,x250,x251,x252,x253,x254,x255,x256,x257,x258,x259,x260,x261,x262,x263,x264,x265,x266,x267,x268,x269,x270,x271,x272,x273,x274,x275,x276,x277,x278,x279,x280,x281,x282,x283,x284,x285,x286,x287,x288,x289,x290,x291,x292,x293,x294,x295,x296,x297,x298,x299,x300,x301,x302,x303,x304,x305,x306,x307,x308,x309,x310,x311,x312,x313,x314,x315,x316,x317,x318,x319,x320,x321,x322,x323,x324,x325,x326,x327,x328,x329,x330,x331,x332,x333,x334,x335,x336,x337,x338,x339,x340,x341,x342,x343,x344,x345,x346,x347,x348,x349,x350,x351,x352,x353,x354,x355,x356,x357,x358,x359,x360,x361,x362,x363,x364,x365,x366,x367,x368,x369,x370,x371,x372,x373,x374,x375,x376,x377,x378,x379,x380,x381,x382,x383,x384,x385,x386,x387,x388,x389,x390,x391,x392,x393,x394,x395,x396,x397,x398,x399,x400,x401,x402,x403,x404,x405,x406,x407,x408,x409,x410,x411,x412,x413,x414,x415,x416,x417,x418,x419,x420,x421,x422,x423,x424,x425,x426,x427,x428,x429,x430,x431,x432,x433,x434,x435,x436,x437,x438,x439,x440,x441,x442,x443,x444,x445,x446,x447,x448,x449,x450,x451,x452,x453,x454,x455,x456,x457,x458,x459,x460,x461,x462,x463,x464,x465,x466,x467,x468,x469,x470,x471,x472,x473,x474,x475,x476,x477,x478,x479,x480,x481,x482,x483,x484,x485,x486,x487,x488,x489,x490,x491,x492,x493,x494,x495,x496,x497,x498,x499,x500,x501,x502,x503,x504,x505,x506,x507,x508,x509,x510,x511,x512,x513,x514,x515,x516,x517,x518,x519,x520,x521,x522,x523,x524,x525,x526,x527,x528,x529,x530,x531,x532,x533,x534,x535,x536,x537,x538,x539,x540,x541,x542,x543,x544,x545,x546,x547,x548,x549,x550,x551,x552,x553,x554,x555,x556,x557,x558,x559,x560,x561,x562,x563,x564,x565,x566,x567,x568,x569,x570,x571,x572,x573,x574,x575,x576,x577,x578,x579,x580,x581,x582,x583,x584,x585,x586,x587,x588,x589,x590,x591,x592,x593,x594,x595,x596,x597,x598,x599,x600,x601,x602,x603,x604,x605,x606,x607,x608,x609,x610,x611,x612,x613,x614,x615,x616,x617,x618,x619,x620,x621,x622,x623,x624,x625,x626,x627,x628,x629,x630,x631,x632,x633,x634,x635,x636,x637,x638,x639,x640,x641,x642,x643,x644,x645,x646,x647,x648,x649,x650,x651,x652,x653,x654,x655,x656,x657,x658,x659,x660,x661,x662,x663,x664,x665,x666,x667,x668,x669,x670,x671,x672,x673,x674,x675,x676,x677,x678,x679,x680,x681,x682,x683,x684,x685,x686,x687,x688,x689,x690,x691,x692,x693,x694,x695,x696,x697,x698,x699,x700,x701,x702,x703,x704,x705,x706,x707,x708,x709,x710,x711,x712,x713,x714,x715,x716,x717,x718,x719,x720,x721,x722,x723,x724,x725,x726,x727,x728,x729,x730,x731,x732,x733,x734,x735,x736,x737,x738,x739,x740,x741,x742,x743,x744,x745,x746,x747,x748,x749,x750,x751,x752,x753,x754,x755,x756,x757,x758,x759,x760,x761,x762,x763,x764,x765,x766,x767,x768,x769,x770,x771,x772,x773,x774,x775,x776,x777,x778,x779,x780,x781,x782,x783,x784</property>
+                    </properties>
+                  </input-map>
+                  <output-map> 
+                    <properties>
+                      <property name='yPredictOut'>yPredictOut</property>
+                      <property name='modelIdOut'>modelIdOut</property>
+                    </properties>
+                  </output-map>
+                </online>
+              </models>
+              <connectors>
+                <connector name="csv" class="fs">
+                  <properties>
+                    <property name="type">sub</property>
+                    <property name="fstype">csv</property>
+                    <property name="fsname">result.out</property>
+                    <property name='snapshot'>true</property> 
+                    <property name='header'>true</property>
+                  </properties>
+                </connector>
+              </connectors>
+            </window-score>
+          </windows>
+          <edges>
+            <edge source='w_data'    target='w_train' role='data'/>
+            <edge source='w_data'    target='w_score' role='data'/>
+            <edge source='w_train'   target='w_score' role='model'/>
+          </edges>
+        </contquery>
+      </contqueries>
+    </project>

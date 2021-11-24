@@ -1,0 +1,134 @@
+<project name="LagMonitoring" pubsub="auto" threads="1"> 
+    <description>
+	This project is a basic demonstration of the Lag Monitoring (LagMonitor) algorithm.
+	The algorithm computes the cross-correlation between a target time series and one
+	or more additional time series. Results contain the selected lags and computed cross-
+	correlation values that correspond to minimum, maximum, and maximum absolute value 
+	cross-correlations for each of the variables.
+
+	The project contains a single continuous query consisting of the following: 
+	1.	A source window that receives the data to be analyzed 
+	2.	A calculate window that performs the LagMonitor calculation
+    </description>
+      <contqueries>
+        <contquery name="contquery">
+          <windows>
+            <window-source autogen-key="false" index="pi_EMPTY" insert-only="true" name="w_data"> 
+            <description> 
+		This source window receives the included example input data via a file socket
+		connector. The input data stream is placed into eight fields for each observation:
+		id, y1, y2, y3, y4, y5, y6, y7.
+	    </description>
+              <schema>
+                <fields>
+                  <field key="true" name="id" type="int64" />
+                  <field key="false" name="y1" type="double" />
+                  <field key="false" name="y2" type="double" />
+                  <field key="false" name="y3" type="double" />
+                  <field key="false" name="y4" type="double" />
+                  <field key="false" name="y5" type="double" />
+                  <field key="false" name="y6" type="double" />
+                  <field key="false" name="y7" type="double" />
+                </fields>
+              </schema>
+              <connectors>
+                <connector class='fs' name='publisher'>
+                  <properties>
+                    <property name='type'>pub</property>
+                    <property name='fstype'>csv</property>
+                    <property name='fsname'>input.csv</property>
+                    <property name='transactional'>true</property>
+                    <property name='blocksize'>1</property>
+                  </properties>
+                </connector>
+              </connectors>
+            </window-source>
+            <window-calculate algorithm="LagMonitor" name="w_calculate"> 
+            <description> 
+		This calculate window receives data events including the values of several variables
+		from the source window. It publishes selected lags and computed cross-correlation
+		values that correspond to the minimum, maximum, and maximum absolute cross-correlations 
+		for each of the variables. In this example, the following algorithm parameters govern the
+		LagMonitor algorithm: 
+
+		maxLag:		Specifies the maximum lag to consider. 
+		minLag:		Specifies the minimum lag to consider. 
+		windowLength:	Specifies the length of the sliding window. The value you specify must be
+				greater than the specified overlap value. 
+
+		Additionally the following input-map and output-map properties define this calculate window: 
+
+		input:		Specifies the analysis variable name in the input stream. 
+		target:		Specifies the target variable name in the input stream. 
+		timeId:		Specifies the time ID variable name in the input stream. 
+
+		absCCFOut:	Specifies the variable name for maximum absolute cross-correlation. 
+		absLagOut:	Specifies the variable name for lag that corresponds to maximum absolute 
+				cross-correlation. 
+		maxCCFOut:	Specifies the variable name for maximum cross-correlation. 
+		maxLagOut:	Specifies the variable name for lag that corresponds  to maximum cross-correlation.
+		minCCFOut:	Specifies the variable name for minimum cross-correlation. 
+		minLagOut:	Specifies the variable name for the lag that corresponds to minimum cross-correlation. 
+		timeIDOut:	Specifies the time ID variable name in the output stream. 
+
+		The resulting output is written to the file result.out via a file socket connector. 
+            </description>
+              <schema>
+                <fields>
+                  <field key="true" name="id" type="int64" />
+                  <field key="false" name="y2" type="double" />
+                  <field key="false" name="y1" type="double" />
+                  <field key="false" name="absCCFOut" type="double" />
+                  <field key="false" name="absLagOut" type="int64" />
+                  <field key="false" name="maxCCFOut" type="double" />
+                  <field key="false" name="maxLagOut" type="int64" />
+                  <field key="false" name="minCCFOut" type="double" />
+                  <field key="false" name="minLagOut" type="int64" />
+                  <field key="false" name="numComputedLagsOut" type="int64" />
+                </fields>
+              </schema>
+              <parameters>
+                <properties>
+                  <property name="maxLag">500</property>
+                  <property name="minLag">1</property>
+	          <property name="windowLength">10000</property>
+                 </properties>
+              </parameters>
+              <input-map>
+                <properties>
+                  <property name="input">y2</property>
+                  <property name="target">y1</property>
+                  <property name="timeId">id</property>
+                </properties>
+              </input-map>
+              <output-map>
+                <properties>
+                  <property name="absCCFOut">absCCFOut</property>
+                  <property name="absLagOut">absLagOut</property>
+                  <property name="maxCCFOut">maxCCFOut</property>
+                  <property name="maxLagOut">maxLagOut</property>
+                  <property name="minCCFOut">minCCFOut</property>
+                  <property name="minLagOut">minLagOut</property>
+                  <property name="numComputedLagsOut">numComputedLagsOut</property>
+                  <property name="timeIdOut">id</property>
+                </properties>
+              </output-map>
+              <connectors>
+                <connector name="csv" class="fs">
+                  <properties>
+                    <property name='type'>sub</property>
+                    <property name='fstype'>csv</property>
+                    <property name='fsname'>result.out</property>
+                    <property name='snapshot'>true</property> 
+                    <property name='header'>true</property>
+                 </properties>
+               </connector>
+             </connectors>
+            </window-calculate>
+          </windows>
+          <edges>
+            <edge role="data" source="w_data" target="w_calculate" />
+          </edges>
+        </contquery>
+      </contqueries>
+    </project>

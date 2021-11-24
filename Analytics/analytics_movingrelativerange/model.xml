@@ -1,0 +1,119 @@
+    <project name='project_01' pubsub='auto' threads='1' use-tagged-token='true'> 
+    <description> 
+    	This example is a basic demonstration of using the moving relative range (MRR)
+	algorithm. The moving relative range provides a measure of volatility for a 
+	nonstationary time series, where the mean and variance of the series changes
+	over time.  
+
+	This project contains a single continuous query consisting of the following: 
+	1.	A source window that receives the data to analyze
+	2.	A calculate window that performs the moving relative range calculation
+    </description>
+      <contqueries>
+        <contquery name='cq_01' trace='w_calculate'>
+          <windows>
+            <window-source name='w_data'> 
+            <description> 
+		This source window receives the included example input data file via
+		a file socket connector. The input data stream is placed into two fields
+		for each observation: an ID that acts as the data stream's key, named id;
+		and a variable x1 that represents an element of the time series.
+            </description>
+              <schema>
+                <fields>
+                  <field name='id'  type='int64' key='true'/>
+                  <field name='x1' type='double'/>
+                </fields>
+              </schema>
+              <connectors>
+                <connector class='fs' name='publisher'>
+                  <properties>
+                    <property name='type'>pub</property>
+                    <property name='fstype'>csv</property>
+                    <property name='fsname'>input.csv</property>
+                    <property name='transactional'>true</property>
+                    <property name='blocksize'>1</property>
+                  </properties>
+                </connector>
+              </connectors>
+            </window-source>
+
+            <window-calculate name='w_calculate' algorithm='MRR'>
+            <description> 
+		This calculate window receives data events from the source window. It 
+		publishes the calculated moving relating range. In this example, the
+		following algorithm parameters govern the MRR algorithm: 
+
+		rangeWindowLength:	Specifies the window length to calculate the 
+					range (M). For a time series whose mean is 
+					changing quickly, a lower value should be 
+					specified. 
+		expRangeWindowLength:	Specifies the window length to calculate the
+					moving relative range (K). For a time series 
+					whose variance is changing quickly, a lower
+					value should be specified. 
+
+		Additionally, the following input-map and output-map properties define
+		this calculate window: 
+
+		input:			Specifies the analysis variable name in the
+					input stream. 
+		timeId:			Specifies the time ID variable name in the
+					input stream. 
+
+		timeIdOut:		Specifies the time ID (key) variable name in the
+					output stream. 
+		erangeOut:		Specifies the expected range variable name in the
+					output stream. 
+		rangeOut:		Specifies the range variable name in the output
+					stream. 
+
+		The resulting output is written to the file result.out via a file socket
+		connector. 
+	    </description>
+              <schema>
+                <fields>
+                  <field name='id' type='int64' key='true'/>
+		  <field name='rangeOut' type='double'/>
+                  <field name='erangeOut' type='double'/>
+                </fields>
+              </schema>
+              <parameters>
+                <properties>
+                  <property name='rangeWindowLength'>3</property>
+                  <property name='expRangeWindowLength'>3</property>
+                </properties>
+              </parameters>
+                <input-map>
+                <properties>
+                  <property name="input">x1</property>
+                  <property name="timeId">id</property>
+                </properties>
+              </input-map>
+              <output-map>
+                 <properties>
+                  <property name="timeIdOut">id</property>
+                  <property name="erangeOut">erangeOut</property>
+                  <property name="rangeOut">rangeOut</property>
+                </properties>
+              </output-map>
+              <connectors>
+                <connector class='fs' name='sub'>
+                  <properties>
+                    <property name='type'>sub</property>
+                    <property name='fstype'>csv</property>
+                    <property name='header'>true</property>
+                    <property name='fsname'>result.out</property>
+                    <property name='snapshot'>true</property> 
+                    <property name='header'>true</property>
+                  </properties>
+                </connector>
+              </connectors>
+            </window-calculate>
+          </windows>
+          <edges>
+            <edge source='w_data'    target='w_calculate' role='data'/>
+          </edges>
+        </contquery>
+      </contqueries>
+    </project>

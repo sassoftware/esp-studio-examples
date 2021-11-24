@@ -1,0 +1,138 @@
+<project name='project_01' pubsub='auto' threads='1' use-tagged-token='true'> 
+<description> 
+	This example project is a basic demonstration of using the Short-Time
+	Fourier Transform (STFT) algorithm. A Fourier transform decomposes a
+	function of time into its underlying frequencies. The amplitude, offset,
+	and rotation speed of every underlying cycle is returned by the function.
+	STFT is commonly used to monitor the time-varying frequency content of a
+	signal. It can be used in digital filters to detect anomalies in continuous
+	streams of data.  
+
+	This project contains a single continuous query consisting of the following: 
+	1.	A source window that receives the data to be analyzed 
+	2.	A calculate window that calculates STFTs on incoming data and publishes
+		the results
+</description>
+<contqueries>
+  <contquery name='cq_01' include-singletons='true' trace='w_calculate'>
+   <windows>
+    <window-source name='w_source' insert-only='true' autogen-key='true'> 
+     <description> 
+	This source window receives the included example input data file via a file
+	socket connector.The input stream is placed into two fields for each observation:
+	an ID that acts as the data stream's key, named ID; and a y coordinate of data
+	named y.
+     </description>
+     <schema>
+      <fields>
+       <field name='ID'  type='int64' key='true'/>
+       <field name='y' type='double'/>
+      </fields>
+     </schema>
+     <connectors>
+      <connector class='fs' name='publisher'>
+       <properties>
+        <property name='type'>pub</property>
+        <property name='fstype'>csv</property>
+        <property name='fsname'>input.csv</property>
+        <property name='transactional'>true</property>
+        <property name='blocksize'>1</property>
+        <property name='addcsvopcode'>true</property> 
+        <property name='addcsvflags'>normal</property> 
+        <property name='noautogenfield'>true</property>
+       </properties>
+      </connector>
+     </connectors>
+    </window-source>
+    <window-calculate name="w_calculate" algorithm="STFT">
+      <description> 
+	The calculate window, w_calculate receives data events from the source window. It
+	publishes calculated transforms according to the STFT algorithm properties. In this
+	example, the following algorithm parameters govern the STFT algorithm: 
+
+	windowLength:		Specifies the length of the sliding window. The value you 
+				specify must be greater than the value of overlap. 
+	windowType:		Specifies one of the following window types: 1=Bartlett,
+				2=Bohman, 3=Chebyshev, 4=Gaussian, 5=Kaiser, 6=Parzen,
+				7=Rectangular, 10=Tukey, 11=Bartlett-Hann, 12=Blackman-Harris,
+				13=Blackman, 14=Hamming, 15=Hanning, and 16=Flat Top. 
+	fftLength:		Specifies the length to which window data should be expanded.
+				Zeros are appended to the data before the Fast Fourier Transform
+				(FFT) is performed. The specified value must be positive and at
+				least as large as windowLength. To maximize computational efficiency
+				it is suggested that a power of two is specified.
+	binsInSchema:		Specifies the number of frequency bins to output. This cannot
+				exceed the value of fftLength. For real signals, bins greater than
+				(fftLength/2) are not physically meaningful. 
+	overlap:		Specifies the overlap between consecutive windows. This must be less
+				than windowLength.
+	
+	Additionally, the following input-map and output-map properties define the STFT algorithm in
+	this calculate window: 
+	
+	input:			Specifies the input variable by its name in the source schema. The
+				calculate window will analyze this variable.
+	timeId:			Specifies the time ID variable name in the input stream. This variable
+				should be of type int64. 
+
+	timeIdOut:		Specifies the time ID variable name in the output stream. There will be
+				more than one output event for a given time ID.
+	binOut:			Specifies the frequency bin variable name in the output stream. 
+	powerOut:		Specifies the name of the power variable in the output stream.
+	phaseOut:		Specifies the name of the phase variable in the output stream. 
+
+	For this example, the output mapping is using a non-list format. An output-mapping that uses a list
+	output is also supported for this algorithm. 
+
+	The resulting calculated transforms are written to the file result.out via a file socket connector
+      </description>
+      <schema>
+        <fields>
+          <field name='time' type='int64' key='true'/>
+          <field name='bin' type='int64' key='true'/>       
+          <field name='power' type='double'/>
+          <field name='phase' type='double'/>
+        </fields>
+      </schema>
+        <parameters>
+          <properties>
+           <property name="windowLength">64</property>
+           <property name="windowType">12</property>
+           <property name="fftLength">256</property>
+           <property name="binsInSchema">256</property>
+           <property name="overlap">32</property>
+          </properties>
+        </parameters>
+        <input-map>
+          <properties>
+           <property name="input">y</property>
+           <property name="timeId">ID</property>
+          </properties>
+        </input-map>
+        <output-map>
+          <properties>
+           <property name="timeIdOut">time</property>
+           <property name="binOut">bin</property>
+           <property name="powerOut">power</property>
+           <property name="phaseOut">phase</property>
+          </properties>
+        </output-map>
+     <connectors>
+      <connector class='fs' name='sub'>
+       <properties>
+        <property name='type'>sub</property>
+        <property name='fstype'>csv</property>
+        <property name='fsname'>result.out</property>
+        <property name='snapshot'>true</property> 
+   	<property name='header'>true</property>
+       </properties>
+      </connector>
+     </connectors>
+    </window-calculate>
+   </windows>
+   <edges>
+    <edge source='w_source' target='w_calculate' role='data'/>
+   </edges>
+  </contquery>
+</contqueries>
+</project>

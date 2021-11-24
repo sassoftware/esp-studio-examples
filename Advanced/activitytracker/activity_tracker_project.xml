@@ -1,0 +1,70 @@
+<project name="ActivityTracker" threads="1" pubsub="auto" heartbeat-interval="1" index="pi_EMPTY">
+  <description><![CDATA[This project processes Global Positioning System (GPS) data from activity trackers.]]></description>
+  <contqueries>
+    <contquery name="GPS">
+      <windows>
+        <window-source pubsub="true" index="pi_HASH" collapse-updates="false" autogen-key="true" insert-only="true" name="DeviceOutput">
+          <description><![CDATA[This Source window receives activity tracker data from the activitytracker.csv file.]]></description>
+          <schema>
+            <fields>
+              <field name="key" type="string" key="true"/>
+              <field name="type" type="string"/>
+              <field name="edge_id" type="string"/>
+              <field name="fix" type="string"/>
+              <field name="satellites" type="int32"/>
+              <field name="latitude" type="double"/>
+              <field name="longitude" type="double"/>
+              <field name="track" type="double"/>
+              <field name="speed" type="double"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="fs" name="Device_Data">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="rate"><![CDATA[25]]></property>
+                <property name="header"><![CDATA[1]]></property>
+                <property name="noautogenfield"><![CDATA[true]]></property>
+                <property name="addcsvopcode"><![CDATA[true]]></property>
+                <property name="addcsvflags"><![CDATA[normal]]></property>
+                <property name="fsname"><![CDATA[/data/input/activitytracker.csv]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-filter pubsub="true" name="LowSatFilter">
+          <description><![CDATA[This Filter window identifies events where the number of satellites available to activity tracker devices is fewer than four.]]></description>
+          <expression><![CDATA[satellites < 4]]></expression>
+        </window-filter>
+        <window-filter pubsub="true" name="DeviceFilter">
+          <description><![CDATA[This Filter window enables you to filter data for a specific activity tracker device. You must deploy the supplied job template to specify a device.]]></description>
+          <expression><![CDATA[edge_id == '{{{edge_id}}}']]></expression>
+        </window-filter>		
+        <window-aggregate pubsub="true" index="pi_RBTREE" collapse-updates="false" name="AggregatedOutput">
+          <description><![CDATA[This Aggregate window places events into aggregate groups and calculates minimum speed, maximum speed, average speed, and standard deviation.]]></description>
+          <schema>
+            <fields>
+              <field name="edge_id" type="string" key="true"/>
+              <field name="min_speed" type="double"/>
+              <field name="max_speed" type="double"/>
+              <field name="ave_speed" type="double"/>
+              <field name="std_speed" type="double"/>
+            </fields>
+          </schema>
+          <output>
+            <field-expr><![CDATA[ESP_aMin(speed)]]></field-expr>
+            <field-expr><![CDATA[ESP_aMax(speed)]]></field-expr>
+            <field-expr><![CDATA[ESP_aAve(speed)]]></field-expr>
+            <field-expr><![CDATA[ESP_aStd(speed)]]></field-expr>
+          </output>
+        </window-aggregate>
+      </windows>
+      <edges>
+        <edge source="DeviceOutput" target="LowSatFilter"/>
+        <edge source="DeviceOutput" target="DeviceFilter"/>
+        <edge source="DeviceFilter" target="AggregatedOutput"/>
+      </edges>
+    </contquery>
+  </contqueries>
+</project>

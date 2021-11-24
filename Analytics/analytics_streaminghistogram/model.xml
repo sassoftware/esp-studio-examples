@@ -1,0 +1,112 @@
+<project name='project' pubsub='auto' threads='1' use-tagged-token='true'> 
+    <description> 
+	This example is a basic demonstration of using the streaming histogram algorithm.
+	The algorithm processes a stream of numerical data and puts it in bins to generate
+	boundaries for creating a histogram that fits it. 
+
+	This project contains a single continuous query consisting of the following: 
+	1.	A source window that receives the data to fit into a histogram
+	2.	A calculate window that performs bucketing
+    </description>
+      <contqueries>
+        <contquery name='contquery' trace='w_data w_calculate'>
+          <windows>
+            <window-source name='w_data' insert-only='true' index='pi_EMPTY'> 
+            <description> 
+		This source window receives the included example input data via a file socket
+		connector. The input data stream is placed into three fields for each observation:
+		an ID that acts as the data stream's key, named id; an x coordinate of data, named
+		x_c; and a y coordinate of data, named y_c.
+            </description>
+              <schema>
+                <fields>
+                  <field name='id'  type='int64' key='true'/>
+                  <field name='x_c' type='double'/>
+                  <field name='y_c' type='double'/>
+                </fields>
+              </schema>
+              <connectors>
+                <connector class='fs' name='publisher'>
+                  <properties>
+                    <property name='type'>pub</property>
+                    <property name='fstype'>csv</property>
+                    <property name='fsname'>input.csv</property>
+                    <property name='transactional'>true</property>
+                    <property name='blocksize'>1</property>
+                  </properties>
+                </connector>
+              </connectors>
+            </window-source>
+            <window-calculate name='w_calculate' algorithm='Histogram'> 
+            <description> 
+		This calculate window receives data events from the source window and publishes output
+		variable values for bin centers and heights for quantiles. In this example, the following
+		algorithm parameters govern the Histogram algorithm: 
+
+		nBins:		Specifies the maximum number of bin in the histogram. 
+		alpha:		Specifies the fading out factor (must be between 0 and 1). The recommended
+				value for alpha is greater than 0.997. 
+		halfLifeSteps:	Specifies the number of steps at which the weight of the input reaches half
+				of its original weight. 
+		quantileList:	Specifies a comma-separated list that contains quantiles to compute. Probabilities
+				must be in the range [0,1] and sorted in ascending order. 
+		reportInterval:	Specifies the interval of reporting histogram and quantile results (if any). 
+
+		Additionally, the following input-map and output-map properties define this calculate window: 
+
+		input:		Specifies the input variable with which to build the histogram. 
+
+		binCentersOut:	Specifies a list of output variable names for bin centers. 
+		binHeightsOut:	Specifies a list of output variable names for bin heights. 
+		quantilesOut:	Specifies a list of output variable names for quantiles. 
+
+		The resulting output is written to the file result.out via a file socket connector. 
+            </description>
+              <schema>
+                <fields>
+                  <field name='id'         type='int64' key='true'/>
+                  <field name='binCenters' type='array(dbl)'/>
+                  <field name='binHeights' type='array(dbl)'/>
+                  <field name='quantiles'  type='array(dbl)'/>
+                </fields>
+              </schema>
+              <parameters>
+                <properties>
+                  <property name="nBins">5</property>
+                  <property name="alpha">0.999</property>
+                  <property name="halfLifeSteps">2</property>
+                  <property name="quantileList">0.25,0.50,0.75</property>
+                  <property name="reportInterval">10</property>
+                </properties>
+              </parameters>
+              <input-map>
+                <properties>
+                  <property name="input">x_c</property>
+                </properties>
+              </input-map>
+              <output-map>
+                <properties>
+                  <property name="binCentersOut">binCenters[1-20]</property>
+                  <property name="binHeightsOut">binHeights[1-20]</property>
+                  <property name="quantilesOut">quantiles[1-3]</property>
+                </properties>
+              </output-map>
+              <connectors>
+                <connector class='fs' name='sub'>
+                  <properties>
+                    <property name='type'>sub</property>
+                    <property name='fstype'>csv</property>
+                    <property name='fsname'>result.out</property>
+                    <property name='snapshot'>true</property> 
+                    <property name='header'>true</property>
+                  </properties>
+                </connector>
+              </connectors>
+            </window-calculate>
+          </windows>
+          <edges>
+            <edge source='w_data' target='w_calculate' role='data'/>
+          </edges>
+        </contquery>
+      </contqueries>
+    </project>

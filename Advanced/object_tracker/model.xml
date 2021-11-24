@@ -1,0 +1,2296 @@
+<project name="object_tracker" threads="1" pubsub="auto" heartbeat-interval="1" index="pi_EMPTY">
+  <description><![CDATA[This example uses an Object Tracking window to perform multi-object tracking (MOT). MOT is the process of accurately estimating the identity and position of multiple objects over time using a model that is based on incoming observations. The Object Tracking window couples trackers with detectors in a process called tracking-by-detection. Specifically, it uses an intersection-over-union (IOU) method of tracking-by-detection. In the tracking-by-detection method, an object detector is applied to each frame in a video. A tracker is then used to assign these detections to tracks. The IOU method tracks objects without using image information. Instead, it relies only on detection data. Using this method enables incremental and event-oriented tracking.
+
+This example uses the following seven files:
+
+The XML file (model.xml) associated with this example.
+det.txt is an input file. This file contains detection data.
+addObjId.csv is an output file. When you run the model, the object IDs are written to the addObjid.csv file.
+MOT17-04-FRCNN_1.csv is an input file. This file is the result of converting a video file into a CSV file. Each line in the CSV file represents a frame in the video. To obtain this file, download the object_tracker_xml.zip file from ftp://ftp.sas.com/techsup/download/esp/object_tracker_xml.zip and extract its contents.
+outputTracks.csv is an output file. When you run the model, the output tracks are written to the outputTracks.csv file.
+transpLong.csv is an output file. When you run the model, transposed output tracks are written to the transpLong.csv file.
+outputTracksLong.csv is an output file. When you run the model, output tracks in long format are written to the outputTracksLong.csv file.]]></description>
+  <metadata>
+    <meta id="studioUploadedBy">fsduser</meta>
+    <meta id="studioUploaded">1613049352878</meta>
+    <meta id="studioModifiedBy">fsduser</meta>
+    <meta id="studioModified">1613049812970</meta>
+    <meta id="layout">{"cq1":{"addObjId":{"x":-425,"y":-435},"detAgg":{"x":-195,"y":-535},"filterEmptyObjects":{"x":-645,"y":-675},"getDetections":{"x":-150,"y":-400},"outputTracks":{"x":-295,"y":-685},"outputTracksLong":{"x":-640,"y":-520},"swDetections":{"x":-425,"y":-540},"swVideo":{"x":-30,"y":-715},"tracking":{"x":55,"y":-495},"transpDetections":{"x":-425,"y":-330},"transpLong":{"x":-575,"y":-880}}}</meta>
+  </metadata>
+  <contqueries>
+    <contquery name="cq1" include-singletons="true">
+      <windows>
+        <window-source pubsub="true" index="pi_EMPTY" insert-only="true" autogen-key="true" name="swDetections">
+          <description><![CDATA[swDetections is a Source window. This is where detection data from the det.txt file enters the model.]]></description>
+          <schema>
+            <fields>
+              <field name="id" type="int64" key="true"/>
+              <field name="frame" type="int64"/>
+              <field name="a" type="int32"/>
+              <field name="x" type="double"/>
+              <field name="y" type="double"/>
+              <field name="w" type="double"/>
+              <field name="h" type="double"/>
+              <field name="score" type="double"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="fs" name="swDetections">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="noautogenfield"><![CDATA[true]]></property>
+                <property name="addcsvopcode"><![CDATA[true]]></property>
+                <property name="addcsvflags"><![CDATA[normal]]></property>
+                <property name="fsname"><![CDATA[det.txt]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-compute pubsub="true" index="pi_EMPTY" name="addObjId">
+          <description><![CDATA[addObjId is a Compute window. This is where an object ID is assigned to each detection in the video file. A list of object IDs is written to the addObjId.csv file.]]></description>
+          <expr-initialize>
+            <initializer type="string"><![CDATA[integer last_frame; last_frame = 0;
+            integer obj_number; obj_number = 0;]]></initializer>
+            <udfs>
+              <udf name="getObjNb" type="int32"><![CDATA[private integer curr_frame; 
+              curr_frame = parameterstring(1);
+              if curr_frame !=last_frame then begin;
+                obj_number = 0;
+              end;
+              else begin;
+                obj_number = obj_number + 1;
+              end;
+              last_frame = curr_frame;
+              return obj_number;]]></udf>
+            </udfs>
+          </expr-initialize>
+          <schema>
+            <fields>
+              <field name="id" type="int64" key="true"/>
+              <field name="frame" type="int64"/>
+              <field name="x" type="double"/>
+              <field name="y" type="double"/>
+              <field name="w" type="double"/>
+              <field name="h" type="double"/>
+              <field name="score" type="double"/>
+              <field name="objId" type="string"/>
+              <field name="objCount" type="int32"/>
+              <field name="label" type="string"/>
+            </fields>
+          </schema>
+          <output>
+            <field-expr><![CDATA[frame-1]]></field-expr>
+            <field-expr><![CDATA[x]]></field-expr>
+            <field-expr><![CDATA[y]]></field-expr>
+            <field-expr><![CDATA[w]]></field-expr>
+            <field-expr><![CDATA[h]]></field-expr>
+            <field-expr><![CDATA[score]]></field-expr>
+            <field-expr><![CDATA['obj_' & getObjNb(frame)]]></field-expr>
+            <field-expr><![CDATA[obj_number+1]]></field-expr>
+            <field-expr><![CDATA['person']]></field-expr>
+          </output>
+          <connectors>
+            <connector class="fs" name="addObjId">
+              <properties>
+                <property name="type"><![CDATA[sub]]></property>
+                <property name="header"><![CDATA[full]]></property>
+                <property name="snapshot"><![CDATA[true]]></property>
+                <property name="fsname"><![CDATA[addObjId.csv]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-compute>
+        <window-transpose name="transpDetections" clear-timeout="never" pubsub="true" mode="wide" tag-name="objId" tag-values="x,y,w,h,score,label" group-by="frame" tags-included="obj_0,obj_1,obj_2,obj_3,obj_4,obj_5,obj_6,obj_7,obj_8,obj_9,obj_10,obj_11,obj_12,obj_13,obj_14,obj_15,obj_16,obj_17,obj_18,obj_19,obj_20,obj_21,obj_22,obj_23,obj_24,obj_25,obj_26,obj_27,obj_28,obj_29,obj_30,obj_31,obj_32,obj_33,obj_34,obj_35,obj_36,obj_37,obj_38,obj_39,obj_40,obj_41,obj_42,obj_43,obj_44,obj_45,obj_46,obj_47,obj_48,obj_49,obj_50,obj_51,obj_52,obj_53,obj_54,obj_55,obj_56,obj_57,obj_58,obj_59,obj_60,obj_61,obj_62,obj_63,obj_64,obj_65">
+          <description><![CDATA[transpDetections is a Transpose window. This is where the detection data is transposed using each detection’s object ID.]]></description>
+        </window-transpose>
+        <window-aggregate pubsub="true" index="pi_HASH" name="detAgg">
+          <description><![CDATA[detAgg is an Aggregate window. This is where the detection data is aggregated.]]></description>
+          <schema>
+            <fields>
+              <field name="frame" type="int64" key="true"/>
+              <field name="objCount" type="int32"/>
+              <field name="obj_0_x" type="double"/>
+              <field name="obj_0_y" type="double"/>
+              <field name="obj_0_w" type="double"/>
+              <field name="obj_0_h" type="double"/>
+              <field name="obj_0_score" type="double"/>
+              <field name="obj_0_label" type="string"/>
+              <field name="obj_1_x" type="double"/>
+              <field name="obj_1_y" type="double"/>
+              <field name="obj_1_w" type="double"/>
+              <field name="obj_1_h" type="double"/>
+              <field name="obj_1_score" type="double"/>
+              <field name="obj_1_label" type="string"/>
+              <field name="obj_2_x" type="double"/>
+              <field name="obj_2_y" type="double"/>
+              <field name="obj_2_w" type="double"/>
+              <field name="obj_2_h" type="double"/>
+              <field name="obj_2_score" type="double"/>
+              <field name="obj_2_label" type="string"/>
+              <field name="obj_3_x" type="double"/>
+              <field name="obj_3_y" type="double"/>
+              <field name="obj_3_w" type="double"/>
+              <field name="obj_3_h" type="double"/>
+              <field name="obj_3_score" type="double"/>
+              <field name="obj_3_label" type="string"/>
+              <field name="obj_4_x" type="double"/>
+              <field name="obj_4_y" type="double"/>
+              <field name="obj_4_w" type="double"/>
+              <field name="obj_4_h" type="double"/>
+              <field name="obj_4_score" type="double"/>
+              <field name="obj_4_label" type="string"/>
+              <field name="obj_5_x" type="double"/>
+              <field name="obj_5_y" type="double"/>
+              <field name="obj_5_w" type="double"/>
+              <field name="obj_5_h" type="double"/>
+              <field name="obj_5_score" type="double"/>
+              <field name="obj_5_label" type="string"/>
+              <field name="obj_6_x" type="double"/>
+              <field name="obj_6_y" type="double"/>
+              <field name="obj_6_w" type="double"/>
+              <field name="obj_6_h" type="double"/>
+              <field name="obj_6_score" type="double"/>
+              <field name="obj_6_label" type="string"/>
+              <field name="obj_7_x" type="double"/>
+              <field name="obj_7_y" type="double"/>
+              <field name="obj_7_w" type="double"/>
+              <field name="obj_7_h" type="double"/>
+              <field name="obj_7_score" type="double"/>
+              <field name="obj_7_label" type="string"/>
+              <field name="obj_8_x" type="double"/>
+              <field name="obj_8_y" type="double"/>
+              <field name="obj_8_w" type="double"/>
+              <field name="obj_8_h" type="double"/>
+              <field name="obj_8_score" type="double"/>
+              <field name="obj_8_label" type="string"/>
+              <field name="obj_9_x" type="double"/>
+              <field name="obj_9_y" type="double"/>
+              <field name="obj_9_w" type="double"/>
+              <field name="obj_9_h" type="double"/>
+              <field name="obj_9_score" type="double"/>
+              <field name="obj_9_label" type="string"/>
+              <field name="obj_10_x" type="double"/>
+              <field name="obj_10_y" type="double"/>
+              <field name="obj_10_w" type="double"/>
+              <field name="obj_10_h" type="double"/>
+              <field name="obj_10_score" type="double"/>
+              <field name="obj_10_label" type="string"/>
+              <field name="obj_11_x" type="double"/>
+              <field name="obj_11_y" type="double"/>
+              <field name="obj_11_w" type="double"/>
+              <field name="obj_11_h" type="double"/>
+              <field name="obj_11_score" type="double"/>
+              <field name="obj_11_label" type="string"/>
+              <field name="obj_12_x" type="double"/>
+              <field name="obj_12_y" type="double"/>
+              <field name="obj_12_w" type="double"/>
+              <field name="obj_12_h" type="double"/>
+              <field name="obj_12_score" type="double"/>
+              <field name="obj_12_label" type="string"/>
+              <field name="obj_13_x" type="double"/>
+              <field name="obj_13_y" type="double"/>
+              <field name="obj_13_w" type="double"/>
+              <field name="obj_13_h" type="double"/>
+              <field name="obj_13_score" type="double"/>
+              <field name="obj_13_label" type="string"/>
+              <field name="obj_14_x" type="double"/>
+              <field name="obj_14_y" type="double"/>
+              <field name="obj_14_w" type="double"/>
+              <field name="obj_14_h" type="double"/>
+              <field name="obj_14_score" type="double"/>
+              <field name="obj_14_label" type="string"/>
+              <field name="obj_15_x" type="double"/>
+              <field name="obj_15_y" type="double"/>
+              <field name="obj_15_w" type="double"/>
+              <field name="obj_15_h" type="double"/>
+              <field name="obj_15_score" type="double"/>
+              <field name="obj_15_label" type="string"/>
+              <field name="obj_16_x" type="double"/>
+              <field name="obj_16_y" type="double"/>
+              <field name="obj_16_w" type="double"/>
+              <field name="obj_16_h" type="double"/>
+              <field name="obj_16_score" type="double"/>
+              <field name="obj_16_label" type="string"/>
+              <field name="obj_17_x" type="double"/>
+              <field name="obj_17_y" type="double"/>
+              <field name="obj_17_w" type="double"/>
+              <field name="obj_17_h" type="double"/>
+              <field name="obj_17_score" type="double"/>
+              <field name="obj_17_label" type="string"/>
+              <field name="obj_18_x" type="double"/>
+              <field name="obj_18_y" type="double"/>
+              <field name="obj_18_w" type="double"/>
+              <field name="obj_18_h" type="double"/>
+              <field name="obj_18_score" type="double"/>
+              <field name="obj_18_label" type="string"/>
+              <field name="obj_19_x" type="double"/>
+              <field name="obj_19_y" type="double"/>
+              <field name="obj_19_w" type="double"/>
+              <field name="obj_19_h" type="double"/>
+              <field name="obj_19_score" type="double"/>
+              <field name="obj_19_label" type="string"/>
+              <field name="obj_20_x" type="double"/>
+              <field name="obj_20_y" type="double"/>
+              <field name="obj_20_w" type="double"/>
+              <field name="obj_20_h" type="double"/>
+              <field name="obj_20_score" type="double"/>
+              <field name="obj_20_label" type="string"/>
+              <field name="obj_21_x" type="double"/>
+              <field name="obj_21_y" type="double"/>
+              <field name="obj_21_w" type="double"/>
+              <field name="obj_21_h" type="double"/>
+              <field name="obj_21_score" type="double"/>
+              <field name="obj_21_label" type="string"/>
+              <field name="obj_22_x" type="double"/>
+              <field name="obj_22_y" type="double"/>
+              <field name="obj_22_w" type="double"/>
+              <field name="obj_22_h" type="double"/>
+              <field name="obj_22_score" type="double"/>
+              <field name="obj_22_label" type="string"/>
+              <field name="obj_23_x" type="double"/>
+              <field name="obj_23_y" type="double"/>
+              <field name="obj_23_w" type="double"/>
+              <field name="obj_23_h" type="double"/>
+              <field name="obj_23_score" type="double"/>
+              <field name="obj_23_label" type="string"/>
+              <field name="obj_24_x" type="double"/>
+              <field name="obj_24_y" type="double"/>
+              <field name="obj_24_w" type="double"/>
+              <field name="obj_24_h" type="double"/>
+              <field name="obj_24_score" type="double"/>
+              <field name="obj_24_label" type="string"/>
+              <field name="obj_25_x" type="double"/>
+              <field name="obj_25_y" type="double"/>
+              <field name="obj_25_w" type="double"/>
+              <field name="obj_25_h" type="double"/>
+              <field name="obj_25_score" type="double"/>
+              <field name="obj_25_label" type="string"/>
+              <field name="obj_26_x" type="double"/>
+              <field name="obj_26_y" type="double"/>
+              <field name="obj_26_w" type="double"/>
+              <field name="obj_26_h" type="double"/>
+              <field name="obj_26_score" type="double"/>
+              <field name="obj_26_label" type="string"/>
+              <field name="obj_27_x" type="double"/>
+              <field name="obj_27_y" type="double"/>
+              <field name="obj_27_w" type="double"/>
+              <field name="obj_27_h" type="double"/>
+              <field name="obj_27_score" type="double"/>
+              <field name="obj_27_label" type="string"/>
+              <field name="obj_28_x" type="double"/>
+              <field name="obj_28_y" type="double"/>
+              <field name="obj_28_w" type="double"/>
+              <field name="obj_28_h" type="double"/>
+              <field name="obj_28_score" type="double"/>
+              <field name="obj_28_label" type="string"/>
+              <field name="obj_29_x" type="double"/>
+              <field name="obj_29_y" type="double"/>
+              <field name="obj_29_w" type="double"/>
+              <field name="obj_29_h" type="double"/>
+              <field name="obj_29_score" type="double"/>
+              <field name="obj_29_label" type="string"/>
+              <field name="obj_30_x" type="double"/>
+              <field name="obj_30_y" type="double"/>
+              <field name="obj_30_w" type="double"/>
+              <field name="obj_30_h" type="double"/>
+              <field name="obj_30_score" type="double"/>
+              <field name="obj_30_label" type="string"/>
+              <field name="obj_31_x" type="double"/>
+              <field name="obj_31_y" type="double"/>
+              <field name="obj_31_w" type="double"/>
+              <field name="obj_31_h" type="double"/>
+              <field name="obj_31_score" type="double"/>
+              <field name="obj_31_label" type="string"/>
+              <field name="obj_32_x" type="double"/>
+              <field name="obj_32_y" type="double"/>
+              <field name="obj_32_w" type="double"/>
+              <field name="obj_32_h" type="double"/>
+              <field name="obj_32_score" type="double"/>
+              <field name="obj_32_label" type="string"/>
+              <field name="obj_33_x" type="double"/>
+              <field name="obj_33_y" type="double"/>
+              <field name="obj_33_w" type="double"/>
+              <field name="obj_33_h" type="double"/>
+              <field name="obj_33_score" type="double"/>
+              <field name="obj_33_label" type="string"/>
+              <field name="obj_34_x" type="double"/>
+              <field name="obj_34_y" type="double"/>
+              <field name="obj_34_w" type="double"/>
+              <field name="obj_34_h" type="double"/>
+              <field name="obj_34_score" type="double"/>
+              <field name="obj_34_label" type="string"/>
+              <field name="obj_35_x" type="double"/>
+              <field name="obj_35_y" type="double"/>
+              <field name="obj_35_w" type="double"/>
+              <field name="obj_35_h" type="double"/>
+              <field name="obj_35_score" type="double"/>
+              <field name="obj_35_label" type="string"/>
+              <field name="obj_36_x" type="double"/>
+              <field name="obj_36_y" type="double"/>
+              <field name="obj_36_w" type="double"/>
+              <field name="obj_36_h" type="double"/>
+              <field name="obj_36_score" type="double"/>
+              <field name="obj_36_label" type="string"/>
+              <field name="obj_37_x" type="double"/>
+              <field name="obj_37_y" type="double"/>
+              <field name="obj_37_w" type="double"/>
+              <field name="obj_37_h" type="double"/>
+              <field name="obj_37_score" type="double"/>
+              <field name="obj_37_label" type="string"/>
+              <field name="obj_38_x" type="double"/>
+              <field name="obj_38_y" type="double"/>
+              <field name="obj_38_w" type="double"/>
+              <field name="obj_38_h" type="double"/>
+              <field name="obj_38_score" type="double"/>
+              <field name="obj_38_label" type="string"/>
+              <field name="obj_39_x" type="double"/>
+              <field name="obj_39_y" type="double"/>
+              <field name="obj_39_w" type="double"/>
+              <field name="obj_39_h" type="double"/>
+              <field name="obj_39_score" type="double"/>
+              <field name="obj_39_label" type="string"/>
+              <field name="obj_40_x" type="double"/>
+              <field name="obj_40_y" type="double"/>
+              <field name="obj_40_w" type="double"/>
+              <field name="obj_40_h" type="double"/>
+              <field name="obj_40_score" type="double"/>
+              <field name="obj_40_label" type="string"/>
+              <field name="obj_41_x" type="double"/>
+              <field name="obj_41_y" type="double"/>
+              <field name="obj_41_w" type="double"/>
+              <field name="obj_41_h" type="double"/>
+              <field name="obj_41_score" type="double"/>
+              <field name="obj_41_label" type="string"/>
+              <field name="obj_42_x" type="double"/>
+              <field name="obj_42_y" type="double"/>
+              <field name="obj_42_w" type="double"/>
+              <field name="obj_42_h" type="double"/>
+              <field name="obj_42_score" type="double"/>
+              <field name="obj_42_label" type="string"/>
+              <field name="obj_43_x" type="double"/>
+              <field name="obj_43_y" type="double"/>
+              <field name="obj_43_w" type="double"/>
+              <field name="obj_43_h" type="double"/>
+              <field name="obj_43_score" type="double"/>
+              <field name="obj_43_label" type="string"/>
+              <field name="obj_44_x" type="double"/>
+              <field name="obj_44_y" type="double"/>
+              <field name="obj_44_w" type="double"/>
+              <field name="obj_44_h" type="double"/>
+              <field name="obj_44_score" type="double"/>
+              <field name="obj_44_label" type="string"/>
+              <field name="obj_45_x" type="double"/>
+              <field name="obj_45_y" type="double"/>
+              <field name="obj_45_w" type="double"/>
+              <field name="obj_45_h" type="double"/>
+              <field name="obj_45_score" type="double"/>
+              <field name="obj_45_label" type="string"/>
+              <field name="obj_46_x" type="double"/>
+              <field name="obj_46_y" type="double"/>
+              <field name="obj_46_w" type="double"/>
+              <field name="obj_46_h" type="double"/>
+              <field name="obj_46_score" type="double"/>
+              <field name="obj_46_label" type="string"/>
+              <field name="obj_47_x" type="double"/>
+              <field name="obj_47_y" type="double"/>
+              <field name="obj_47_w" type="double"/>
+              <field name="obj_47_h" type="double"/>
+              <field name="obj_47_score" type="double"/>
+              <field name="obj_47_label" type="string"/>
+              <field name="obj_48_x" type="double"/>
+              <field name="obj_48_y" type="double"/>
+              <field name="obj_48_w" type="double"/>
+              <field name="obj_48_h" type="double"/>
+              <field name="obj_48_score" type="double"/>
+              <field name="obj_48_label" type="string"/>
+              <field name="obj_49_x" type="double"/>
+              <field name="obj_49_y" type="double"/>
+              <field name="obj_49_w" type="double"/>
+              <field name="obj_49_h" type="double"/>
+              <field name="obj_49_score" type="double"/>
+              <field name="obj_49_label" type="string"/>
+              <field name="obj_50_x" type="double"/>
+              <field name="obj_50_y" type="double"/>
+              <field name="obj_50_w" type="double"/>
+              <field name="obj_50_h" type="double"/>
+              <field name="obj_50_score" type="double"/>
+              <field name="obj_50_label" type="string"/>
+              <field name="obj_51_x" type="double"/>
+              <field name="obj_51_y" type="double"/>
+              <field name="obj_51_w" type="double"/>
+              <field name="obj_51_h" type="double"/>
+              <field name="obj_51_score" type="double"/>
+              <field name="obj_51_label" type="string"/>
+              <field name="obj_52_x" type="double"/>
+              <field name="obj_52_y" type="double"/>
+              <field name="obj_52_w" type="double"/>
+              <field name="obj_52_h" type="double"/>
+              <field name="obj_52_score" type="double"/>
+              <field name="obj_52_label" type="string"/>
+              <field name="obj_53_x" type="double"/>
+              <field name="obj_53_y" type="double"/>
+              <field name="obj_53_w" type="double"/>
+              <field name="obj_53_h" type="double"/>
+              <field name="obj_53_score" type="double"/>
+              <field name="obj_53_label" type="string"/>
+              <field name="obj_54_x" type="double"/>
+              <field name="obj_54_y" type="double"/>
+              <field name="obj_54_w" type="double"/>
+              <field name="obj_54_h" type="double"/>
+              <field name="obj_54_score" type="double"/>
+              <field name="obj_54_label" type="string"/>
+              <field name="obj_55_x" type="double"/>
+              <field name="obj_55_y" type="double"/>
+              <field name="obj_55_w" type="double"/>
+              <field name="obj_55_h" type="double"/>
+              <field name="obj_55_score" type="double"/>
+              <field name="obj_55_label" type="string"/>
+              <field name="obj_56_x" type="double"/>
+              <field name="obj_56_y" type="double"/>
+              <field name="obj_56_w" type="double"/>
+              <field name="obj_56_h" type="double"/>
+              <field name="obj_56_score" type="double"/>
+              <field name="obj_56_label" type="string"/>
+              <field name="obj_57_x" type="double"/>
+              <field name="obj_57_y" type="double"/>
+              <field name="obj_57_w" type="double"/>
+              <field name="obj_57_h" type="double"/>
+              <field name="obj_57_score" type="double"/>
+              <field name="obj_57_label" type="string"/>
+              <field name="obj_58_x" type="double"/>
+              <field name="obj_58_y" type="double"/>
+              <field name="obj_58_w" type="double"/>
+              <field name="obj_58_h" type="double"/>
+              <field name="obj_58_score" type="double"/>
+              <field name="obj_58_label" type="string"/>
+              <field name="obj_59_x" type="double"/>
+              <field name="obj_59_y" type="double"/>
+              <field name="obj_59_w" type="double"/>
+              <field name="obj_59_h" type="double"/>
+              <field name="obj_59_score" type="double"/>
+              <field name="obj_59_label" type="string"/>
+              <field name="obj_60_x" type="double"/>
+              <field name="obj_60_y" type="double"/>
+              <field name="obj_60_w" type="double"/>
+              <field name="obj_60_h" type="double"/>
+              <field name="obj_60_score" type="double"/>
+              <field name="obj_60_label" type="string"/>
+              <field name="obj_61_x" type="double"/>
+              <field name="obj_61_y" type="double"/>
+              <field name="obj_61_w" type="double"/>
+              <field name="obj_61_h" type="double"/>
+              <field name="obj_61_score" type="double"/>
+              <field name="obj_61_label" type="string"/>
+              <field name="obj_62_x" type="double"/>
+              <field name="obj_62_y" type="double"/>
+              <field name="obj_62_w" type="double"/>
+              <field name="obj_62_h" type="double"/>
+              <field name="obj_62_score" type="double"/>
+              <field name="obj_62_label" type="string"/>
+              <field name="obj_63_x" type="double"/>
+              <field name="obj_63_y" type="double"/>
+              <field name="obj_63_w" type="double"/>
+              <field name="obj_63_h" type="double"/>
+              <field name="obj_63_score" type="double"/>
+              <field name="obj_63_label" type="string"/>
+              <field name="obj_64_x" type="double"/>
+              <field name="obj_64_y" type="double"/>
+              <field name="obj_64_w" type="double"/>
+              <field name="obj_64_h" type="double"/>
+              <field name="obj_64_score" type="double"/>
+              <field name="obj_64_label" type="string"/>
+              <field name="obj_65_x" type="double"/>
+              <field name="obj_65_y" type="double"/>
+              <field name="obj_65_w" type="double"/>
+              <field name="obj_65_h" type="double"/>
+              <field name="obj_65_score" type="double"/>
+              <field name="obj_65_label" type="string"/>
+            </fields>
+          </schema>
+          <output>
+            <field-expr><![CDATA[ESP_aLast(objCount)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_0_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_0_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_0_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_0_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_0_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_0_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_1_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_1_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_1_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_1_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_1_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_1_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_2_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_2_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_2_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_2_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_2_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_2_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_3_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_3_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_3_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_3_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_3_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_3_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_4_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_4_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_4_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_4_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_4_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_4_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_5_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_5_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_5_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_5_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_5_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_5_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_6_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_6_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_6_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_6_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_6_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_6_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_7_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_7_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_7_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_7_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_7_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_7_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_8_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_8_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_8_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_8_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_8_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_8_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_9_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_9_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_9_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_9_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_9_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_9_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_10_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_10_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_10_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_10_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_10_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_10_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_11_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_11_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_11_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_11_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_11_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_11_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_12_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_12_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_12_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_12_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_12_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_12_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_13_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_13_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_13_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_13_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_13_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_13_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_14_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_14_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_14_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_14_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_14_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_14_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_15_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_15_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_15_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_15_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_15_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_15_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_16_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_16_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_16_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_16_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_16_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_16_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_17_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_17_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_17_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_17_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_17_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_17_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_18_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_18_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_18_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_18_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_18_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_18_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_19_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_19_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_19_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_19_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_19_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_19_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_20_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_20_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_20_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_20_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_20_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_20_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_21_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_21_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_21_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_21_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_21_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_21_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_22_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_22_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_22_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_22_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_22_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_22_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_23_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_23_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_23_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_23_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_23_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_23_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_24_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_24_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_24_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_24_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_24_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_24_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_25_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_25_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_25_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_25_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_25_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_25_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_26_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_26_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_26_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_26_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_26_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_26_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_27_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_27_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_27_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_27_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_27_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_27_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_28_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_28_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_28_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_28_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_28_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_28_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_29_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_29_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_29_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_29_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_29_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_29_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_30_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_30_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_30_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_30_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_30_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_30_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_31_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_31_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_31_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_31_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_31_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_31_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_32_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_32_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_32_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_32_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_32_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_32_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_33_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_33_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_33_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_33_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_33_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_33_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_34_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_34_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_34_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_34_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_34_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_34_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_35_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_35_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_35_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_35_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_35_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_35_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_36_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_36_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_36_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_36_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_36_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_36_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_37_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_37_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_37_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_37_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_37_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_37_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_38_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_38_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_38_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_38_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_38_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_38_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_39_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_39_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_39_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_39_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_39_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_39_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_40_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_40_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_40_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_40_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_40_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_40_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_41_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_41_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_41_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_41_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_41_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_41_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_42_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_42_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_42_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_42_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_42_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_42_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_43_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_43_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_43_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_43_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_43_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_43_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_44_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_44_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_44_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_44_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_44_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_44_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_45_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_45_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_45_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_45_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_45_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_45_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_46_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_46_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_46_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_46_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_46_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_46_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_47_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_47_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_47_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_47_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_47_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_47_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_48_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_48_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_48_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_48_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_48_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_48_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_49_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_49_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_49_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_49_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_49_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_49_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_50_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_50_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_50_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_50_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_50_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_50_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_51_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_51_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_51_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_51_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_51_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_51_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_52_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_52_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_52_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_52_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_52_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_52_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_53_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_53_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_53_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_53_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_53_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_53_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_54_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_54_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_54_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_54_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_54_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_54_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_55_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_55_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_55_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_55_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_55_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_55_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_56_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_56_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_56_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_56_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_56_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_56_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_57_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_57_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_57_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_57_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_57_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_57_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_58_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_58_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_58_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_58_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_58_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_58_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_59_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_59_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_59_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_59_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_59_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_59_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_60_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_60_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_60_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_60_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_60_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_60_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_61_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_61_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_61_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_61_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_61_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_61_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_62_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_62_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_62_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_62_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_62_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_62_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_63_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_63_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_63_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_63_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_63_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_63_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_64_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_64_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_64_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_64_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_64_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_64_label)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_65_x)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_65_y)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_65_w)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_65_h)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_65_score)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(obj_65_label)]]></field-expr>
+          </output>
+        </window-aggregate>
+        <window-source pubsub="true" index="pi_EMPTY" insert-only="true" name="swVideo">
+          <description><![CDATA[swVideo is a Source window. This is where data from the MOT17-04-FRCNN_1.csv file enters the model. This file is the result of converting a video file into a CSV file. Each line in the file represents one frame in the video.]]></description>
+          <schema>
+            <fields>
+              <field name="ID" type="int64" key="true"/>
+              <field name="image" type="blob"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="fs" name="csv_file">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="fsname"><![CDATA[MOT17-04-FRCNN_1.csv]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-join pubsub="true" name="getDetections">
+          <description><![CDATA[getDetections is a Join window. This is where the video frames from the MOT17-04-FRCNN_1.csv file and the detection data from the det.txt file are merged.]]></description>
+          <join type="leftouter" no-regenerates="true">
+            <conditions>
+              <fields left="ID" right="frame"/>
+            </conditions>
+          </join>
+          <output>
+            <field-selection name="image" source="l_image"/>
+            <field-selection name="objCount" source="r_objCount"/>
+            <field-selection name="obj_0_x" source="r_obj_0_x"/>
+            <field-selection name="obj_0_y" source="r_obj_0_y"/>
+            <field-selection name="obj_0_w" source="r_obj_0_w"/>
+            <field-selection name="obj_0_h" source="r_obj_0_h"/>
+            <field-selection name="obj_0_score" source="r_obj_0_score"/>
+            <field-selection name="obj_0_label" source="r_obj_0_label"/>
+            <field-selection name="obj_1_x" source="r_obj_1_x"/>
+            <field-selection name="obj_1_y" source="r_obj_1_y"/>
+            <field-selection name="obj_1_w" source="r_obj_1_w"/>
+            <field-selection name="obj_1_h" source="r_obj_1_h"/>
+            <field-selection name="obj_1_score" source="r_obj_1_score"/>
+            <field-selection name="obj_1_label" source="r_obj_1_label"/>
+            <field-selection name="obj_2_x" source="r_obj_2_x"/>
+            <field-selection name="obj_2_y" source="r_obj_2_y"/>
+            <field-selection name="obj_2_w" source="r_obj_2_w"/>
+            <field-selection name="obj_2_h" source="r_obj_2_h"/>
+            <field-selection name="obj_2_score" source="r_obj_2_score"/>
+            <field-selection name="obj_2_label" source="r_obj_2_label"/>
+            <field-selection name="obj_3_x" source="r_obj_3_x"/>
+            <field-selection name="obj_3_y" source="r_obj_3_y"/>
+            <field-selection name="obj_3_w" source="r_obj_3_w"/>
+            <field-selection name="obj_3_h" source="r_obj_3_h"/>
+            <field-selection name="obj_3_score" source="r_obj_3_score"/>
+            <field-selection name="obj_3_label" source="r_obj_3_label"/>
+            <field-selection name="obj_4_x" source="r_obj_4_x"/>
+            <field-selection name="obj_4_y" source="r_obj_4_y"/>
+            <field-selection name="obj_4_w" source="r_obj_4_w"/>
+            <field-selection name="obj_4_h" source="r_obj_4_h"/>
+            <field-selection name="obj_4_score" source="r_obj_4_score"/>
+            <field-selection name="obj_4_label" source="r_obj_4_label"/>
+            <field-selection name="obj_5_x" source="r_obj_5_x"/>
+            <field-selection name="obj_5_y" source="r_obj_5_y"/>
+            <field-selection name="obj_5_w" source="r_obj_5_w"/>
+            <field-selection name="obj_5_h" source="r_obj_5_h"/>
+            <field-selection name="obj_5_score" source="r_obj_5_score"/>
+            <field-selection name="obj_5_label" source="r_obj_5_label"/>
+            <field-selection name="obj_6_x" source="r_obj_6_x"/>
+            <field-selection name="obj_6_y" source="r_obj_6_y"/>
+            <field-selection name="obj_6_w" source="r_obj_6_w"/>
+            <field-selection name="obj_6_h" source="r_obj_6_h"/>
+            <field-selection name="obj_6_score" source="r_obj_6_score"/>
+            <field-selection name="obj_6_label" source="r_obj_6_label"/>
+            <field-selection name="obj_7_x" source="r_obj_7_x"/>
+            <field-selection name="obj_7_y" source="r_obj_7_y"/>
+            <field-selection name="obj_7_w" source="r_obj_7_w"/>
+            <field-selection name="obj_7_h" source="r_obj_7_h"/>
+            <field-selection name="obj_7_score" source="r_obj_7_score"/>
+            <field-selection name="obj_7_label" source="r_obj_7_label"/>
+            <field-selection name="obj_8_x" source="r_obj_8_x"/>
+            <field-selection name="obj_8_y" source="r_obj_8_y"/>
+            <field-selection name="obj_8_w" source="r_obj_8_w"/>
+            <field-selection name="obj_8_h" source="r_obj_8_h"/>
+            <field-selection name="obj_8_score" source="r_obj_8_score"/>
+            <field-selection name="obj_8_label" source="r_obj_8_label"/>
+            <field-selection name="obj_9_x" source="r_obj_9_x"/>
+            <field-selection name="obj_9_y" source="r_obj_9_y"/>
+            <field-selection name="obj_9_w" source="r_obj_9_w"/>
+            <field-selection name="obj_9_h" source="r_obj_9_h"/>
+            <field-selection name="obj_9_score" source="r_obj_9_score"/>
+            <field-selection name="obj_9_label" source="r_obj_9_label"/>
+            <field-selection name="obj_10_x" source="r_obj_10_x"/>
+            <field-selection name="obj_10_y" source="r_obj_10_y"/>
+            <field-selection name="obj_10_w" source="r_obj_10_w"/>
+            <field-selection name="obj_10_h" source="r_obj_10_h"/>
+            <field-selection name="obj_10_score" source="r_obj_10_score"/>
+            <field-selection name="obj_10_label" source="r_obj_10_label"/>
+            <field-selection name="obj_11_x" source="r_obj_11_x"/>
+            <field-selection name="obj_11_y" source="r_obj_11_y"/>
+            <field-selection name="obj_11_w" source="r_obj_11_w"/>
+            <field-selection name="obj_11_h" source="r_obj_11_h"/>
+            <field-selection name="obj_11_score" source="r_obj_11_score"/>
+            <field-selection name="obj_11_label" source="r_obj_11_label"/>
+            <field-selection name="obj_12_x" source="r_obj_12_x"/>
+            <field-selection name="obj_12_y" source="r_obj_12_y"/>
+            <field-selection name="obj_12_w" source="r_obj_12_w"/>
+            <field-selection name="obj_12_h" source="r_obj_12_h"/>
+            <field-selection name="obj_12_score" source="r_obj_12_score"/>
+            <field-selection name="obj_12_label" source="r_obj_12_label"/>
+            <field-selection name="obj_13_x" source="r_obj_13_x"/>
+            <field-selection name="obj_13_y" source="r_obj_13_y"/>
+            <field-selection name="obj_13_w" source="r_obj_13_w"/>
+            <field-selection name="obj_13_h" source="r_obj_13_h"/>
+            <field-selection name="obj_13_score" source="r_obj_13_score"/>
+            <field-selection name="obj_13_label" source="r_obj_13_label"/>
+            <field-selection name="obj_14_x" source="r_obj_14_x"/>
+            <field-selection name="obj_14_y" source="r_obj_14_y"/>
+            <field-selection name="obj_14_w" source="r_obj_14_w"/>
+            <field-selection name="obj_14_h" source="r_obj_14_h"/>
+            <field-selection name="obj_14_score" source="r_obj_14_score"/>
+            <field-selection name="obj_14_label" source="r_obj_14_label"/>
+            <field-selection name="obj_15_x" source="r_obj_15_x"/>
+            <field-selection name="obj_15_y" source="r_obj_15_y"/>
+            <field-selection name="obj_15_w" source="r_obj_15_w"/>
+            <field-selection name="obj_15_h" source="r_obj_15_h"/>
+            <field-selection name="obj_15_score" source="r_obj_15_score"/>
+            <field-selection name="obj_15_label" source="r_obj_15_label"/>
+            <field-selection name="obj_16_x" source="r_obj_16_x"/>
+            <field-selection name="obj_16_y" source="r_obj_16_y"/>
+            <field-selection name="obj_16_w" source="r_obj_16_w"/>
+            <field-selection name="obj_16_h" source="r_obj_16_h"/>
+            <field-selection name="obj_16_score" source="r_obj_16_score"/>
+            <field-selection name="obj_16_label" source="r_obj_16_label"/>
+            <field-selection name="obj_17_x" source="r_obj_17_x"/>
+            <field-selection name="obj_17_y" source="r_obj_17_y"/>
+            <field-selection name="obj_17_w" source="r_obj_17_w"/>
+            <field-selection name="obj_17_h" source="r_obj_17_h"/>
+            <field-selection name="obj_17_score" source="r_obj_17_score"/>
+            <field-selection name="obj_17_label" source="r_obj_17_label"/>
+            <field-selection name="obj_18_x" source="r_obj_18_x"/>
+            <field-selection name="obj_18_y" source="r_obj_18_y"/>
+            <field-selection name="obj_18_w" source="r_obj_18_w"/>
+            <field-selection name="obj_18_h" source="r_obj_18_h"/>
+            <field-selection name="obj_18_score" source="r_obj_18_score"/>
+            <field-selection name="obj_18_label" source="r_obj_18_label"/>
+            <field-selection name="obj_19_x" source="r_obj_19_x"/>
+            <field-selection name="obj_19_y" source="r_obj_19_y"/>
+            <field-selection name="obj_19_w" source="r_obj_19_w"/>
+            <field-selection name="obj_19_h" source="r_obj_19_h"/>
+            <field-selection name="obj_19_score" source="r_obj_19_score"/>
+            <field-selection name="obj_19_label" source="r_obj_19_label"/>
+            <field-selection name="obj_20_x" source="r_obj_20_x"/>
+            <field-selection name="obj_20_y" source="r_obj_20_y"/>
+            <field-selection name="obj_20_w" source="r_obj_20_w"/>
+            <field-selection name="obj_20_h" source="r_obj_20_h"/>
+            <field-selection name="obj_20_score" source="r_obj_20_score"/>
+            <field-selection name="obj_20_label" source="r_obj_20_label"/>
+            <field-selection name="obj_21_x" source="r_obj_21_x"/>
+            <field-selection name="obj_21_y" source="r_obj_21_y"/>
+            <field-selection name="obj_21_w" source="r_obj_21_w"/>
+            <field-selection name="obj_21_h" source="r_obj_21_h"/>
+            <field-selection name="obj_21_score" source="r_obj_21_score"/>
+            <field-selection name="obj_21_label" source="r_obj_21_label"/>
+            <field-selection name="obj_22_x" source="r_obj_22_x"/>
+            <field-selection name="obj_22_y" source="r_obj_22_y"/>
+            <field-selection name="obj_22_w" source="r_obj_22_w"/>
+            <field-selection name="obj_22_h" source="r_obj_22_h"/>
+            <field-selection name="obj_22_score" source="r_obj_22_score"/>
+            <field-selection name="obj_22_label" source="r_obj_22_label"/>
+            <field-selection name="obj_23_x" source="r_obj_23_x"/>
+            <field-selection name="obj_23_y" source="r_obj_23_y"/>
+            <field-selection name="obj_23_w" source="r_obj_23_w"/>
+            <field-selection name="obj_23_h" source="r_obj_23_h"/>
+            <field-selection name="obj_23_score" source="r_obj_23_score"/>
+            <field-selection name="obj_23_label" source="r_obj_23_label"/>
+            <field-selection name="obj_24_x" source="r_obj_24_x"/>
+            <field-selection name="obj_24_y" source="r_obj_24_y"/>
+            <field-selection name="obj_24_w" source="r_obj_24_w"/>
+            <field-selection name="obj_24_h" source="r_obj_24_h"/>
+            <field-selection name="obj_24_score" source="r_obj_24_score"/>
+            <field-selection name="obj_24_label" source="r_obj_24_label"/>
+            <field-selection name="obj_25_x" source="r_obj_25_x"/>
+            <field-selection name="obj_25_y" source="r_obj_25_y"/>
+            <field-selection name="obj_25_w" source="r_obj_25_w"/>
+            <field-selection name="obj_25_h" source="r_obj_25_h"/>
+            <field-selection name="obj_25_score" source="r_obj_25_score"/>
+            <field-selection name="obj_25_label" source="r_obj_25_label"/>
+            <field-selection name="obj_26_x" source="r_obj_26_x"/>
+            <field-selection name="obj_26_y" source="r_obj_26_y"/>
+            <field-selection name="obj_26_w" source="r_obj_26_w"/>
+            <field-selection name="obj_26_h" source="r_obj_26_h"/>
+            <field-selection name="obj_26_score" source="r_obj_26_score"/>
+            <field-selection name="obj_26_label" source="r_obj_26_label"/>
+            <field-selection name="obj_27_x" source="r_obj_27_x"/>
+            <field-selection name="obj_27_y" source="r_obj_27_y"/>
+            <field-selection name="obj_27_w" source="r_obj_27_w"/>
+            <field-selection name="obj_27_h" source="r_obj_27_h"/>
+            <field-selection name="obj_27_score" source="r_obj_27_score"/>
+            <field-selection name="obj_27_label" source="r_obj_27_label"/>
+            <field-selection name="obj_28_x" source="r_obj_28_x"/>
+            <field-selection name="obj_28_y" source="r_obj_28_y"/>
+            <field-selection name="obj_28_w" source="r_obj_28_w"/>
+            <field-selection name="obj_28_h" source="r_obj_28_h"/>
+            <field-selection name="obj_28_score" source="r_obj_28_score"/>
+            <field-selection name="obj_28_label" source="r_obj_28_label"/>
+            <field-selection name="obj_29_x" source="r_obj_29_x"/>
+            <field-selection name="obj_29_y" source="r_obj_29_y"/>
+            <field-selection name="obj_29_w" source="r_obj_29_w"/>
+            <field-selection name="obj_29_h" source="r_obj_29_h"/>
+            <field-selection name="obj_29_score" source="r_obj_29_score"/>
+            <field-selection name="obj_29_label" source="r_obj_29_label"/>
+            <field-selection name="obj_30_x" source="r_obj_30_x"/>
+            <field-selection name="obj_30_y" source="r_obj_30_y"/>
+            <field-selection name="obj_30_w" source="r_obj_30_w"/>
+            <field-selection name="obj_30_h" source="r_obj_30_h"/>
+            <field-selection name="obj_30_score" source="r_obj_30_score"/>
+            <field-selection name="obj_30_label" source="r_obj_30_label"/>
+            <field-selection name="obj_31_x" source="r_obj_31_x"/>
+            <field-selection name="obj_31_y" source="r_obj_31_y"/>
+            <field-selection name="obj_31_w" source="r_obj_31_w"/>
+            <field-selection name="obj_31_h" source="r_obj_31_h"/>
+            <field-selection name="obj_31_score" source="r_obj_31_score"/>
+            <field-selection name="obj_31_label" source="r_obj_31_label"/>
+            <field-selection name="obj_32_x" source="r_obj_32_x"/>
+            <field-selection name="obj_32_y" source="r_obj_32_y"/>
+            <field-selection name="obj_32_w" source="r_obj_32_w"/>
+            <field-selection name="obj_32_h" source="r_obj_32_h"/>
+            <field-selection name="obj_32_score" source="r_obj_32_score"/>
+            <field-selection name="obj_32_label" source="r_obj_32_label"/>
+            <field-selection name="obj_33_x" source="r_obj_33_x"/>
+            <field-selection name="obj_33_y" source="r_obj_33_y"/>
+            <field-selection name="obj_33_w" source="r_obj_33_w"/>
+            <field-selection name="obj_33_h" source="r_obj_33_h"/>
+            <field-selection name="obj_33_score" source="r_obj_33_score"/>
+            <field-selection name="obj_33_label" source="r_obj_33_label"/>
+            <field-selection name="obj_34_x" source="r_obj_34_x"/>
+            <field-selection name="obj_34_y" source="r_obj_34_y"/>
+            <field-selection name="obj_34_w" source="r_obj_34_w"/>
+            <field-selection name="obj_34_h" source="r_obj_34_h"/>
+            <field-selection name="obj_34_score" source="r_obj_34_score"/>
+            <field-selection name="obj_34_label" source="r_obj_34_label"/>
+            <field-selection name="obj_35_x" source="r_obj_35_x"/>
+            <field-selection name="obj_35_y" source="r_obj_35_y"/>
+            <field-selection name="obj_35_w" source="r_obj_35_w"/>
+            <field-selection name="obj_35_h" source="r_obj_35_h"/>
+            <field-selection name="obj_35_score" source="r_obj_35_score"/>
+            <field-selection name="obj_35_label" source="r_obj_35_label"/>
+            <field-selection name="obj_36_x" source="r_obj_36_x"/>
+            <field-selection name="obj_36_y" source="r_obj_36_y"/>
+            <field-selection name="obj_36_w" source="r_obj_36_w"/>
+            <field-selection name="obj_36_h" source="r_obj_36_h"/>
+            <field-selection name="obj_36_score" source="r_obj_36_score"/>
+            <field-selection name="obj_36_label" source="r_obj_36_label"/>
+            <field-selection name="obj_37_x" source="r_obj_37_x"/>
+            <field-selection name="obj_37_y" source="r_obj_37_y"/>
+            <field-selection name="obj_37_w" source="r_obj_37_w"/>
+            <field-selection name="obj_37_h" source="r_obj_37_h"/>
+            <field-selection name="obj_37_score" source="r_obj_37_score"/>
+            <field-selection name="obj_37_label" source="r_obj_37_label"/>
+            <field-selection name="obj_38_x" source="r_obj_38_x"/>
+            <field-selection name="obj_38_y" source="r_obj_38_y"/>
+            <field-selection name="obj_38_w" source="r_obj_38_w"/>
+            <field-selection name="obj_38_h" source="r_obj_38_h"/>
+            <field-selection name="obj_38_score" source="r_obj_38_score"/>
+            <field-selection name="obj_38_label" source="r_obj_38_label"/>
+            <field-selection name="obj_39_x" source="r_obj_39_x"/>
+            <field-selection name="obj_39_y" source="r_obj_39_y"/>
+            <field-selection name="obj_39_w" source="r_obj_39_w"/>
+            <field-selection name="obj_39_h" source="r_obj_39_h"/>
+            <field-selection name="obj_39_score" source="r_obj_39_score"/>
+            <field-selection name="obj_39_label" source="r_obj_39_label"/>
+            <field-selection name="obj_40_x" source="r_obj_40_x"/>
+            <field-selection name="obj_40_y" source="r_obj_40_y"/>
+            <field-selection name="obj_40_w" source="r_obj_40_w"/>
+            <field-selection name="obj_40_h" source="r_obj_40_h"/>
+            <field-selection name="obj_40_score" source="r_obj_40_score"/>
+            <field-selection name="obj_40_label" source="r_obj_40_label"/>
+            <field-selection name="obj_41_x" source="r_obj_41_x"/>
+            <field-selection name="obj_41_y" source="r_obj_41_y"/>
+            <field-selection name="obj_41_w" source="r_obj_41_w"/>
+            <field-selection name="obj_41_h" source="r_obj_41_h"/>
+            <field-selection name="obj_41_score" source="r_obj_41_score"/>
+            <field-selection name="obj_41_label" source="r_obj_41_label"/>
+            <field-selection name="obj_42_x" source="r_obj_42_x"/>
+            <field-selection name="obj_42_y" source="r_obj_42_y"/>
+            <field-selection name="obj_42_w" source="r_obj_42_w"/>
+            <field-selection name="obj_42_h" source="r_obj_42_h"/>
+            <field-selection name="obj_42_score" source="r_obj_42_score"/>
+            <field-selection name="obj_42_label" source="r_obj_42_label"/>
+            <field-selection name="obj_43_x" source="r_obj_43_x"/>
+            <field-selection name="obj_43_y" source="r_obj_43_y"/>
+            <field-selection name="obj_43_w" source="r_obj_43_w"/>
+            <field-selection name="obj_43_h" source="r_obj_43_h"/>
+            <field-selection name="obj_43_score" source="r_obj_43_score"/>
+            <field-selection name="obj_43_label" source="r_obj_43_label"/>
+            <field-selection name="obj_44_x" source="r_obj_44_x"/>
+            <field-selection name="obj_44_y" source="r_obj_44_y"/>
+            <field-selection name="obj_44_w" source="r_obj_44_w"/>
+            <field-selection name="obj_44_h" source="r_obj_44_h"/>
+            <field-selection name="obj_44_score" source="r_obj_44_score"/>
+            <field-selection name="obj_44_label" source="r_obj_44_label"/>
+            <field-selection name="obj_45_x" source="r_obj_45_x"/>
+            <field-selection name="obj_45_y" source="r_obj_45_y"/>
+            <field-selection name="obj_45_w" source="r_obj_45_w"/>
+            <field-selection name="obj_45_h" source="r_obj_45_h"/>
+            <field-selection name="obj_45_score" source="r_obj_45_score"/>
+            <field-selection name="obj_45_label" source="r_obj_45_label"/>
+            <field-selection name="obj_46_x" source="r_obj_46_x"/>
+            <field-selection name="obj_46_y" source="r_obj_46_y"/>
+            <field-selection name="obj_46_w" source="r_obj_46_w"/>
+            <field-selection name="obj_46_h" source="r_obj_46_h"/>
+            <field-selection name="obj_46_score" source="r_obj_46_score"/>
+            <field-selection name="obj_46_label" source="r_obj_46_label"/>
+            <field-selection name="obj_47_x" source="r_obj_47_x"/>
+            <field-selection name="obj_47_y" source="r_obj_47_y"/>
+            <field-selection name="obj_47_w" source="r_obj_47_w"/>
+            <field-selection name="obj_47_h" source="r_obj_47_h"/>
+            <field-selection name="obj_47_score" source="r_obj_47_score"/>
+            <field-selection name="obj_47_label" source="r_obj_47_label"/>
+            <field-selection name="obj_48_x" source="r_obj_48_x"/>
+            <field-selection name="obj_48_y" source="r_obj_48_y"/>
+            <field-selection name="obj_48_w" source="r_obj_48_w"/>
+            <field-selection name="obj_48_h" source="r_obj_48_h"/>
+            <field-selection name="obj_48_score" source="r_obj_48_score"/>
+            <field-selection name="obj_48_label" source="r_obj_48_label"/>
+            <field-selection name="obj_49_x" source="r_obj_49_x"/>
+            <field-selection name="obj_49_y" source="r_obj_49_y"/>
+            <field-selection name="obj_49_w" source="r_obj_49_w"/>
+            <field-selection name="obj_49_h" source="r_obj_49_h"/>
+            <field-selection name="obj_49_score" source="r_obj_49_score"/>
+            <field-selection name="obj_49_label" source="r_obj_49_label"/>
+            <field-selection name="obj_50_x" source="r_obj_50_x"/>
+            <field-selection name="obj_50_y" source="r_obj_50_y"/>
+            <field-selection name="obj_50_w" source="r_obj_50_w"/>
+            <field-selection name="obj_50_h" source="r_obj_50_h"/>
+            <field-selection name="obj_50_score" source="r_obj_50_score"/>
+            <field-selection name="obj_50_label" source="r_obj_50_label"/>
+            <field-selection name="obj_51_x" source="r_obj_51_x"/>
+            <field-selection name="obj_51_y" source="r_obj_51_y"/>
+            <field-selection name="obj_51_w" source="r_obj_51_w"/>
+            <field-selection name="obj_51_h" source="r_obj_51_h"/>
+            <field-selection name="obj_51_score" source="r_obj_51_score"/>
+            <field-selection name="obj_51_label" source="r_obj_51_label"/>
+            <field-selection name="obj_52_x" source="r_obj_52_x"/>
+            <field-selection name="obj_52_y" source="r_obj_52_y"/>
+            <field-selection name="obj_52_w" source="r_obj_52_w"/>
+            <field-selection name="obj_52_h" source="r_obj_52_h"/>
+            <field-selection name="obj_52_score" source="r_obj_52_score"/>
+            <field-selection name="obj_52_label" source="r_obj_52_label"/>
+            <field-selection name="obj_53_x" source="r_obj_53_x"/>
+            <field-selection name="obj_53_y" source="r_obj_53_y"/>
+            <field-selection name="obj_53_w" source="r_obj_53_w"/>
+            <field-selection name="obj_53_h" source="r_obj_53_h"/>
+            <field-selection name="obj_53_score" source="r_obj_53_score"/>
+            <field-selection name="obj_53_label" source="r_obj_53_label"/>
+            <field-selection name="obj_54_x" source="r_obj_54_x"/>
+            <field-selection name="obj_54_y" source="r_obj_54_y"/>
+            <field-selection name="obj_54_w" source="r_obj_54_w"/>
+            <field-selection name="obj_54_h" source="r_obj_54_h"/>
+            <field-selection name="obj_54_score" source="r_obj_54_score"/>
+            <field-selection name="obj_54_label" source="r_obj_54_label"/>
+            <field-selection name="obj_55_x" source="r_obj_55_x"/>
+            <field-selection name="obj_55_y" source="r_obj_55_y"/>
+            <field-selection name="obj_55_w" source="r_obj_55_w"/>
+            <field-selection name="obj_55_h" source="r_obj_55_h"/>
+            <field-selection name="obj_55_score" source="r_obj_55_score"/>
+            <field-selection name="obj_55_label" source="r_obj_55_label"/>
+            <field-selection name="obj_56_x" source="r_obj_56_x"/>
+            <field-selection name="obj_56_y" source="r_obj_56_y"/>
+            <field-selection name="obj_56_w" source="r_obj_56_w"/>
+            <field-selection name="obj_56_h" source="r_obj_56_h"/>
+            <field-selection name="obj_56_score" source="r_obj_56_score"/>
+            <field-selection name="obj_56_label" source="r_obj_56_label"/>
+            <field-selection name="obj_57_x" source="r_obj_57_x"/>
+            <field-selection name="obj_57_y" source="r_obj_57_y"/>
+            <field-selection name="obj_57_w" source="r_obj_57_w"/>
+            <field-selection name="obj_57_h" source="r_obj_57_h"/>
+            <field-selection name="obj_57_score" source="r_obj_57_score"/>
+            <field-selection name="obj_57_label" source="r_obj_57_label"/>
+            <field-selection name="obj_58_x" source="r_obj_58_x"/>
+            <field-selection name="obj_58_y" source="r_obj_58_y"/>
+            <field-selection name="obj_58_w" source="r_obj_58_w"/>
+            <field-selection name="obj_58_h" source="r_obj_58_h"/>
+            <field-selection name="obj_58_score" source="r_obj_58_score"/>
+            <field-selection name="obj_58_label" source="r_obj_58_label"/>
+            <field-selection name="obj_59_x" source="r_obj_59_x"/>
+            <field-selection name="obj_59_y" source="r_obj_59_y"/>
+            <field-selection name="obj_59_w" source="r_obj_59_w"/>
+            <field-selection name="obj_59_h" source="r_obj_59_h"/>
+            <field-selection name="obj_59_score" source="r_obj_59_score"/>
+            <field-selection name="obj_59_label" source="r_obj_59_label"/>
+            <field-selection name="obj_60_x" source="r_obj_60_x"/>
+            <field-selection name="obj_60_y" source="r_obj_60_y"/>
+            <field-selection name="obj_60_w" source="r_obj_60_w"/>
+            <field-selection name="obj_60_h" source="r_obj_60_h"/>
+            <field-selection name="obj_60_score" source="r_obj_60_score"/>
+            <field-selection name="obj_60_label" source="r_obj_60_label"/>
+            <field-selection name="obj_61_x" source="r_obj_61_x"/>
+            <field-selection name="obj_61_y" source="r_obj_61_y"/>
+            <field-selection name="obj_61_w" source="r_obj_61_w"/>
+            <field-selection name="obj_61_h" source="r_obj_61_h"/>
+            <field-selection name="obj_61_score" source="r_obj_61_score"/>
+            <field-selection name="obj_61_label" source="r_obj_61_label"/>
+            <field-selection name="obj_62_x" source="r_obj_62_x"/>
+            <field-selection name="obj_62_y" source="r_obj_62_y"/>
+            <field-selection name="obj_62_w" source="r_obj_62_w"/>
+            <field-selection name="obj_62_h" source="r_obj_62_h"/>
+            <field-selection name="obj_62_score" source="r_obj_62_score"/>
+            <field-selection name="obj_62_label" source="r_obj_62_label"/>
+            <field-selection name="obj_63_x" source="r_obj_63_x"/>
+            <field-selection name="obj_63_y" source="r_obj_63_y"/>
+            <field-selection name="obj_63_w" source="r_obj_63_w"/>
+            <field-selection name="obj_63_h" source="r_obj_63_h"/>
+            <field-selection name="obj_63_score" source="r_obj_63_score"/>
+            <field-selection name="obj_63_label" source="r_obj_63_label"/>
+            <field-selection name="obj_64_x" source="r_obj_64_x"/>
+            <field-selection name="obj_64_y" source="r_obj_64_y"/>
+            <field-selection name="obj_64_w" source="r_obj_64_w"/>
+            <field-selection name="obj_64_h" source="r_obj_64_h"/>
+            <field-selection name="obj_64_score" source="r_obj_64_score"/>
+            <field-selection name="obj_64_label" source="r_obj_64_label"/>
+            <field-selection name="obj_65_x" source="r_obj_65_x"/>
+            <field-selection name="obj_65_y" source="r_obj_65_y"/>
+            <field-selection name="obj_65_w" source="r_obj_65_w"/>
+            <field-selection name="obj_65_h" source="r_obj_65_h"/>
+            <field-selection name="obj_65_score" source="r_obj_65_score"/>
+            <field-selection name="obj_65_label" source="r_obj_65_label"/>
+          </output>
+        </window-join>
+        <window-object-tracker pubsub="true" name="tracking">
+          <description><![CDATA[tracking is an Object Tracker window. This is where incoming detection data is used to perform multi-object tracking. This window uses an input schema to propose detections.]]></description>
+          <tracker method="iou" score-sigma-low="0.3" score-sigma-high="0.7" iou-sigma="0.6" iou-sigma2="0.3" iou-sigma-dup="0" velocity-vector-frames="11" max-track-lives="60" min-track-length="0" track-retention="0"/>
+          <output mode="wide" tracks="65" velocity-vector="true"/>
+          <input count="objCount" score="obj_%_score" label="obj_%_label" coord-type="rect" x="obj_%_x" y="obj_%_y" width="obj_%_w" height="obj_%_h"/>
+        </window-object-tracker>
+        <window-functional pubsub="true" index="pi_EMPTY" name="outputTracks">
+          <description><![CDATA[outputTracks is a Functional window. This is where the output tracks are written. A list of output tracks is written to the outputTracks.csv file.]]></description>
+          <schema>
+            <fields>
+              <field name="ID" type="int64" key="true"/>
+              <field name="objCount" type="int32"/>
+              <field name="Object_density" type="int32"/>
+              <field name="Object0_id" type="int64"/>
+              <field name="Object0_label" type="string"/>
+              <field name="Object0_score" type="double"/>
+              <field name="Object0_x" type="double"/>
+              <field name="Object0_y" type="double"/>
+              <field name="Object0_w" type="double"/>
+              <field name="Object0_h" type="double"/>
+              <field name="Object0_center_x" type="double"/>
+              <field name="Object0_center_y" type="double"/>
+              <field name="Object0_track_x" type="array(dbl)"/>
+              <field name="Object0_track_y" type="array(dbl)"/>
+              <field name="Object0_vvect_x" type="double"/>
+              <field name="Object0_vvect_y" type="double"/>
+              <field name="Object1_id" type="int64"/>
+              <field name="Object1_label" type="string"/>
+              <field name="Object1_score" type="double"/>
+              <field name="Object1_x" type="double"/>
+              <field name="Object1_y" type="double"/>
+              <field name="Object1_w" type="double"/>
+              <field name="Object1_h" type="double"/>
+              <field name="Object1_center_x" type="double"/>
+              <field name="Object1_center_y" type="double"/>
+              <field name="Object1_track_x" type="array(dbl)"/>
+              <field name="Object1_track_y" type="array(dbl)"/>
+              <field name="Object1_vvect_x" type="double"/>
+              <field name="Object1_vvect_y" type="double"/>
+              <field name="Object2_id" type="int64"/>
+              <field name="Object2_label" type="string"/>
+              <field name="Object2_score" type="double"/>
+              <field name="Object2_x" type="double"/>
+              <field name="Object2_y" type="double"/>
+              <field name="Object2_w" type="double"/>
+              <field name="Object2_h" type="double"/>
+              <field name="Object2_center_x" type="double"/>
+              <field name="Object2_center_y" type="double"/>
+              <field name="Object2_track_x" type="array(dbl)"/>
+              <field name="Object2_track_y" type="array(dbl)"/>
+              <field name="Object2_vvect_x" type="double"/>
+              <field name="Object2_vvect_y" type="double"/>
+              <field name="Object3_id" type="int64"/>
+              <field name="Object3_label" type="string"/>
+              <field name="Object3_score" type="double"/>
+              <field name="Object3_x" type="double"/>
+              <field name="Object3_y" type="double"/>
+              <field name="Object3_w" type="double"/>
+              <field name="Object3_h" type="double"/>
+              <field name="Object3_center_x" type="double"/>
+              <field name="Object3_center_y" type="double"/>
+              <field name="Object3_track_x" type="array(dbl)"/>
+              <field name="Object3_track_y" type="array(dbl)"/>
+              <field name="Object3_vvect_x" type="double"/>
+              <field name="Object3_vvect_y" type="double"/>
+              <field name="Object4_id" type="int64"/>
+              <field name="Object4_label" type="string"/>
+              <field name="Object4_score" type="double"/>
+              <field name="Object4_x" type="double"/>
+              <field name="Object4_y" type="double"/>
+              <field name="Object4_w" type="double"/>
+              <field name="Object4_h" type="double"/>
+              <field name="Object4_center_x" type="double"/>
+              <field name="Object4_center_y" type="double"/>
+              <field name="Object4_track_x" type="array(dbl)"/>
+              <field name="Object4_track_y" type="array(dbl)"/>
+              <field name="Object4_vvect_x" type="double"/>
+              <field name="Object4_vvect_y" type="double"/>
+              <field name="Object5_id" type="int64"/>
+              <field name="Object5_label" type="string"/>
+              <field name="Object5_score" type="double"/>
+              <field name="Object5_x" type="double"/>
+              <field name="Object5_y" type="double"/>
+              <field name="Object5_w" type="double"/>
+              <field name="Object5_h" type="double"/>
+              <field name="Object5_center_x" type="double"/>
+              <field name="Object5_center_y" type="double"/>
+              <field name="Object5_track_x" type="array(dbl)"/>
+              <field name="Object5_track_y" type="array(dbl)"/>
+              <field name="Object5_vvect_x" type="double"/>
+              <field name="Object5_vvect_y" type="double"/>
+              <field name="Object6_id" type="int64"/>
+              <field name="Object6_label" type="string"/>
+              <field name="Object6_score" type="double"/>
+              <field name="Object6_x" type="double"/>
+              <field name="Object6_y" type="double"/>
+              <field name="Object6_w" type="double"/>
+              <field name="Object6_h" type="double"/>
+              <field name="Object6_center_x" type="double"/>
+              <field name="Object6_center_y" type="double"/>
+              <field name="Object6_track_x" type="array(dbl)"/>
+              <field name="Object6_track_y" type="array(dbl)"/>
+              <field name="Object6_vvect_x" type="double"/>
+              <field name="Object6_vvect_y" type="double"/>
+              <field name="Object7_id" type="int64"/>
+              <field name="Object7_label" type="string"/>
+              <field name="Object7_score" type="double"/>
+              <field name="Object7_x" type="double"/>
+              <field name="Object7_y" type="double"/>
+              <field name="Object7_w" type="double"/>
+              <field name="Object7_h" type="double"/>
+              <field name="Object7_center_x" type="double"/>
+              <field name="Object7_center_y" type="double"/>
+              <field name="Object7_track_x" type="array(dbl)"/>
+              <field name="Object7_track_y" type="array(dbl)"/>
+              <field name="Object7_vvect_x" type="double"/>
+              <field name="Object7_vvect_y" type="double"/>
+              <field name="Object8_id" type="int64"/>
+              <field name="Object8_label" type="string"/>
+              <field name="Object8_score" type="double"/>
+              <field name="Object8_x" type="double"/>
+              <field name="Object8_y" type="double"/>
+              <field name="Object8_w" type="double"/>
+              <field name="Object8_h" type="double"/>
+              <field name="Object8_center_x" type="double"/>
+              <field name="Object8_center_y" type="double"/>
+              <field name="Object8_track_x" type="array(dbl)"/>
+              <field name="Object8_track_y" type="array(dbl)"/>
+              <field name="Object8_vvect_x" type="double"/>
+              <field name="Object8_vvect_y" type="double"/>
+              <field name="Object9_id" type="int64"/>
+              <field name="Object9_label" type="string"/>
+              <field name="Object9_score" type="double"/>
+              <field name="Object9_x" type="double"/>
+              <field name="Object9_y" type="double"/>
+              <field name="Object9_w" type="double"/>
+              <field name="Object9_h" type="double"/>
+              <field name="Object9_center_x" type="double"/>
+              <field name="Object9_center_y" type="double"/>
+              <field name="Object9_track_x" type="array(dbl)"/>
+              <field name="Object9_track_y" type="array(dbl)"/>
+              <field name="Object9_vvect_x" type="double"/>
+              <field name="Object9_vvect_y" type="double"/>
+              <field name="Object10_id" type="int64"/>
+              <field name="Object10_label" type="string"/>
+              <field name="Object10_score" type="double"/>
+              <field name="Object10_x" type="double"/>
+              <field name="Object10_y" type="double"/>
+              <field name="Object10_w" type="double"/>
+              <field name="Object10_h" type="double"/>
+              <field name="Object10_center_x" type="double"/>
+              <field name="Object10_center_y" type="double"/>
+              <field name="Object10_track_x" type="array(dbl)"/>
+              <field name="Object10_track_y" type="array(dbl)"/>
+              <field name="Object10_vvect_x" type="double"/>
+              <field name="Object10_vvect_y" type="double"/>
+              <field name="Object11_id" type="int64"/>
+              <field name="Object11_label" type="string"/>
+              <field name="Object11_score" type="double"/>
+              <field name="Object11_x" type="double"/>
+              <field name="Object11_y" type="double"/>
+              <field name="Object11_w" type="double"/>
+              <field name="Object11_h" type="double"/>
+              <field name="Object11_center_x" type="double"/>
+              <field name="Object11_center_y" type="double"/>
+              <field name="Object11_track_x" type="array(dbl)"/>
+              <field name="Object11_track_y" type="array(dbl)"/>
+              <field name="Object11_vvect_x" type="double"/>
+              <field name="Object11_vvect_y" type="double"/>
+              <field name="Object12_id" type="int64"/>
+              <field name="Object12_label" type="string"/>
+              <field name="Object12_score" type="double"/>
+              <field name="Object12_x" type="double"/>
+              <field name="Object12_y" type="double"/>
+              <field name="Object12_w" type="double"/>
+              <field name="Object12_h" type="double"/>
+              <field name="Object12_center_x" type="double"/>
+              <field name="Object12_center_y" type="double"/>
+              <field name="Object12_track_x" type="array(dbl)"/>
+              <field name="Object12_track_y" type="array(dbl)"/>
+              <field name="Object12_vvect_x" type="double"/>
+              <field name="Object12_vvect_y" type="double"/>
+              <field name="Object13_id" type="int64"/>
+              <field name="Object13_label" type="string"/>
+              <field name="Object13_score" type="double"/>
+              <field name="Object13_x" type="double"/>
+              <field name="Object13_y" type="double"/>
+              <field name="Object13_w" type="double"/>
+              <field name="Object13_h" type="double"/>
+              <field name="Object13_center_x" type="double"/>
+              <field name="Object13_center_y" type="double"/>
+              <field name="Object13_track_x" type="array(dbl)"/>
+              <field name="Object13_track_y" type="array(dbl)"/>
+              <field name="Object13_vvect_x" type="double"/>
+              <field name="Object13_vvect_y" type="double"/>
+              <field name="Object14_id" type="int64"/>
+              <field name="Object14_label" type="string"/>
+              <field name="Object14_score" type="double"/>
+              <field name="Object14_x" type="double"/>
+              <field name="Object14_y" type="double"/>
+              <field name="Object14_w" type="double"/>
+              <field name="Object14_h" type="double"/>
+              <field name="Object14_center_x" type="double"/>
+              <field name="Object14_center_y" type="double"/>
+              <field name="Object14_track_x" type="array(dbl)"/>
+              <field name="Object14_track_y" type="array(dbl)"/>
+              <field name="Object14_vvect_x" type="double"/>
+              <field name="Object14_vvect_y" type="double"/>
+              <field name="Object15_id" type="int64"/>
+              <field name="Object15_label" type="string"/>
+              <field name="Object15_score" type="double"/>
+              <field name="Object15_x" type="double"/>
+              <field name="Object15_y" type="double"/>
+              <field name="Object15_w" type="double"/>
+              <field name="Object15_h" type="double"/>
+              <field name="Object15_center_x" type="double"/>
+              <field name="Object15_center_y" type="double"/>
+              <field name="Object15_track_x" type="array(dbl)"/>
+              <field name="Object15_track_y" type="array(dbl)"/>
+              <field name="Object15_vvect_x" type="double"/>
+              <field name="Object15_vvect_y" type="double"/>
+              <field name="Object16_id" type="int64"/>
+              <field name="Object16_label" type="string"/>
+              <field name="Object16_score" type="double"/>
+              <field name="Object16_x" type="double"/>
+              <field name="Object16_y" type="double"/>
+              <field name="Object16_w" type="double"/>
+              <field name="Object16_h" type="double"/>
+              <field name="Object16_center_x" type="double"/>
+              <field name="Object16_center_y" type="double"/>
+              <field name="Object16_track_x" type="array(dbl)"/>
+              <field name="Object16_track_y" type="array(dbl)"/>
+              <field name="Object16_vvect_x" type="double"/>
+              <field name="Object16_vvect_y" type="double"/>
+              <field name="Object17_id" type="int64"/>
+              <field name="Object17_label" type="string"/>
+              <field name="Object17_score" type="double"/>
+              <field name="Object17_x" type="double"/>
+              <field name="Object17_y" type="double"/>
+              <field name="Object17_w" type="double"/>
+              <field name="Object17_h" type="double"/>
+              <field name="Object17_center_x" type="double"/>
+              <field name="Object17_center_y" type="double"/>
+              <field name="Object17_track_x" type="array(dbl)"/>
+              <field name="Object17_track_y" type="array(dbl)"/>
+              <field name="Object17_vvect_x" type="double"/>
+              <field name="Object17_vvect_y" type="double"/>
+              <field name="Object18_id" type="int64"/>
+              <field name="Object18_label" type="string"/>
+              <field name="Object18_score" type="double"/>
+              <field name="Object18_x" type="double"/>
+              <field name="Object18_y" type="double"/>
+              <field name="Object18_w" type="double"/>
+              <field name="Object18_h" type="double"/>
+              <field name="Object18_center_x" type="double"/>
+              <field name="Object18_center_y" type="double"/>
+              <field name="Object18_track_x" type="array(dbl)"/>
+              <field name="Object18_track_y" type="array(dbl)"/>
+              <field name="Object18_vvect_x" type="double"/>
+              <field name="Object18_vvect_y" type="double"/>
+              <field name="Object19_id" type="int64"/>
+              <field name="Object19_label" type="string"/>
+              <field name="Object19_score" type="double"/>
+              <field name="Object19_x" type="double"/>
+              <field name="Object19_y" type="double"/>
+              <field name="Object19_w" type="double"/>
+              <field name="Object19_h" type="double"/>
+              <field name="Object19_center_x" type="double"/>
+              <field name="Object19_center_y" type="double"/>
+              <field name="Object19_track_x" type="array(dbl)"/>
+              <field name="Object19_track_y" type="array(dbl)"/>
+              <field name="Object19_vvect_x" type="double"/>
+              <field name="Object19_vvect_y" type="double"/>
+              <field name="Object20_id" type="int64"/>
+              <field name="Object20_label" type="string"/>
+              <field name="Object20_score" type="double"/>
+              <field name="Object20_x" type="double"/>
+              <field name="Object20_y" type="double"/>
+              <field name="Object20_w" type="double"/>
+              <field name="Object20_h" type="double"/>
+              <field name="Object20_center_x" type="double"/>
+              <field name="Object20_center_y" type="double"/>
+              <field name="Object20_track_x" type="array(dbl)"/>
+              <field name="Object20_track_y" type="array(dbl)"/>
+              <field name="Object20_vvect_x" type="double"/>
+              <field name="Object20_vvect_y" type="double"/>
+              <field name="Object21_id" type="int64"/>
+              <field name="Object21_label" type="string"/>
+              <field name="Object21_score" type="double"/>
+              <field name="Object21_x" type="double"/>
+              <field name="Object21_y" type="double"/>
+              <field name="Object21_w" type="double"/>
+              <field name="Object21_h" type="double"/>
+              <field name="Object21_center_x" type="double"/>
+              <field name="Object21_center_y" type="double"/>
+              <field name="Object21_track_x" type="array(dbl)"/>
+              <field name="Object21_track_y" type="array(dbl)"/>
+              <field name="Object21_vvect_x" type="double"/>
+              <field name="Object21_vvect_y" type="double"/>
+              <field name="Object22_id" type="int64"/>
+              <field name="Object22_label" type="string"/>
+              <field name="Object22_score" type="double"/>
+              <field name="Object22_x" type="double"/>
+              <field name="Object22_y" type="double"/>
+              <field name="Object22_w" type="double"/>
+              <field name="Object22_h" type="double"/>
+              <field name="Object22_center_x" type="double"/>
+              <field name="Object22_center_y" type="double"/>
+              <field name="Object22_track_x" type="array(dbl)"/>
+              <field name="Object22_track_y" type="array(dbl)"/>
+              <field name="Object22_vvect_x" type="double"/>
+              <field name="Object22_vvect_y" type="double"/>
+              <field name="Object23_id" type="int64"/>
+              <field name="Object23_label" type="string"/>
+              <field name="Object23_score" type="double"/>
+              <field name="Object23_x" type="double"/>
+              <field name="Object23_y" type="double"/>
+              <field name="Object23_w" type="double"/>
+              <field name="Object23_h" type="double"/>
+              <field name="Object23_center_x" type="double"/>
+              <field name="Object23_center_y" type="double"/>
+              <field name="Object23_track_x" type="array(dbl)"/>
+              <field name="Object23_track_y" type="array(dbl)"/>
+              <field name="Object23_vvect_x" type="double"/>
+              <field name="Object23_vvect_y" type="double"/>
+              <field name="Object24_id" type="int64"/>
+              <field name="Object24_label" type="string"/>
+              <field name="Object24_score" type="double"/>
+              <field name="Object24_x" type="double"/>
+              <field name="Object24_y" type="double"/>
+              <field name="Object24_w" type="double"/>
+              <field name="Object24_h" type="double"/>
+              <field name="Object24_center_x" type="double"/>
+              <field name="Object24_center_y" type="double"/>
+              <field name="Object24_track_x" type="array(dbl)"/>
+              <field name="Object24_track_y" type="array(dbl)"/>
+              <field name="Object24_vvect_x" type="double"/>
+              <field name="Object24_vvect_y" type="double"/>
+              <field name="Object25_id" type="int64"/>
+              <field name="Object25_label" type="string"/>
+              <field name="Object25_score" type="double"/>
+              <field name="Object25_x" type="double"/>
+              <field name="Object25_y" type="double"/>
+              <field name="Object25_w" type="double"/>
+              <field name="Object25_h" type="double"/>
+              <field name="Object25_center_x" type="double"/>
+              <field name="Object25_center_y" type="double"/>
+              <field name="Object25_track_x" type="array(dbl)"/>
+              <field name="Object25_track_y" type="array(dbl)"/>
+              <field name="Object25_vvect_x" type="double"/>
+              <field name="Object25_vvect_y" type="double"/>
+              <field name="Object26_id" type="int64"/>
+              <field name="Object26_label" type="string"/>
+              <field name="Object26_score" type="double"/>
+              <field name="Object26_x" type="double"/>
+              <field name="Object26_y" type="double"/>
+              <field name="Object26_w" type="double"/>
+              <field name="Object26_h" type="double"/>
+              <field name="Object26_center_x" type="double"/>
+              <field name="Object26_center_y" type="double"/>
+              <field name="Object26_track_x" type="array(dbl)"/>
+              <field name="Object26_track_y" type="array(dbl)"/>
+              <field name="Object26_vvect_x" type="double"/>
+              <field name="Object26_vvect_y" type="double"/>
+              <field name="Object27_id" type="int64"/>
+              <field name="Object27_label" type="string"/>
+              <field name="Object27_score" type="double"/>
+              <field name="Object27_x" type="double"/>
+              <field name="Object27_y" type="double"/>
+              <field name="Object27_w" type="double"/>
+              <field name="Object27_h" type="double"/>
+              <field name="Object27_center_x" type="double"/>
+              <field name="Object27_center_y" type="double"/>
+              <field name="Object27_track_x" type="array(dbl)"/>
+              <field name="Object27_track_y" type="array(dbl)"/>
+              <field name="Object27_vvect_x" type="double"/>
+              <field name="Object27_vvect_y" type="double"/>
+              <field name="Object28_id" type="int64"/>
+              <field name="Object28_label" type="string"/>
+              <field name="Object28_score" type="double"/>
+              <field name="Object28_x" type="double"/>
+              <field name="Object28_y" type="double"/>
+              <field name="Object28_w" type="double"/>
+              <field name="Object28_h" type="double"/>
+              <field name="Object28_center_x" type="double"/>
+              <field name="Object28_center_y" type="double"/>
+              <field name="Object28_track_x" type="array(dbl)"/>
+              <field name="Object28_track_y" type="array(dbl)"/>
+              <field name="Object28_vvect_x" type="double"/>
+              <field name="Object28_vvect_y" type="double"/>
+              <field name="Object29_id" type="int64"/>
+              <field name="Object29_label" type="string"/>
+              <field name="Object29_score" type="double"/>
+              <field name="Object29_x" type="double"/>
+              <field name="Object29_y" type="double"/>
+              <field name="Object29_w" type="double"/>
+              <field name="Object29_h" type="double"/>
+              <field name="Object29_center_x" type="double"/>
+              <field name="Object29_center_y" type="double"/>
+              <field name="Object29_track_x" type="array(dbl)"/>
+              <field name="Object29_track_y" type="array(dbl)"/>
+              <field name="Object29_vvect_x" type="double"/>
+              <field name="Object29_vvect_y" type="double"/>
+              <field name="Object30_id" type="int64"/>
+              <field name="Object30_label" type="string"/>
+              <field name="Object30_score" type="double"/>
+              <field name="Object30_x" type="double"/>
+              <field name="Object30_y" type="double"/>
+              <field name="Object30_w" type="double"/>
+              <field name="Object30_h" type="double"/>
+              <field name="Object30_center_x" type="double"/>
+              <field name="Object30_center_y" type="double"/>
+              <field name="Object30_track_x" type="array(dbl)"/>
+              <field name="Object30_track_y" type="array(dbl)"/>
+              <field name="Object30_vvect_x" type="double"/>
+              <field name="Object30_vvect_y" type="double"/>
+              <field name="Object31_id" type="int64"/>
+              <field name="Object31_label" type="string"/>
+              <field name="Object31_score" type="double"/>
+              <field name="Object31_x" type="double"/>
+              <field name="Object31_y" type="double"/>
+              <field name="Object31_w" type="double"/>
+              <field name="Object31_h" type="double"/>
+              <field name="Object31_center_x" type="double"/>
+              <field name="Object31_center_y" type="double"/>
+              <field name="Object31_track_x" type="array(dbl)"/>
+              <field name="Object31_track_y" type="array(dbl)"/>
+              <field name="Object31_vvect_x" type="double"/>
+              <field name="Object31_vvect_y" type="double"/>
+              <field name="Object32_id" type="int64"/>
+              <field name="Object32_label" type="string"/>
+              <field name="Object32_score" type="double"/>
+              <field name="Object32_x" type="double"/>
+              <field name="Object32_y" type="double"/>
+              <field name="Object32_w" type="double"/>
+              <field name="Object32_h" type="double"/>
+              <field name="Object32_center_x" type="double"/>
+              <field name="Object32_center_y" type="double"/>
+              <field name="Object32_track_x" type="array(dbl)"/>
+              <field name="Object32_track_y" type="array(dbl)"/>
+              <field name="Object32_vvect_x" type="double"/>
+              <field name="Object32_vvect_y" type="double"/>
+              <field name="Object33_id" type="int64"/>
+              <field name="Object33_label" type="string"/>
+              <field name="Object33_score" type="double"/>
+              <field name="Object33_x" type="double"/>
+              <field name="Object33_y" type="double"/>
+              <field name="Object33_w" type="double"/>
+              <field name="Object33_h" type="double"/>
+              <field name="Object33_center_x" type="double"/>
+              <field name="Object33_center_y" type="double"/>
+              <field name="Object33_track_x" type="array(dbl)"/>
+              <field name="Object33_track_y" type="array(dbl)"/>
+              <field name="Object33_vvect_x" type="double"/>
+              <field name="Object33_vvect_y" type="double"/>
+              <field name="Object34_id" type="int64"/>
+              <field name="Object34_label" type="string"/>
+              <field name="Object34_score" type="double"/>
+              <field name="Object34_x" type="double"/>
+              <field name="Object34_y" type="double"/>
+              <field name="Object34_w" type="double"/>
+              <field name="Object34_h" type="double"/>
+              <field name="Object34_center_x" type="double"/>
+              <field name="Object34_center_y" type="double"/>
+              <field name="Object34_track_x" type="array(dbl)"/>
+              <field name="Object34_track_y" type="array(dbl)"/>
+              <field name="Object34_vvect_x" type="double"/>
+              <field name="Object34_vvect_y" type="double"/>
+              <field name="Object35_id" type="int64"/>
+              <field name="Object35_label" type="string"/>
+              <field name="Object35_score" type="double"/>
+              <field name="Object35_x" type="double"/>
+              <field name="Object35_y" type="double"/>
+              <field name="Object35_w" type="double"/>
+              <field name="Object35_h" type="double"/>
+              <field name="Object35_center_x" type="double"/>
+              <field name="Object35_center_y" type="double"/>
+              <field name="Object35_track_x" type="array(dbl)"/>
+              <field name="Object35_track_y" type="array(dbl)"/>
+              <field name="Object35_vvect_x" type="double"/>
+              <field name="Object35_vvect_y" type="double"/>
+              <field name="Object36_id" type="int64"/>
+              <field name="Object36_label" type="string"/>
+              <field name="Object36_score" type="double"/>
+              <field name="Object36_x" type="double"/>
+              <field name="Object36_y" type="double"/>
+              <field name="Object36_w" type="double"/>
+              <field name="Object36_h" type="double"/>
+              <field name="Object36_center_x" type="double"/>
+              <field name="Object36_center_y" type="double"/>
+              <field name="Object36_track_x" type="array(dbl)"/>
+              <field name="Object36_track_y" type="array(dbl)"/>
+              <field name="Object36_vvect_x" type="double"/>
+              <field name="Object36_vvect_y" type="double"/>
+              <field name="Object37_id" type="int64"/>
+              <field name="Object37_label" type="string"/>
+              <field name="Object37_score" type="double"/>
+              <field name="Object37_x" type="double"/>
+              <field name="Object37_y" type="double"/>
+              <field name="Object37_w" type="double"/>
+              <field name="Object37_h" type="double"/>
+              <field name="Object37_center_x" type="double"/>
+              <field name="Object37_center_y" type="double"/>
+              <field name="Object37_track_x" type="array(dbl)"/>
+              <field name="Object37_track_y" type="array(dbl)"/>
+              <field name="Object37_vvect_x" type="double"/>
+              <field name="Object37_vvect_y" type="double"/>
+              <field name="Object38_id" type="int64"/>
+              <field name="Object38_label" type="string"/>
+              <field name="Object38_score" type="double"/>
+              <field name="Object38_x" type="double"/>
+              <field name="Object38_y" type="double"/>
+              <field name="Object38_w" type="double"/>
+              <field name="Object38_h" type="double"/>
+              <field name="Object38_center_x" type="double"/>
+              <field name="Object38_center_y" type="double"/>
+              <field name="Object38_track_x" type="array(dbl)"/>
+              <field name="Object38_track_y" type="array(dbl)"/>
+              <field name="Object38_vvect_x" type="double"/>
+              <field name="Object38_vvect_y" type="double"/>
+              <field name="Object39_id" type="int64"/>
+              <field name="Object39_label" type="string"/>
+              <field name="Object39_score" type="double"/>
+              <field name="Object39_x" type="double"/>
+              <field name="Object39_y" type="double"/>
+              <field name="Object39_w" type="double"/>
+              <field name="Object39_h" type="double"/>
+              <field name="Object39_center_x" type="double"/>
+              <field name="Object39_center_y" type="double"/>
+              <field name="Object39_track_x" type="array(dbl)"/>
+              <field name="Object39_track_y" type="array(dbl)"/>
+              <field name="Object39_vvect_x" type="double"/>
+              <field name="Object39_vvect_y" type="double"/>
+              <field name="Object40_id" type="int64"/>
+              <field name="Object40_label" type="string"/>
+              <field name="Object40_score" type="double"/>
+              <field name="Object40_x" type="double"/>
+              <field name="Object40_y" type="double"/>
+              <field name="Object40_w" type="double"/>
+              <field name="Object40_h" type="double"/>
+              <field name="Object40_center_x" type="double"/>
+              <field name="Object40_center_y" type="double"/>
+              <field name="Object40_track_x" type="array(dbl)"/>
+              <field name="Object40_track_y" type="array(dbl)"/>
+              <field name="Object40_vvect_x" type="double"/>
+              <field name="Object40_vvect_y" type="double"/>
+              <field name="Object41_id" type="int64"/>
+              <field name="Object41_label" type="string"/>
+              <field name="Object41_score" type="double"/>
+              <field name="Object41_x" type="double"/>
+              <field name="Object41_y" type="double"/>
+              <field name="Object41_w" type="double"/>
+              <field name="Object41_h" type="double"/>
+              <field name="Object41_center_x" type="double"/>
+              <field name="Object41_center_y" type="double"/>
+              <field name="Object41_track_x" type="array(dbl)"/>
+              <field name="Object41_track_y" type="array(dbl)"/>
+              <field name="Object41_vvect_x" type="double"/>
+              <field name="Object41_vvect_y" type="double"/>
+              <field name="Object42_id" type="int64"/>
+              <field name="Object42_label" type="string"/>
+              <field name="Object42_score" type="double"/>
+              <field name="Object42_x" type="double"/>
+              <field name="Object42_y" type="double"/>
+              <field name="Object42_w" type="double"/>
+              <field name="Object42_h" type="double"/>
+              <field name="Object42_center_x" type="double"/>
+              <field name="Object42_center_y" type="double"/>
+              <field name="Object42_track_x" type="array(dbl)"/>
+              <field name="Object42_track_y" type="array(dbl)"/>
+              <field name="Object42_vvect_x" type="double"/>
+              <field name="Object42_vvect_y" type="double"/>
+              <field name="Object43_id" type="int64"/>
+              <field name="Object43_label" type="string"/>
+              <field name="Object43_score" type="double"/>
+              <field name="Object43_x" type="double"/>
+              <field name="Object43_y" type="double"/>
+              <field name="Object43_w" type="double"/>
+              <field name="Object43_h" type="double"/>
+              <field name="Object43_center_x" type="double"/>
+              <field name="Object43_center_y" type="double"/>
+              <field name="Object43_track_x" type="array(dbl)"/>
+              <field name="Object43_track_y" type="array(dbl)"/>
+              <field name="Object43_vvect_x" type="double"/>
+              <field name="Object43_vvect_y" type="double"/>
+              <field name="Object44_id" type="int64"/>
+              <field name="Object44_label" type="string"/>
+              <field name="Object44_score" type="double"/>
+              <field name="Object44_x" type="double"/>
+              <field name="Object44_y" type="double"/>
+              <field name="Object44_w" type="double"/>
+              <field name="Object44_h" type="double"/>
+              <field name="Object44_center_x" type="double"/>
+              <field name="Object44_center_y" type="double"/>
+              <field name="Object44_track_x" type="array(dbl)"/>
+              <field name="Object44_track_y" type="array(dbl)"/>
+              <field name="Object44_vvect_x" type="double"/>
+              <field name="Object44_vvect_y" type="double"/>
+              <field name="Object45_id" type="int64"/>
+              <field name="Object45_label" type="string"/>
+              <field name="Object45_score" type="double"/>
+              <field name="Object45_x" type="double"/>
+              <field name="Object45_y" type="double"/>
+              <field name="Object45_w" type="double"/>
+              <field name="Object45_h" type="double"/>
+              <field name="Object45_center_x" type="double"/>
+              <field name="Object45_center_y" type="double"/>
+              <field name="Object45_track_x" type="array(dbl)"/>
+              <field name="Object45_track_y" type="array(dbl)"/>
+              <field name="Object45_vvect_x" type="double"/>
+              <field name="Object45_vvect_y" type="double"/>
+              <field name="Object46_id" type="int64"/>
+              <field name="Object46_label" type="string"/>
+              <field name="Object46_score" type="double"/>
+              <field name="Object46_x" type="double"/>
+              <field name="Object46_y" type="double"/>
+              <field name="Object46_w" type="double"/>
+              <field name="Object46_h" type="double"/>
+              <field name="Object46_center_x" type="double"/>
+              <field name="Object46_center_y" type="double"/>
+              <field name="Object46_track_x" type="array(dbl)"/>
+              <field name="Object46_track_y" type="array(dbl)"/>
+              <field name="Object46_vvect_x" type="double"/>
+              <field name="Object46_vvect_y" type="double"/>
+              <field name="Object47_id" type="int64"/>
+              <field name="Object47_label" type="string"/>
+              <field name="Object47_score" type="double"/>
+              <field name="Object47_x" type="double"/>
+              <field name="Object47_y" type="double"/>
+              <field name="Object47_w" type="double"/>
+              <field name="Object47_h" type="double"/>
+              <field name="Object47_center_x" type="double"/>
+              <field name="Object47_center_y" type="double"/>
+              <field name="Object47_track_x" type="array(dbl)"/>
+              <field name="Object47_track_y" type="array(dbl)"/>
+              <field name="Object47_vvect_x" type="double"/>
+              <field name="Object47_vvect_y" type="double"/>
+              <field name="Object48_id" type="int64"/>
+              <field name="Object48_label" type="string"/>
+              <field name="Object48_score" type="double"/>
+              <field name="Object48_x" type="double"/>
+              <field name="Object48_y" type="double"/>
+              <field name="Object48_w" type="double"/>
+              <field name="Object48_h" type="double"/>
+              <field name="Object48_center_x" type="double"/>
+              <field name="Object48_center_y" type="double"/>
+              <field name="Object48_track_x" type="array(dbl)"/>
+              <field name="Object48_track_y" type="array(dbl)"/>
+              <field name="Object48_vvect_x" type="double"/>
+              <field name="Object48_vvect_y" type="double"/>
+              <field name="Object49_id" type="int64"/>
+              <field name="Object49_label" type="string"/>
+              <field name="Object49_score" type="double"/>
+              <field name="Object49_x" type="double"/>
+              <field name="Object49_y" type="double"/>
+              <field name="Object49_w" type="double"/>
+              <field name="Object49_h" type="double"/>
+              <field name="Object49_center_x" type="double"/>
+              <field name="Object49_center_y" type="double"/>
+              <field name="Object49_track_x" type="array(dbl)"/>
+              <field name="Object49_track_y" type="array(dbl)"/>
+              <field name="Object49_vvect_x" type="double"/>
+              <field name="Object49_vvect_y" type="double"/>
+              <field name="Object50_id" type="int64"/>
+              <field name="Object50_label" type="string"/>
+              <field name="Object50_score" type="double"/>
+              <field name="Object50_x" type="double"/>
+              <field name="Object50_y" type="double"/>
+              <field name="Object50_w" type="double"/>
+              <field name="Object50_h" type="double"/>
+              <field name="Object50_center_x" type="double"/>
+              <field name="Object50_center_y" type="double"/>
+              <field name="Object50_track_x" type="array(dbl)"/>
+              <field name="Object50_track_y" type="array(dbl)"/>
+              <field name="Object50_vvect_x" type="double"/>
+              <field name="Object50_vvect_y" type="double"/>
+              <field name="Object51_id" type="int64"/>
+              <field name="Object51_label" type="string"/>
+              <field name="Object51_score" type="double"/>
+              <field name="Object51_x" type="double"/>
+              <field name="Object51_y" type="double"/>
+              <field name="Object51_w" type="double"/>
+              <field name="Object51_h" type="double"/>
+              <field name="Object51_center_x" type="double"/>
+              <field name="Object51_center_y" type="double"/>
+              <field name="Object51_track_x" type="array(dbl)"/>
+              <field name="Object51_track_y" type="array(dbl)"/>
+              <field name="Object51_vvect_x" type="double"/>
+              <field name="Object51_vvect_y" type="double"/>
+              <field name="Object52_id" type="int64"/>
+              <field name="Object52_label" type="string"/>
+              <field name="Object52_score" type="double"/>
+              <field name="Object52_x" type="double"/>
+              <field name="Object52_y" type="double"/>
+              <field name="Object52_w" type="double"/>
+              <field name="Object52_h" type="double"/>
+              <field name="Object52_center_x" type="double"/>
+              <field name="Object52_center_y" type="double"/>
+              <field name="Object52_track_x" type="array(dbl)"/>
+              <field name="Object52_track_y" type="array(dbl)"/>
+              <field name="Object52_vvect_x" type="double"/>
+              <field name="Object52_vvect_y" type="double"/>
+              <field name="Object53_id" type="int64"/>
+              <field name="Object53_label" type="string"/>
+              <field name="Object53_score" type="double"/>
+              <field name="Object53_x" type="double"/>
+              <field name="Object53_y" type="double"/>
+              <field name="Object53_w" type="double"/>
+              <field name="Object53_h" type="double"/>
+              <field name="Object53_center_x" type="double"/>
+              <field name="Object53_center_y" type="double"/>
+              <field name="Object53_track_x" type="array(dbl)"/>
+              <field name="Object53_track_y" type="array(dbl)"/>
+              <field name="Object53_vvect_x" type="double"/>
+              <field name="Object53_vvect_y" type="double"/>
+              <field name="Object54_id" type="int64"/>
+              <field name="Object54_label" type="string"/>
+              <field name="Object54_score" type="double"/>
+              <field name="Object54_x" type="double"/>
+              <field name="Object54_y" type="double"/>
+              <field name="Object54_w" type="double"/>
+              <field name="Object54_h" type="double"/>
+              <field name="Object54_center_x" type="double"/>
+              <field name="Object54_center_y" type="double"/>
+              <field name="Object54_track_x" type="array(dbl)"/>
+              <field name="Object54_track_y" type="array(dbl)"/>
+              <field name="Object54_vvect_x" type="double"/>
+              <field name="Object54_vvect_y" type="double"/>
+              <field name="Object55_id" type="int64"/>
+              <field name="Object55_label" type="string"/>
+              <field name="Object55_score" type="double"/>
+              <field name="Object55_x" type="double"/>
+              <field name="Object55_y" type="double"/>
+              <field name="Object55_w" type="double"/>
+              <field name="Object55_h" type="double"/>
+              <field name="Object55_center_x" type="double"/>
+              <field name="Object55_center_y" type="double"/>
+              <field name="Object55_track_x" type="array(dbl)"/>
+              <field name="Object55_track_y" type="array(dbl)"/>
+              <field name="Object55_vvect_x" type="double"/>
+              <field name="Object55_vvect_y" type="double"/>
+              <field name="Object56_id" type="int64"/>
+              <field name="Object56_label" type="string"/>
+              <field name="Object56_score" type="double"/>
+              <field name="Object56_x" type="double"/>
+              <field name="Object56_y" type="double"/>
+              <field name="Object56_w" type="double"/>
+              <field name="Object56_h" type="double"/>
+              <field name="Object56_center_x" type="double"/>
+              <field name="Object56_center_y" type="double"/>
+              <field name="Object56_track_x" type="array(dbl)"/>
+              <field name="Object56_track_y" type="array(dbl)"/>
+              <field name="Object56_vvect_x" type="double"/>
+              <field name="Object56_vvect_y" type="double"/>
+              <field name="Object57_id" type="int64"/>
+              <field name="Object57_label" type="string"/>
+              <field name="Object57_score" type="double"/>
+              <field name="Object57_x" type="double"/>
+              <field name="Object57_y" type="double"/>
+              <field name="Object57_w" type="double"/>
+              <field name="Object57_h" type="double"/>
+              <field name="Object57_center_x" type="double"/>
+              <field name="Object57_center_y" type="double"/>
+              <field name="Object57_track_x" type="array(dbl)"/>
+              <field name="Object57_track_y" type="array(dbl)"/>
+              <field name="Object57_vvect_x" type="double"/>
+              <field name="Object57_vvect_y" type="double"/>
+              <field name="Object58_id" type="int64"/>
+              <field name="Object58_label" type="string"/>
+              <field name="Object58_score" type="double"/>
+              <field name="Object58_x" type="double"/>
+              <field name="Object58_y" type="double"/>
+              <field name="Object58_w" type="double"/>
+              <field name="Object58_h" type="double"/>
+              <field name="Object58_center_x" type="double"/>
+              <field name="Object58_center_y" type="double"/>
+              <field name="Object58_track_x" type="array(dbl)"/>
+              <field name="Object58_track_y" type="array(dbl)"/>
+              <field name="Object58_vvect_x" type="double"/>
+              <field name="Object58_vvect_y" type="double"/>
+              <field name="Object59_id" type="int64"/>
+              <field name="Object59_label" type="string"/>
+              <field name="Object59_score" type="double"/>
+              <field name="Object59_x" type="double"/>
+              <field name="Object59_y" type="double"/>
+              <field name="Object59_w" type="double"/>
+              <field name="Object59_h" type="double"/>
+              <field name="Object59_center_x" type="double"/>
+              <field name="Object59_center_y" type="double"/>
+              <field name="Object59_track_x" type="array(dbl)"/>
+              <field name="Object59_track_y" type="array(dbl)"/>
+              <field name="Object59_vvect_x" type="double"/>
+              <field name="Object59_vvect_y" type="double"/>
+              <field name="Object60_id" type="int64"/>
+              <field name="Object60_label" type="string"/>
+              <field name="Object60_score" type="double"/>
+              <field name="Object60_x" type="double"/>
+              <field name="Object60_y" type="double"/>
+              <field name="Object60_w" type="double"/>
+              <field name="Object60_h" type="double"/>
+              <field name="Object60_center_x" type="double"/>
+              <field name="Object60_center_y" type="double"/>
+              <field name="Object60_track_x" type="array(dbl)"/>
+              <field name="Object60_track_y" type="array(dbl)"/>
+              <field name="Object60_vvect_x" type="double"/>
+              <field name="Object60_vvect_y" type="double"/>
+              <field name="Object61_id" type="int64"/>
+              <field name="Object61_label" type="string"/>
+              <field name="Object61_score" type="double"/>
+              <field name="Object61_x" type="double"/>
+              <field name="Object61_y" type="double"/>
+              <field name="Object61_w" type="double"/>
+              <field name="Object61_h" type="double"/>
+              <field name="Object61_center_x" type="double"/>
+              <field name="Object61_center_y" type="double"/>
+              <field name="Object61_track_x" type="array(dbl)"/>
+              <field name="Object61_track_y" type="array(dbl)"/>
+              <field name="Object61_vvect_x" type="double"/>
+              <field name="Object61_vvect_y" type="double"/>
+              <field name="Object62_id" type="int64"/>
+              <field name="Object62_label" type="string"/>
+              <field name="Object62_score" type="double"/>
+              <field name="Object62_x" type="double"/>
+              <field name="Object62_y" type="double"/>
+              <field name="Object62_w" type="double"/>
+              <field name="Object62_h" type="double"/>
+              <field name="Object62_center_x" type="double"/>
+              <field name="Object62_center_y" type="double"/>
+              <field name="Object62_track_x" type="array(dbl)"/>
+              <field name="Object62_track_y" type="array(dbl)"/>
+              <field name="Object62_vvect_x" type="double"/>
+              <field name="Object62_vvect_y" type="double"/>
+              <field name="Object63_id" type="int64"/>
+              <field name="Object63_label" type="string"/>
+              <field name="Object63_score" type="double"/>
+              <field name="Object63_x" type="double"/>
+              <field name="Object63_y" type="double"/>
+              <field name="Object63_w" type="double"/>
+              <field name="Object63_h" type="double"/>
+              <field name="Object63_center_x" type="double"/>
+              <field name="Object63_center_y" type="double"/>
+              <field name="Object63_track_x" type="array(dbl)"/>
+              <field name="Object63_track_y" type="array(dbl)"/>
+              <field name="Object63_vvect_x" type="double"/>
+              <field name="Object63_vvect_y" type="double"/>
+              <field name="Object64_id" type="int64"/>
+              <field name="Object64_label" type="string"/>
+              <field name="Object64_score" type="double"/>
+              <field name="Object64_x" type="double"/>
+              <field name="Object64_y" type="double"/>
+              <field name="Object64_w" type="double"/>
+              <field name="Object64_h" type="double"/>
+              <field name="Object64_center_x" type="double"/>
+              <field name="Object64_center_y" type="double"/>
+              <field name="Object64_track_x" type="array(dbl)"/>
+              <field name="Object64_track_y" type="array(dbl)"/>
+              <field name="Object64_vvect_x" type="double"/>
+              <field name="Object64_vvect_y" type="double"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="fs" name="outputTracks">
+              <properties>
+                <property name="type"><![CDATA[sub]]></property>
+                <property name="header"><![CDATA[full]]></property>
+                <property name="snapshot"><![CDATA[true]]></property>
+                <property name="fsname"><![CDATA[outputTracks.csv]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-functional>
+        <window-transpose name="transpLong" pubsub="true" mode="long" tag-name="obj" tag-values="id,label,score,x,y,h,w,center_x,center_y,track_x,track_y,vvect_x,vvect_y" tags-included="Object0,Object1,Object2,Object3,Object4,Object5,Object6,Object7,Object8,Object9,Object10,Object11,Object12,Object13,Object14,Object15,Object16,Object17,Object18,Object19,Object20,Object21,Object22,Object23,Object24,Object25,Object26,Object27,Object28,Object29,Object30,Object31,Object32,Object33,Object34,Object35,Object36,Object37,Object38,Object39,Object40,Object41,Object42,Object43,Object44,Object45,Object46,Object47,Object48,Object49,Object50,Object51,Object52,Object53,Object54,Object55,Object56,Object57,Object58,Object59,Object60,Object61,Object62,Object63,Object64">
+          <description><![CDATA[transpLong is Transpose window. This is where the output tracks are transposed and written to the transpLong.csv file.]]></description>
+          <connectors>
+            <connector class="fs" name="transpLong">
+              <properties>
+                <property name="type"><![CDATA[sub]]></property>
+                <property name="header"><![CDATA[full]]></property>
+                <property name="snapshot"><![CDATA[true]]></property>
+                <property name="fsname"><![CDATA[transLong.csv]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-transpose>
+        <window-filter pubsub="true" name="filterEmptyObjects">
+          <description><![CDATA[filterEmptyObjects is a Filter window. This is where objects that do not contain any values are filtered out of the model.]]></description>
+          <expression><![CDATA[not isblank(id)]]></expression>
+        </window-filter>
+        <window-functional pubsub="true" index="pi_EMPTY" name="outputTracksLong">
+          <description><![CDATA[outputTracksLong is a Functional window. This is where output tracks are written in long format to the outputTracksLong.csv file.]]></description>
+          <schema>
+            <fields>
+              <field name="ID" type="int64" key="true"/>
+              <field name="Object_density" type="int32"/>
+              <field name="id" type="int64" key="true"/>
+              <field name="label" type="string"/>
+              <field name="score" type="double"/>
+              <field name="x" type="double"/>
+              <field name="y" type="double"/>
+              <field name="h" type="double"/>
+              <field name="w" type="double"/>
+              <field name="center_x" type="double"/>
+              <field name="center_y" type="double"/>
+              <field name="track_x" type="array(dbl)"/>
+              <field name="track_y" type="array(dbl)"/>
+              <field name="vvect_x" type="double"/>
+              <field name="vvect_y" type="double"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="fs" name="outputTracksLong">
+              <properties>
+                <property name="type"><![CDATA[sub]]></property>
+                <property name="header"><![CDATA[full]]></property>
+                <property name="snapshot"><![CDATA[false]]></property>
+                <property name="fsname"><![CDATA[outputTracksLong.csv]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-functional>
+      </windows>
+      <edges>
+        <edge source="swDetections" target="addObjId"/>
+        <edge source="addObjId" target="transpDetections"/>
+        <edge source="transpDetections" target="detAgg"/>
+        <edge source="swVideo" target="getDetections" role="left"/>
+        <edge source="detAgg" target="getDetections" role="right"/>
+        <edge source="getDetections" target="tracking"/>
+        <edge source="tracking" target="outputTracks"/>
+        <edge source="outputTracks" target="transpLong"/>
+        <edge source="transpLong" target="filterEmptyObjects"/>
+        <edge source="filterEmptyObjects" target="outputTracksLong"/>
+      </edges>
+    </contquery>
+  </contqueries>
+  <project-connectors>
+    <connector-groups>
+      <connector-group name="subscribers">
+        <connector-entry connector="cq1/outputTracksLong/outputTracksLong" state="running"/>
+        <connector-entry connector="cq1/transpLong/transpLong" state="running"/>
+        <connector-entry connector="cq1/outputTracks/outputTracks" state="running"/>
+        <connector-entry connector="cq1/addObjId/addObjId" state="running"/>
+      </connector-group>
+      <connector-group name="detections">
+        <connector-entry connector="cq1/swDetections/swDetections" state="finished"/>
+      </connector-group>
+      <connector-group name="stream">
+        <connector-entry connector="cq1/swVideo/csv_file" state="finished"/>
+      </connector-group>
+    </connector-groups>
+    <edges>
+      <edge source="subscribers" target="detections"/>
+      <edge source="detections" target="stream"/>
+    </edges>
+  </project-connectors>
+</project>

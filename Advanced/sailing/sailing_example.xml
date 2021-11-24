@@ -1,0 +1,326 @@
+<project name="sailing_example" threads="4" pubsub="auto" heartbeat-interval="1" index="pi_EMPTY">
+  <description><![CDATA[This example shows an event stream of data obtained from a set of boats. The model identifies two geographical areas of interest. One area is an exclusion zone that the boats identified are not permitted to enter. The other is an area where a speed restriction has been applied. For convenience, it is recommended that you import the preprepared model XML file to SAS Event Stream Processing Studio.
+
+This example uses six files listed below:
+
+The XML file (sailing_example.xml) is the project used in the example.
+geoArea.csv is an input file. This file contains events relating to the defined areas of interest.
+boat1.csv is an input file. This file contains the event stream of boat 1. The event stream contains time-stamped geographical coordinates of the boat’s movements.
+Note: For demonstration purposes, the time-stamped geographical coordinates used in this example are represented as strings.
+boat2.csv is an input file. This file contains the event stream of boat 2. The event stream contains time-stamped geographical coordinates of the boat’s movements.
+boat3.csv is an input file. This file contains the event stream of boat 3. The event stream contains time-stamped geographical coordinates of the boat’s movements.
+boat4.csv is an input file. This file contains the event stream of boat 4. The event stream contains time-stamped geographical coordinates of the boat’s movements.
+For demonstration purposes, this example uses CSV files containing historical data. When a model similar to the one used in this example is deployed in a live environment, real-time data sources might be used instead. Before attempting to follow the steps in this example to create a sailing data dashboard, ensure that the model is working correctly in test mode. This includes ensuring that the model’s publisher connectors are correctly configured. The CSV files listed previously must be in a location on the server on which SAS Event Stream Processing is running. This model runs on an ESP server. Before you build a sailing data dashboard in SAS Event Stream Processing Studio, ensure that the ESP server is running and configured in SAS Event Stream Processing Studio.]]></description>
+  <metadata>
+    <meta id="studioUploadedBy">fsduser</meta>
+    <meta id="studioUploaded">1613049977247</meta>
+    <meta id="studioModifiedBy">fsduser</meta>
+    <meta id="studioModified">1613051080446</meta>
+    <meta id="layout">{"cq1":{"Areas_Of_Interest":{"x":-330,"y":-440},"Boat1":{"x":-460,"y":-730},"Boat2":{"x":-225,"y":-725},"Boat3":{"x":-5,"y":-725},"Boat4":{"x":210,"y":-725},"Compute_ID1":{"x":-460,"y":-590},"Compute_ID2":{"x":-225,"y":-590},"Compute_ID3":{"x":-5,"y":-590},"Compute_ID4":{"x":210,"y":-590},"Filter_Inside_Exclusion_Zone":{"x":-250,"y":-55},"Filter_Speeding_In_Marina":{"x":-30,"y":-55},"Geofence_Area_Check":{"x":-115,"y":-315},"Last_Exclusion_Violation":{"x":-250,"y":70},"Last_Speeding_Event":{"x":-30,"y":70},"Retention_30Min":{"x":-145,"y":-185},"Union_All_Boats":{"x":-115,"y":-440}}}</meta>
+  </metadata>
+  <contqueries>
+    <contquery name="cq1" index="pi_EMPTY">
+      <windows>
+        <window-source pubsub="true" index="pi_EMPTY" insert-only="true" name="Boat1">
+          <description><![CDATA[There are four Source windows that receive event streams from the four boats identified: Boat1, Boat2, Boat3, and Boat4]]></description>
+          <schema>
+            <fields>
+              <field name="dateTime" type="string" key="true"/>
+              <field name="heading" type="double"/>
+              <field name="speed" type="double"/>
+              <field name="lat" type="double"/>
+              <field name="long" type="double"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="fs" name="Sailing_Data1">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="dateformat"><![CDATA[%Y-%m-%d %H:%M:%S]]></property>
+                <property name="rate"><![CDATA[5]]></property>
+                <property name="fsname"><![CDATA[boat1.csv]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-source pubsub="true" index="pi_EMPTY" insert-only="true" name="Boat2">
+          <schema>
+            <fields>
+              <field name="dateTime" type="string" key="true"/>
+              <field name="heading" type="double"/>
+              <field name="speed" type="double"/>
+              <field name="lat" type="double"/>
+              <field name="long" type="double"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="fs" name="Sailing_Data2">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="dateformat"><![CDATA[%Y-%m-%d %H:%M:%S]]></property>
+                <property name="rate"><![CDATA[5]]></property>
+                <property name="header"><![CDATA[1]]></property>
+                <property name="addcsvopcode"><![CDATA[true]]></property>
+                <property name="addcsvflags"><![CDATA[normal]]></property>
+                <property name="fsname"><![CDATA[boat2.csv]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-compute pubsub="true" index="pi_EMPTY" name="Compute_ID2">
+          <schema>
+            <fields>
+              <field name="dateTime" type="string" key="true"/>
+              <field name="heading" type="double"/>
+              <field name="speed" type="double"/>
+              <field name="lat" type="double"/>
+              <field name="long" type="double"/>
+              <field name="BoatNumber" type="int32"/>
+            </fields>
+          </schema>
+          <output>
+            <field-expr><![CDATA[heading]]></field-expr>
+            <field-expr><![CDATA[speed]]></field-expr>
+            <field-expr><![CDATA[lat]]></field-expr>
+            <field-expr><![CDATA[long]]></field-expr>
+            <field-expr><![CDATA[2]]></field-expr>
+          </output>
+        </window-compute>
+        <window-compute pubsub="true" index="pi_EMPTY" name="Compute_ID1">
+          <description><![CDATA[There are four Compute windows that assign a boat number to each of the four boats identified: Compute_ID1, Compute_ID2, Compute_ID3, and Compute_ID4. This allows SAS Event Stream Processing to differentiate the boats before joining the streams together for processing.]]></description>
+          <expr-initialize>
+            <initializer type="string"/>
+          </expr-initialize>
+          <schema>
+            <fields>
+              <field name="dateTime" type="string" key="true"/>
+              <field name="heading" type="double"/>
+              <field name="speed" type="double"/>
+              <field name="lat" type="double"/>
+              <field name="long" type="double"/>
+              <field name="BoatNumber" type="int32"/>
+            </fields>
+          </schema>
+          <output>
+            <field-expr><![CDATA[heading]]></field-expr>
+            <field-expr><![CDATA[speed]]></field-expr>
+            <field-expr><![CDATA[lat]]></field-expr>
+            <field-expr><![CDATA[long]]></field-expr>
+            <field-expr><![CDATA[1]]></field-expr>
+          </output>
+        </window-compute>
+        <window-union pubsub="true" strict="false" index="pi_EMPTY" name="Union_All_Boats">
+          <description><![CDATA[This is a Union window that unifies the boats’ event streams.]]></description>
+        </window-union>
+        <window-source pubsub="true" index="pi_EMPTY" insert-only="true" name="Boat3">
+          <schema>
+            <fields>
+              <field name="dateTime" type="string" key="true"/>
+              <field name="heading" type="double"/>
+              <field name="speed" type="double"/>
+              <field name="lat" type="double"/>
+              <field name="long" type="double"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="fs" name="Sailing_Data3">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="dateformat"><![CDATA[%Y-%m-%d %H:%M:%S]]></property>
+                <property name="rate"><![CDATA[5]]></property>
+                <property name="header"><![CDATA[1]]></property>
+                <property name="addcsvopcode"><![CDATA[true]]></property>
+                <property name="addcsvflags"><![CDATA[normal]]></property>
+                <property name="fsname"><![CDATA[boat3.csv]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-compute pubsub="true" index="pi_EMPTY" name="Compute_ID3">
+          <schema>
+            <fields>
+              <field name="dateTime" type="string" key="true"/>
+              <field name="heading" type="double"/>
+              <field name="speed" type="double"/>
+              <field name="lat" type="double"/>
+              <field name="long" type="double"/>
+              <field name="BoatNumber" type="int32"/>
+            </fields>
+          </schema>
+          <output>
+            <field-expr><![CDATA[heading]]></field-expr>
+            <field-expr><![CDATA[speed]]></field-expr>
+            <field-expr><![CDATA[lat]]></field-expr>
+            <field-expr><![CDATA[long]]></field-expr>
+            <field-expr><![CDATA[3]]></field-expr>
+          </output>
+        </window-compute>
+        <window-source pubsub="true" index="pi_EMPTY" insert-only="true" name="Boat4">
+          <schema>
+            <fields>
+              <field name="dateTime" type="string" key="true"/>
+              <field name="heading" type="double"/>
+              <field name="speed" type="double"/>
+              <field name="lat" type="double"/>
+              <field name="long" type="double"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="fs" name="Sailing_Data4">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="dateformat"><![CDATA[%Y-%m-%d %H:%M:%S]]></property>
+                <property name="rate"><![CDATA[5]]></property>
+                <property name="header"><![CDATA[1]]></property>
+                <property name="addcsvopcode"><![CDATA[true]]></property>
+                <property name="addcsvflags"><![CDATA[normal]]></property>
+                <property name="fsname"><![CDATA[boat4.csv]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-compute pubsub="true" index="pi_EMPTY" name="Compute_ID4">
+          <schema>
+            <fields>
+              <field name="dateTime" type="string" key="true"/>
+              <field name="heading" type="double"/>
+              <field name="speed" type="double"/>
+              <field name="lat" type="double"/>
+              <field name="long" type="double"/>
+              <field name="BoatNumber" type="int32"/>
+            </fields>
+          </schema>
+          <output>
+            <field-expr><![CDATA[heading]]></field-expr>
+            <field-expr><![CDATA[speed]]></field-expr>
+            <field-expr><![CDATA[lat]]></field-expr>
+            <field-expr><![CDATA[long]]></field-expr>
+            <field-expr><![CDATA[4]]></field-expr>
+          </output>
+        </window-compute>
+        <window-geofence pubsub="true" pubsub-index="pi_HASH" name="Geofence_Area_Check">
+          <description><![CDATA[This is a Geofence window that defines the areas of interest.]]></description>
+          <geofence coordinate-type="geographic" autosize-mesh="true" max-meshcells-per-geometry="50" log-invalid-geometry="true"/>
+          <geometry desc-fieldname="poly_desc" radius-fieldname="Poly_Radius" data-fieldname="Poly_Data" radius="1000" data-separator=" "/>
+          <position x-fieldname="long" y-fieldname="lat" lookupdistance="0"/>
+          <output geoid-fieldname="GeoID" geodesc-fieldname="GeoDesc" geodistance-fieldname="GeoDist" geotype-fieldname="GeoType" include-geo-fields="Poly_Data,Poly_Radius"/>
+          <connectors>
+            <connector class="fs" name="Geo_Sub" active="false">
+              <properties>
+                <property name="type"><![CDATA[sub]]></property>
+                <property name="snapshot"><![CDATA[false]]></property>
+                <property name="fsname"><![CDATA[Geo_Sub.csv]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-geofence>
+        <window-source pubsub="true" index="pi_EMPTY" name="Areas_Of_Interest">
+          <description><![CDATA[This is a Source window that receives an event stream defining the areas of interest that the boats are not permitted to enter.]]></description>
+          <schema>
+            <fields>
+              <field name="poly_id" type="int64" key="true"/>
+              <field name="poly_desc" type="string"/>
+              <field name="Poly_Data" type="string"/>
+              <field name="Poly_Radius" type="double"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="fs" name="Areas_Of_Interest">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="fsname"><![CDATA[geoArea.csv]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-filter pubsub="true" index="pi_HASH" name="Filter_Speeding_In_Marina">
+          <expression><![CDATA[GeoID == 1 AND speed > 4]]></expression>
+        </window-filter>
+        <window-filter pubsub="true" index="pi_HASH" name="Filter_Inside_Exclusion_Zone">
+          <description><![CDATA[There are two Filter windows that identify if any of the boats have entered the exclusion zone and speed restriction zone and if any of the boats were speeding : Filter_Inside_Exclusion_Zone and Last_Speeding_Event.]]></description>
+          <expression><![CDATA[GeoID == 2]]></expression>
+        </window-filter>
+        <window-aggregate pubsub="true" index="pi_HASH" name="Last_Exclusion_Violation">
+          <description><![CDATA[There are two Aggregate windows that aggregate the last exclusion violation and the last speeding event : Last_Exclusion_Violation and Last_Speeding_Event]]></description>
+          <schema>
+            <fields>
+              <field name="BoatNumber" type="int32" key="true"/>
+              <field name="Minimum_Distance" type="double"/>
+              <field name="Location_Name" type="string"/>
+              <field name="First_dateTime" type="string"/>
+              <field name="Last_dateTime" type="string"/>
+            </fields>
+          </schema>
+          <output>
+            <field-expr><![CDATA[ESP_aMin(GeoDist)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(GeoDesc)]]></field-expr>
+            <field-expr><![CDATA[ESP_aFirst(dateTime)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(dateTime)]]></field-expr>
+          </output>
+        </window-aggregate>
+        <window-aggregate pubsub="true" index="pi_HASH" name="Last_Speeding_Event">
+          <schema>
+            <fields>
+              <field name="BoatNumber" type="int32" key="true"/>
+              <field name="Max_speed" type="double"/>
+              <field name="Location_Name" type="string"/>
+              <field name="dateTime" type="string"/>
+            </fields>
+          </schema>
+          <output>
+            <field-expr><![CDATA[ESP_aMax(speed)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(GeoDesc)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(dateTime)]]></field-expr>
+          </output>
+        </window-aggregate>
+        <window-copy pubsub="true" index="pi_HASH" name="Retention_30Min">
+          <description><![CDATA[This is a Copy window that is used to transition the model from stateless to stateful.]]></description>
+          <retention type="bytime_sliding"><![CDATA[30 minutes]]></retention>
+        </window-copy>
+      </windows>
+      <edges>
+        <edge source="Boat2" target="Compute_ID2"/>
+        <edge source="Boat1" target="Compute_ID1"/>
+        <edge source="Compute_ID2" target="Union_All_Boats"/>
+        <edge source="Compute_ID1" target="Union_All_Boats"/>
+        <edge source="Boat3" target="Compute_ID3"/>
+        <edge source="Compute_ID3" target="Union_All_Boats"/>
+        <edge source="Boat4" target="Compute_ID4"/>
+        <edge source="Compute_ID4" target="Union_All_Boats"/>
+        <edge source="Union_All_Boats" target="Geofence_Area_Check" role="position"/>
+        <edge source="Areas_Of_Interest" target="Geofence_Area_Check" role="geometry"/>
+        <edge source="Geofence_Area_Check" target="Retention_30Min"/>
+        <edge source="Retention_30Min" target="Filter_Inside_Exclusion_Zone"/>
+        <edge source="Retention_30Min" target="Filter_Speeding_In_Marina"/>
+        <edge source="Filter_Speeding_In_Marina" target="Last_Speeding_Event"/>
+        <edge source="Filter_Inside_Exclusion_Zone" target="Last_Exclusion_Violation"/>
+      </edges>
+    </contquery>
+  </contqueries>
+  <project-connectors>
+    <connector-groups>
+      <connector-group name="Boat_Data">
+        <connector-entry connector="cq1/Boat1/Sailing_Data1" state="finished"/>
+        <connector-entry connector="cq1/Boat2/Sailing_Data2" state="finished"/>
+        <connector-entry connector="cq1/Boat3/Sailing_Data3" state="finished"/>
+        <connector-entry connector="cq1/Boat4/Sailing_Data4" state="finished"/>
+      </connector-group>
+      <connector-group name="Areas_Of_Interest">
+        <connector-entry connector="cq1/Areas_Of_Interest/Areas_Of_Interest" state="finished"/>
+      </connector-group>
+      <connector-group name="Subscribers">
+        <connector-entry connector="cq1/Geofence_Area_Check/Geo_Sub" state="finished"/>
+      </connector-group>
+    </connector-groups>
+    <edges>
+      <edge source="Areas_Of_Interest" target="Boat_Data"/>
+      <edge source="Areas_Of_Interest" target="Subscribers"/>
+    </edges>
+  </project-connectors>
+</project>

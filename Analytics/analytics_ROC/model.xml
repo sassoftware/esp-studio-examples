@@ -1,0 +1,166 @@
+    <project name='project_01' pubsub='auto' threads='1' use-tagged-token='true'> 
+    <description> 
+	This example project is a basic demonstration of using the receiver operating
+	curve characteristic (ROC) information algorithm. ROC information shows the
+	diagnostic ability of a classifier system as you vary its discrimination threshold.
+	You create ROC information by plotting the positive rate (TPR) against the false
+	positive rate (FPR) at various thresholding settings. 
+
+	This project contains a single continuous query consisting of the following:
+	1.	A source window that receives the data to be analyzed 
+	2.	A calculate window that performs the ROC calculation
+    </description>
+      <contqueries>
+        <contquery name='cq_01' trace='w_calculate'>
+          <windows>
+            <window-source name='w_data'> 
+              <description> 
+ 		This source window receives the included example input file via a file
+		socket connector. The input stream is placed into four fields for each
+		observation: an ID that acts as the data stream's key, named id; a 
+		response classifier string, named y_c;  
+              </description>
+              <schema>
+                <fields>
+                  <field name='id'  type='int64' key='true'/>
+                  <field name='y_c' type='string'/>
+                  <field name='p_0' type='double'/>
+                  <field name='p_1' type='double'/>
+                  <field name='p_2' type='double'/>
+                </fields>
+              </schema>
+              <connectors>
+                <connector class='fs' name='publisher'>
+                  <properties>
+                    <property name='type'>pub</property>
+                    <property name='fstype'>csv</property>
+                    <property name='fsname'>input.csv</property>
+                    <property name='transactional'>true</property>
+                    <property name='blocksize'>1</property> 
+                  </properties>
+                </connector>
+              </connectors>
+            </window-source>
+
+            <window-calculate name='w_calculate' algorithm='ROC'>
+	      <description>
+                The calculate window, w_calculate receives data events from the source window.
+		This includes values of several variables. This window publishes a confusion table,
+		according to the specified ROC algorithm properties. In this example, the following
+		algorithm parameters govern the ROC algorithm: 
+
+		cutStep:	Specifies the bin width. This must be a value between 0 and 1. The 
+				default, 0.01, generates 100 bins to fit the ROC. 
+		event:		Specifies the desired response event to use for ROC calculations. 
+
+		Additionally, the following input-map and output-map properties define the ROC algorithm
+		in this calculate window: 
+
+		input:		Specifies the input variable, which is the predicted probability for a
+				given event. 
+		response:	Specifies the response variable. 
+
+		binIdOut, cutOffOut, tpOut, fpOut, fnOut, tnOut, sensitivityOut, specificityOut, ksOut, ks2Out, fHalfOut, pfrOut, accOut, fdrOut, f1Out, cOut,ginniOut, gammaOut, tauOut, miscEventOut
+		binIdOut:	Specifies the bin ID. 
+		cutOffOut:	Specifies the cutoff probability. 
+		tpOut:		Specifies the number of true positives. 
+		fpOut:		Specifies the number of false positives. 
+		fnOut:		Specifies the number of false negatives. 
+		tnOut:		Specifies the number of true negatives. 
+		sensitivityOut:	Specifies the ROC sensitivity. 
+		specificityOut:	Specifies the ROC specificity. 
+		ksOut:		Specifies the Kolmogorov-Smirnov statistic. 
+		ks2Out:		Specifies the KS2. 
+		fHalfOut:	Specifies the F_Half. 
+		fprOut:		Specifies the false positive rate. 
+		accOut: 	Specifies the accuracy (ACC). 
+		fdrOut:		Specifies the false discovery rate. 
+		f1Out:		Specifies the F1 score. 
+		cOut:		Specifies C (area under curve). 
+		giniOut:	Specifies the Gini coefficient. 
+		gammaOut:	Specifies Goodman and Kruskal's Gamma. 
+		tauOut:		Specifies Kendall's Tau-a. 
+		miscEventOut:	Specifies the Misclassification rate (1 - area under the curve). 
+
+		The computed confusion table is written to the file result.out via a file socket connector.		 
+              </description>
+              <schema>
+                <fields>
+                  <field name='id' type='int64' key='true'/>
+                  <field name='binIdOut' type='int64' key='true'/>
+                  <field name='cutOffOut' type='double'/>
+                  <field name='tpOut' type='double'/>
+                  <field name='fpOut' type='double'/>
+                  <field name='fnOut' type='double'/>
+                  <field name='tnOut' type='double'/>
+                  <field name='sensitivityOut' type='double'/>
+                  <field name='specificityOut' type='double'/>
+                  <field name='ksOut' type='double'/>
+                  <field name='ks2Out' type='double'/>
+                  <field name='fHalfOut' type='double'/>
+                  <field name='fprOut' type='double'/>
+                  <field name='accOut' type='double'/>
+                  <field name='fdrOut' type='double'/>
+                  <field name='f1Out' type='double'/>
+                  <field name='cOut' type='double'/>
+                  <field name='giniOut' type='double'/>
+                  <field name='gammaOut' type='double'/>
+                  <field name='tauOut' type='double'/>
+                  <field name='miscEventOut' type='double'/>
+                </fields>
+              </schema>
+              <parameters>
+                <properties>
+                  <property name='cutStep'>0.1</property>
+                  <property name='event'>good</property>
+                </properties>
+              </parameters>
+              <input-map>
+                <properties>
+                  <property name="input">p_0</property>
+                  <property name="response">y_c</property>
+                </properties>
+              </input-map>
+              <output-map>
+                 <properties>
+                  <property name="binIdOut">binIdOut</property>
+                  <property name="cutOffOut">cutOffOut</property>
+                  <property name="tpOut">tpOut</property>
+                  <property name="fpOut">fpOut</property>
+                  <property name="fnOut">fnOut</property>
+                  <property name="tnOut">tnOut</property>
+                  <property name="sensitivityOut">sensitivityOut</property>
+                  <property name="specificityOut">specificityOut</property>
+                  <property name="ksOut">ksOut</property>
+                  <property name="ks2Out">ks2Out</property>
+                  <property name="fHalfOut">fHalfOut</property>
+                  <property name="fprOut">fprOut</property>
+                  <property name="accOut">accOut</property>
+                  <property name="fdrOut">fdrOut</property>
+                  <property name="f1Out">f1Out</property>
+                  <property name="cOut">cOut</property>
+                  <property name="giniOut">giniOut</property>
+                  <property name="gammaOut">gammaOut</property>
+                  <property name="tauOut">tauOut</property>
+                  <property name="miscEventOut">miscEventOut</property>
+                </properties>
+              </output-map>
+              <connectors>
+                <connector class='fs' name='sub'>
+                  <properties>
+                    <property name='type'>sub</property>
+                    <property name='fstype'>csv</property>
+                    <property name='header'>true</property>
+                    <property name='fsname'>result.out</property>
+                    <property name='snapshot'>true</property>
+                  </properties>
+                </connector>
+              </connectors>
+            </window-calculate>
+          </windows>
+          <edges>
+            <edge source='w_data'    target='w_calculate' role='data'/>
+          </edges>
+        </contquery>
+      </contqueries>
+    </project>

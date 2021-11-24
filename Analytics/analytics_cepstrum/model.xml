@@ -1,0 +1,117 @@
+<project name='project_01' pubsub='auto' threads='1' use-tagged-token='true'> 
+<description> 
+	This example is a basic demonstration of using the Cepstrum Transform (Cepstrum)
+	algorithm. A cepstrum results from taking the inverse Fourier transform of the
+	logarithm of the estimated spectrum of a signal. This application is often used
+	in speech analysis, specifically with voice detection. Two variations are supported:
+	a complex cepstrum and a real cepstrum. 
+
+	This project contains a single continuous query consisting of the following: 
+	1.	A source window that receives the data to be analyzed 
+	2. 	A calculate window that uses the cepstrum algorithm to compute the cepstrum
+</description>
+<contqueries>
+  <contquery name='cq_01' include-singletons='true' trace='w_calculate'>
+   <windows>
+    <window-source name='w_source' insert-only='true' autogen-key='true'> 
+    <description> 
+	This source window receives the included example input data file via a file socket 
+	connector. The input data stream is placed into two fields for each observation:
+	a key called datetime, and a signal x.
+    </description>
+     <schema>
+      <fields>
+       <field name='datetime'  type='int64' key='true'/>
+       <field name='x' type='double'/>
+      </fields>
+     </schema>
+     <connectors>
+      <connector class='fs' name='publisher'>
+       <properties>
+        <property name='type'>pub</property>
+        <property name='fstype'>csv</property>
+        <property name='fsname'>input.csv</property>
+        <property name='transactional'>true</property>
+        <property name='blocksize'>1</property>
+        <property name='blocksize'>1</property>
+       </properties>
+      </connector>
+     </connectors>
+    </window-source>
+    <window-calculate name="w_calculate" algorithm="Cepstrum"> 
+    <description> 
+	This calculate window receives data events from the source window. It computes and
+	publishes the computed cepstrum of the data. For this example, the following parameters
+	govern the Cepstrum algorithm: 
+
+	windowLength:		Specifies the length of the sliding window. The value you specify 
+				must be greater than the value you specify for overlap. 
+	windowType:		Specifies the type of the window. Options: 1=Bartlett, 2=Bohman,
+				3=Chebyshev, 4=Gaussian, 5=Kaiser, 6=Parzen, 7=Rectangular, 
+				10=Tukey, 11=Bartlett-Hann, 12=Blackman-Harris, 13=Blackman, 
+				14=Hamming, 15=Hanning, 16=Flat Top. 
+	windowParam:		Some window types require an additional parameter. If not required
+				 for the window type selected, this value is ignored. 
+	overlap:		Overlap between consecutive windows. Must be strictly less than 
+				the value of windowLength.
+	complexCepstrum:	When set to 1, the complex cepstrum is calculated. When set to 0 or
+				unspecified, the real cepstrum is calculated. 
+
+	Additionally the following input-map and output-map properties define this calculate window: 
+	
+	input:			Name of analysis variable in the input stream. 
+	timeId:			Name of the time ID variable in the input stream. 
+
+	timeIdOut:		Name of time ID variable in output stream. 
+	cepstrumListOut:	List of cepstrum variables in the output stream. Cepstrum variable
+				values are always real numbers. The algorithm writes windowLength
+				values for each output event.  
+	
+	The resulting output is written to the file result.out via a file socket connector. 
+    </description>
+      <schema>
+          <fields>
+          <field name='datetime' type='int64' key='true'/>
+          <field name='y' type='array(dbl)'/>
+        </fields>
+      </schema>
+        <parameters>
+          <properties>
+           <property name="windowLength">128</property>
+           <property name="windowType">1</property>
+           <property name="windowParam">-1.0</property>
+           <property name="overlap">0</property>
+           <property name="complexCepstrum">1</property>
+          </properties>
+        </parameters>
+        <input-map>
+          <properties>
+           <property name="input">x</property>
+           <property name="timeId">datetime</property>
+          </properties>
+        </input-map>
+        <output-map>
+          <properties>
+           <property name="timeIdOut">datetime</property>
+           <property name="cepstrumListOut">y[1-128]</property>
+          </properties>
+        </output-map>
+     <connectors>
+      <connector class='fs' name='sub'>
+       <properties>
+        <property name='type'>sub</property>
+        <property name='fstype'>csv</property>
+        <property name='fsname'>result.out</property>
+        <property name='snapshot'>true</property> 
+        <property name='header'>true</property>
+       </properties>
+      </connector>
+     </connectors>
+    </window-calculate>
+   </windows>
+   <edges>
+    <edge source='w_source' target='w_calculate' role='data'/>
+   </edges>
+  </contquery>
+</contqueries>
+</project>

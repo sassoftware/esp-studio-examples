@@ -1,0 +1,131 @@
+    <project name='project_01' pubsub='auto' threads='1' use-tagged-token='true'> 
+    <description> 
+	This example project is a basic demonstration of using the FitStat (fit statistics)
+	algorithm. The goodness-of-fit of a statistical model describes how well a model fits
+	a set of data. The measures summarize the difference between observed values and 
+	predicted values of the model under consideration. 
+
+	This project contains a single continuous query consisting of the following: 
+	1.	A source window that receives scored data to be analyzed 
+	2.	A calculate window that calculates fit statistics and publishes the results
+    </description>
+      <contqueries>
+        <contquery name='cq_01' trace='w_calculate'>
+          <windows>
+            <window-source name='w_data' insert-only='true' index='pi_EMPTY'> 
+              <description> 
+		This source window receives the included example input data file via a file
+		socket connector. The input stream is placed into three fields for each 
+		observation: an ID that acts as the data steam's key, named id; an x coordinate
+		of data named x_c; and a y coordinate of data, named y_c.
+
+		This input file contains scored data. x_c is an observed value and y_c is a value
+		predicted by a regression model.
+              </description>
+              <schema>
+                <fields>
+                  <field name='id'  type='int64' key='true'/>
+                  <field name='x_c' type='double'/>
+                  <field name='y_c' type='double'/>
+                </fields>
+              </schema>
+              <connectors>
+                <connector class='fs' name='publisher'>
+                  <properties>
+                    <property name='type'>pub</property>
+                    <property name='fstype'>csv</property>
+                    <property name='fsname'>input.csv</property>
+                    <property name='transactional'>true</property>
+                    <property name='blocksize'>1</property>
+                  </properties>
+                </connector>
+              </connectors>
+            </window-source>
+
+            <window-calculate name='w_calculate' algorithm='FitStat'> 
+              <description> 
+		This calculate window, w_calculate receives data events from the source window. It
+		publishes goodness-of-fit statistics according to the FitStat algorithm properties. In
+		this example, the following input-map and output-map properties define the the FitStat
+		algorithm in this calculate window:
+
+		inputs:		Specifies input variables. For regression models, only one input variable
+				is required. That variable specifies the predicted response. For classification
+				models, the variables should be listed and should contain the predicted probabilities
+				for each class. 
+		response:	Specifies the response variable (that is, the target variable). 
+
+		nOut:		Specifies the output variable for the number of obserations(N).
+		nmissOut:	Specifies the output variable for the number of missing values (NMISS). 
+		aseOut:		Specifies the average square error (ASE). 
+		divOut:		Specifies the divisor of the average square error. 
+		raseOut:	Specifies the root average square error
+		mceOut:		Specifies the mean consequential error. 	
+		mcllOut:	Specifies the multiclass log loss.
+		maeOut:		Specifies the mean absolute error. 
+		rmaeOut:	Specifies the root mean absolute error. 
+		msleOut:	Specifies the mean square logarithmic error. 
+		rmsleOut:	Specifies the root mean square logarithmic error. 
+
+		For this example, the data from the source window is from a regression model. For this reason, 
+		the variables mceOut and mcllOut will appear as blank in the resulting output. 
+		
+		The output of this window, containing the calculated goodness-of-fit measures, is written to the
+		file result.out via a file socket connector.
+              </description>
+              <schema>
+                <fields>
+                  <field name='id' type='int64' key='true'/>
+                  <field name='nOut' type='double'/>
+                  <field name='nmissOut' type='double'/>
+                  <field name='aseOut' type='double'/>
+                  <field name='divOut' type='double'/>
+                  <field name='raseOut' type='double'/>
+                  <field name='mceOut' type='double'/>
+                  <field name='mcllOut' type='double'/>
+                  <field name='maeOut' type='double'/>
+                  <field name='rmaeOut' type='double'/>
+                  <field name='msleOut' type='double'/>
+                  <field name='rmsleOut' type='double'/>
+                </fields>
+              </schema>
+              <input-map>
+                <properties>
+                  <property name="inputs">y_c</property>
+                  <property name="response">x_c</property>
+                </properties>
+              </input-map> 
+              <output-map> 
+	        <properties> 
+                  <property name='nOut'>nOut</property> 
+		  <property name='nmissOut'>nmissOut</property> 
+                  <property name='aseOut'>aseOut</property> 
+                  <property name='divOut'>divOut</property> 
+                  <property name='raseOut'>raseOut</property> 
+                  <property name='mceOut'>mceOut</property> 
+                  <property name='mcllOut'>mcllOut</property>
+                  <property name='maeOut'>maeOut</property> 
+                  <property name='rmaeOut'>rmaeOut</property> 
+                  <property name='msleOut'>msleOut</property> 
+                  <property name='rmsleOut'>rmsleOut</property>
+                </properties> 
+              </output-map>
+              <connectors>
+                <connector class='fs' name='sub'>
+                  <properties>
+                    <property name='type'>sub</property>
+                    <property name='fstype'>csv</property>
+                    <property name='fsname'>result.out</property>
+                    <property name='snapshot'>true</property>
+		    <property name='header'>true</property>
+                  </properties>
+                </connector>
+              </connectors>
+            </window-calculate>
+          </windows>
+          <edges>
+            <edge source='w_data'    target='w_calculate' role='data'/>
+          </edges>
+        </contquery>
+      </contqueries>
+    </project>

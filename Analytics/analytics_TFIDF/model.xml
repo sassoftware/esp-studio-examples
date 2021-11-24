@@ -1,0 +1,110 @@
+<project name='project' pubsub='auto' threads='1' use-tagged-token='true'> 
+    <description> 
+	This project is a basic demonstration of using the Term Frequency - Inverse
+	Document Frequency (TFIDF) algorithm. TFIDF is a weight that shows how important 
+	a word is to a document in a document collection. TFIDF increases proportionally
+	to the frequency with which each word appears in a document, but is offset by the
+	frequency with which the word appears in the document collection. TFIDF can be used
+	as a weighing factor in text mining or general information searches. 
+
+	This project contains a single continuous query consisting of the following: 
+	1.	A source window that receives scored data from a score window to be analyzed 
+	2.	A calculate window that runs the TFIDF algorithm
+    </description>
+      <contqueries>
+        <contquery name='contquery' trace='w_source w_evaluating'>
+          <windows>
+            <window-source name='w_source'> 
+            <description> 
+		This source window receives data events from the included example input via
+		a file socket connector. The input stream is placed into three fields for
+		each observation: two key fields named docID and tokenID; and a string named
+		token.
+            </description>
+              <schema>
+                <fields>
+                  <field name='docId'  type='int64' key='true'/>
+                  <field name='tokenId' type='int64' key='true'/>
+                  <field name='token'  type='string' key='false'/>
+                </fields>
+              </schema>
+              <connectors>
+                <connector class='fs' name='publisher'>
+                  <properties>
+                    <property name='type'>pub</property>
+                    <property name='fstype'>csv</property>
+                    <property name='fsname'>input.csv</property>
+                    <property name='transactional'>true</property>
+                    <property name='blocksize'>1</property>
+                  </properties>
+                </connector>
+              </connectors>
+            </window-source>
+            <window-calculate algorithm="TFIDF" name="w_calculate"> 
+            <description> 
+		This calculate window receives data events from the source window, and publishes
+		calculated transforms according to the TFIDF algorithm properties that are specified. 
+		For this example, the following input-map and output-map define this window: 
+
+		docId:		Specifies the input variable for the unique doc ID (key).
+		tokenId:	Specifies the input variable for the token ID (key). 
+		token:		Specifies the input token string. 
+
+		docIdOut:	Specifies the output varable for the unique doc ID (key).
+		tokenIdOut:	Specifies the output variable for the unique ID of the token. It is a 
+				key when the word vectors are output. It is not a key when the document
+				vectors are output. 
+		tokenOut:	Specifies the output variable for the token. 
+		tfOut:		Specifies the output variable for the term frequency (TF). 
+		idfOut:		Specifies the output variable for the inverse document frequency (IDF). 
+		tfidfOut:	Specifies the output variable for the TFIDF 
+
+		The resulting output is written to the file result.out via a file socket connector.
+	    </description>
+              <schema>
+                <fields>
+                  <field key="true" name="docId"  type="int64" />
+                  <field key="true" name="tokenId"    type="int64" />
+                  <field key="false" name="token" type="string" />
+                  <field key="false" name="tf"    type="double"/>
+                  <field key="false" name="idf"   type="double"/>
+                  <field key="false" name="tfidf" type="double"/>
+                </fields>
+              </schema>
+              <input-map>
+                <properties>
+                  <property name="docId">docId</property>
+                  <property name="tokenId">tokenId</property>
+		  <property name="token">token</property>
+                </properties>
+              </input-map>
+              <output-map>
+                <properties>
+                  <property name="docIdOut">docId</property>
+                  <property name="tokenIdOut">tokenId</property>
+                  <property name="tokenOut">token</property>
+                  <property name="tfOut">tf</property>
+                  <property name="idfOut">idf</property>
+                  <property name="tfidfOut">tfidf</property>
+                </properties>
+              </output-map>
+            
+               <connectors>
+		<connector name="csv" class="fs">
+		  <properties>
+		    <property name='type'>sub</property>
+		    <property name='fstype'>csv</property>
+		    <property name='fsname'>result.out</property>
+		    <property name='snapshot'>true</property> 
+                    <property name='header'>true</property>
+		</properties>
+	      </connector>
+	    </connectors>
+	   </window-calculate>
+          </windows>
+          <edges>
+            <edge source='w_source' target='w_calculate' role='data'/>
+          </edges>
+        </contquery>
+      </contqueries>
+    </project>

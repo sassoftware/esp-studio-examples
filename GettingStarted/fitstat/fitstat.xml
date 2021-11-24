@@ -1,0 +1,87 @@
+<project name="fitstatExample" pubsub="auto" threads="1" use-tagged-token="true" heartbeat-interval="1">
+  <description><![CDATA[This model shows a demonstration of the FitStat (fit statistics) algorithm. The goodness-of-fit of a statistical model describes how well a model fits a set of data. The measures summarize the difference between observed values and predicted values of the model under consideration. 
+
+This project contains a Source window that receives scored data to be analysed, and a Calculate window that calculates fit statistics and publishes the results.]]></description>
+  <metadata>
+    
+  </metadata>
+  <contqueries>
+    <contquery name="cq_01" trace="w_calculate">
+      <windows>
+        <window-source insert-only="true" index="pi_EMPTY" pubsub="true" name="sourceWindow">
+          <description><![CDATA[The Source window in this model receives input data from a CSV file that contains scored data. The input data specifies three fields for each observation: an ID that acts as the data stream's key, an x coordinate of data, and a y coordinate of data. The field x_c is an observed value and the field y_c is a value predicted by a regression model.]]></description>
+          <schema>
+            <fields>
+              <field name="id" type="int64" key="true"/>
+              <field name="x_c" type="double"/>
+              <field name="y_c" type="double"/>
+            </fields>
+          </schema>
+        </window-source>
+        <window-calculate algorithm="FitStat" pubsub="true" name="w_calculate">
+          <description><![CDATA[The Calculate window receives data events from the Source window. It publishes goodness-of-fit statistics according to the FitStat algorithm's properties. In the Calculate window used in this model, the FitStat algorithm is defined by input-map properties and output-map properties. For input variables in regression models, only one input variable is required. This input variable specifies the predicted response. For classification models, the variables must be listed and must contain the predicted probabilities for each class. In this example, the data from the source window is from a regression model.  In addition, the response variable specifies the target variable. The following output-map properties are also defined:
+
+nOut:		The number of obserations(N).
+nmissOut:	The output variable for the number of missing values (NMISS). 
+aseOut:		The average square error (ASE). 
+divOut:		The divisor of the average square error. 
+raseOut:	The root average square error
+mceOut:	The mean consequential error. 	
+mcllOut:	The multiclass log loss.
+maeOut:	The mean absolute error. 
+rmaeOut:	The root mean absolute error. 
+msleOut:	The mean square logarithmic error. 
+rmsleOut:	The root mean square logarithmic error. 
+
+As the data from the Source window is from a regression model, the variables mceOut and mcllOut appear as blank in the resulting output.]]></description>
+          <schema>
+            <fields>
+              <field name="id" type="int64" key="true"/>
+              <field name="nOut" type="double"/>
+              <field name="nmissOut" type="double"/>
+              <field name="aseOut" type="double"/>
+              <field name="divOut" type="double"/>
+              <field name="raseOut" type="double"/>
+              <field name="mceOut" type="double"/>
+              <field name="mcllOut" type="double"/>
+              <field name="maeOut" type="double"/>
+              <field name="rmaeOut" type="double"/>
+              <field name="msleOut" type="double"/>
+              <field name="rmsleOut" type="double"/>
+            </fields>
+          </schema>
+          <parameters>
+            <properties>
+              <property name="windowLength"><![CDATA[0]]></property>
+              <property name="labelLen"><![CDATA[128]]></property>
+            </properties>
+          </parameters>
+          <input-map>
+            <properties>
+              <property name="inputs"><![CDATA[y_c]]></property>
+              <property name="response"><![CDATA[x_c]]></property>
+            </properties>
+          </input-map>
+          <output-map>
+            <properties>
+              <property name="nOut"><![CDATA[nOut]]></property>
+              <property name="nmissOut"><![CDATA[nmissOut]]></property>
+              <property name="aseOut"><![CDATA[aseOut]]></property>
+              <property name="divOut"><![CDATA[divOut]]></property>
+              <property name="raseOut"><![CDATA[raseOut]]></property>
+              <property name="mceOut"><![CDATA[mceOut]]></property>
+              <property name="mcllOut"><![CDATA[mcllOut]]></property>
+              <property name="maeOut"><![CDATA[maeOut]]></property>
+              <property name="rmaeOut"><![CDATA[rmaeOut]]></property>
+              <property name="msleOut"><![CDATA[msleOut]]></property>
+              <property name="rmsleOut"><![CDATA[rmsleOut]]></property>
+            </properties>
+          </output-map>
+        </window-calculate>
+      </windows>
+      <edges>
+        <edge source="sourceWindow" target="w_calculate" role="data"/>
+      </edges>
+    </contquery>
+  </contqueries>
+</project>

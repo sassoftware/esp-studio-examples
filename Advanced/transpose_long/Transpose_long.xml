@@ -1,0 +1,66 @@
+<project name="Transpose_long" threads="2" pubsub="auto" heartbeat-interval="1">
+  <description><![CDATA[This example conceptualizes an event as a row that consists of multiple columns. You can use a Transpose window to interchange an event’s rows as columns, and columns as rows. Use attributes of the Transpose window to govern the rearrangement of data. You will process information about the pitch, yaw, roll, and velocity of an aircraft in flight.
+
+As the Transpose window has two modes, long and wide, this example consists of two parts:
+
+Transpose aircraft information in wide mode. 
+Transpose aircraft information in long mode.
+
+The long mode part of this example uses the following files:
+
+The XML file (transpose_long.xml) associated with this example.
+datafortransposition.csv. This is an input file. This file contains event streams from the aircraft in flight.
+The wide mode part of this example uses the following files:
+
+The XML file (transpose_wide.xml) associated with this example.
+datafortransposition.csv. This is an input file. This file contains event streams from the aircraft in flight.]]></description>
+  <metadata>
+    <meta id="studioUploadedBy">fsduser</meta>
+    <meta id="studioUploaded">1613063110977</meta>
+    <meta id="studioModifiedBy">fsduser</meta>
+    <meta id="studioModified">1613063147034</meta>
+    <meta id="layout">{"cq1":{"SourceW":{"x":-70,"y":-295},"TransposeL":{"x":-70,"y":-80}}}</meta>
+  </metadata>
+  <contqueries>
+    <contquery name="cq1" trace="TransposeL">
+      <windows>
+        <window-source pubsub="true" index="pi_EMPTY" insert-only="true" name="SourceW">
+          <description><![CDATA[This is a Source window, where aircraft events from the input file enter the model. In both the wide mode and long mode versions of this example, this file is called datafortransposition.csv.]]></description>
+          <schema>
+            <fields>
+              <field name="ID" type="int64" key="true"/>
+              <field name="pitch_value" type="double"/>
+              <field name="pitch_time" type="stamp"/>
+              <field name="yaw_value" type="double"/>
+              <field name="yaw_time" type="stamp"/>
+              <field name="roll_value" type="double"/>
+              <field name="roll_time" type="stamp"/>
+              <field name="velocity_value" type="double"/>
+              <field name="velocity_time" type="stamp"/>
+              <field name="lat" type="double"/>
+              <field name="long" type="double"/>
+            </fields>
+          </schema>
+        </window-source>
+        <window-transpose name="TransposeL" pubsub="true" mode="long" tag-name="TAG" tag-values="value,time" tags-included="pitch,roll,yaw,velocity">
+          <description><![CDATA[This is a Transpose window, where the transposition of the aircraft events occurs. You can configure the attributes of the Transpose window to govern the rearrangement of data. In the wide mode version of this example, this window is called TransposeW. In the long mode version of this example, this window is called TranposeL.]]></description>
+          <connectors>
+            <connector class="fs" name="sub">
+              <properties>
+                <property name="type"><![CDATA[sub]]></property>
+                <property name="dateformat"><![CDATA[%Y-%m-%d %H:%M:%S]]></property>
+                <property name="rate"><![CDATA[1]]></property>
+                <property name="snapshot"><![CDATA[false]]></property>
+                <property name="fsname"><![CDATA[./output.csv]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-transpose>
+      </windows>
+      <edges>
+        <edge source="SourceW" target="TransposeL"/>
+      </edges>
+    </contquery>
+  </contqueries>
+</project>

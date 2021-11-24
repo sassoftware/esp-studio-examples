@@ -1,0 +1,153 @@
+<project name='project' pubsub='auto' threads='1' use-tagged-token='true'>
+      <description> 
+	t-Distributed Stochastic Neighbor Embedding (t-SNE) is a machine learning algorithm
+	for dimensionality reduction that is used to visualize high-dimensional data sets.
+	It is nonparametric and non-linear, and renders high-dimensional objects into two-
+	or three-dimensional points. Nearby points model similar objects and dissimilar 
+	objects are modeled by distant points. 
+
+	This example project contains a single continuous query which includes the following: 
+	1.	a source window that receives data to be trained and scored. 
+	2.	a train window that generates and periodically updates the t-SNE model
+	3.	a score window that performs the scoring 
+
+      </description>
+      <contqueries>
+        <contquery name='contquery' trace='w_scoring w_training'>
+          <windows>
+            <window-source name='w_data' insert-only='true'> 
+              <description> 
+		This source window receives the included example data file as input via a 
+		file socket connector. Each observation contains several fields of characteristics
+		of a flower. The input stream is placed into the following fields for each observation: 
+		an ID that acts as the data stream's key, named id;, a sepal length measurement, named
+		sepal_length;, a sepal width measurement, named sepal_width;, a petal length measurement,
+		named petal_length;, a petal width measurement, named petal_width;, and the name of the
+		flower species, named 'species'. 
+              </description>
+              <schema>
+                <fields>
+                  <field name='id'  type='int64' key='true'/>
+                  <field name='sepal_length' type='double'/>
+                  <field name='sepal_width' type='double'/>
+                  <field name='petal_length' type='double'/>
+                  <field name='petal_width' type='double'/>
+                  <field name='species' type='string'/>
+                </fields>
+              </schema>
+              <connectors>
+                <connector class='fs' name='publisher'>
+                  <properties>
+                    <property name='type'>pub</property>
+                    <property name='fstype'>csv</property>
+                    <property name='fsname'>input.csv</property>
+                    <property name='transactional'>true</property>
+                    <property name='blocksize'>1</property>
+                  </properties>
+                </connector>
+              </connectors>
+            </window-source>
+
+            <window-train name='w_training' algorithm='TSNE'> 
+              <description> 
+		This train window parses all observations from the source window and periodically generates
+		a new model that uses the TSNE algorithm.  
+
+		The following properties govern the TSNE algorithm in the train window for this example: 
+		nDims:		specifies the number of embedding dimensions to report.
+		initSeed:	specifies the random seed to use during initialization. 
+		nLandmarks:	specifies the number of landmarks to keep in the model. Landmarks usually
+				consist of past observations. The model retains both the original landmark
+				observation and their embeddings. 
+		perplexity:	specifies the perplexity parameter. This parameter determines how tightly
+				to couple the embeddings for faraway observations. Lower perplexity values
+				tend to produce a higher number of small, scattered groups. 
+		learnRate:	specifies the learning rate for the gradient descent optimization procedure. 
+		maxIters:	specifies the maximum number of iterations for the gradient descent optimization
+				procedure. 
+		nInit:		specifies the number of data events used during initialization. 
+		commitInterval:	specifies the number of timestamps to be elapsed before triggering a commit of
+				model to downstream scoring. 
+
+		There is a single property that defines the input-map for this window: 
+		inputs:		specifies the list of variable names used for the high-dimensional analysis.
+				Variable names are defined in the input schema, and are separated by a comma.
+              </description>
+              <parameters>
+                <properties>
+                 <property name='nDims'>2</property>
+                 <property name="initSeed">12345</property>
+                  <property name="nLandmarks">150</property>
+                  <property name="perplexity">5</property>
+                  <property name="learnRate">100</property>
+                  <property name="maxIters">500</property>
+                  <property name="nInit">150</property>
+                  <property name="commitInterval">10</property>
+                </properties>
+              </parameters>
+              <input-map>
+                <properties>
+                 <property name="inputs">sepal_length,sepal_width,petal_length,petal_width</property>
+                </properties>
+              </input-map>
+            </window-train>
+            <window-score name='w_scoring'> 
+	      <description> 
+      		This score window scores the data received from the source window, using the model produced
+		by the train window. The following properties within the input-map and output-map govern the 
+		TNSE algorithm in the score window for this example: 
+
+		inputs: 	specifies the list of variable names that are used for the high-dimensional
+				analysis. These variables should be identical to those that were specified
+				in the train window. 
+
+		embeddingOut1:	specifies the output variable name in the output schema that stores the first
+				embedding dimension.
+		embeddingOut2:	specifies the output variable name in the output schema that stores the second
+				embedding dimension.
+              </description>
+              <schema>
+                <fields>
+                 <field name='id' type='int64' key='true'/>
+                 <field name='species' type='string'/>
+                 <field name='_DIM_1_' type='double'/>
+                 <field name='_DIM_2_' type='double'/>
+                 
+                </fields>
+              </schema>
+              <models>
+                <online algorithm='TSNE'>
+                  <input-map>
+                    <properties>
+                      <property name="inputs">sepal_length,sepal_width,petal_length,petal_width</property>
+                    </properties>
+                  </input-map>
+                  <output-map>
+                    <properties>
+                      <property name="embeddingOut1">_DIM_1_</property>
+                      <property name='embeddingOut2'>_DIM_2_</property>
+                    </properties>
+                  </output-map>
+                </online>
+              </models>
+              <connectors>
+                <connector name="csv" class="fs">
+                  <properties>
+                    <property name="type">sub</property>
+                    <property name="fstype">csv</property>
+                    <property name="fsname">result.out</property>
+                    <property name='snapshot'>true</property> 
+                    <property name='header'>true</property>
+                  </properties>
+                </connector>
+              </connectors>
+            </window-score>
+          </windows>
+          <edges>
+            <edge source='w_data'  target='w_training' role='data'/>
+            <edge source='w_data'  target='w_scoring' role='data'/>
+            <edge source='w_training' target='w_scoring' role='model'/>
+          </edges>
+        </contquery>
+      </contqueries>
+    </project>

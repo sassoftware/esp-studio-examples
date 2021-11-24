@@ -1,0 +1,141 @@
+<project name='project' pubsub='auto' threads='1' use-tagged-token='true'> 
+<description> 
+	This project demonstrates a basic example of using the streaming summary
+	statistics algorithm in a calculate window. This algorithm calculates
+	univariate summary statistics for input variable data it receives from a 
+	source window. 
+
+	The project contains a single continuous query comprised of the following: 
+	1.	A source window that receives the data to be analyzed
+	2.	A calculate window that computes summary statistics on incoming
+		events and publishes the results. 
+</description> 
+<contqueries>
+  <contquery name='contquery' trace='w_calculate'>
+   <windows>
+    <window-source name='w_source' insert-only='true' autogen-key='false'> 
+     <description> 
+	This source window receives input data via a file socket connector. The
+	input stream is placed into three fields for each observation read: an
+	ID that acts as the data stream's key, named id; an x coordinate of data,
+	named x_c;, and a y coordinate of data, named y_c.
+     </description>
+     <schema>
+      <fields>
+       <field name='id'  type='int64' key='true'/>
+       <field name='x_c' type='double'/>
+       <field name='y_c' type='double'/>
+      </fields>
+     </schema>
+     <connectors>
+      <connector class='fs' name='publisher'>
+       <properties>
+        <property name='type'>pub</property>
+        <property name='fstype'>csv</property>
+        <property name='fsname'>input.csv</property>
+        <property name='transactional'>true</property>
+        <property name='blocksize'>1</property>
+       </properties>
+      </connector>
+     </connectors>
+    </window-source>
+
+    <window-calculate name="w_calculate" algorithm="Summary">
+      <description> 
+	The calculate window, w_calculate calculates univariate summary statistics
+	on data events it receives from the source window and publishes the results to the
+	file result.out. The algorithm will perform calculations using the specified algorithm 
+	parameters. In this example, the following algorithm parameters govern the summary algorithm 
+	in the calculate window: 
+
+	windowLength:	specifies the length of the sliding window.
+
+	Additionally, the following input-map and output-map properties define the summary
+	algorithm in this calculate window: 
+
+	input:		Specifies the input variable y its name in the source schema. The
+			univariate summary statistics will be calculated for this variable.
+
+	nOut:		Specifies the output variable name for the number of observations
+			analyzed for the incoming data events(N).
+	nmissOut:	Specifies the output variable name for the number of missing values
+			in the incoming data events (NMISS). 
+	minOut:		Specifies the output variable name for the minimum observed value
+			(MIN). 
+	maxOut:		Specifies the output variable name for the maximum value (MAX).
+	sumOut:		Specifies the output variable name for the linear sum (SUM). 
+	meanOut:	Specifies the output variable name for the mean (MEAN).
+	stdOut:		Specifies the output variable name for the standard deviation (STD).
+	varOut:		Specifies the output variable name for the sample variance (VAR). 
+	cssOut:		Specifies the output variable name for the corrected sum of squares 
+			(CSS). 
+	ussOut:		Specifies the output variable name for the uncorrected sum of squares 
+			(USS).
+	stderrOut:	Specifies the output variable name for the standard error (STDERR). 
+	cvOut:		Specifies the output variable name for the coefficient of variation
+			(CV).
+      </description>
+      <schema>
+          <fields>
+          <field name='id' type='int64' key='true'/>
+          <field name='y_c' type='double'/>
+          <field name='x_c' type='double'/>
+          <field name='nOut' type='int64'/>
+          <field name='nmissOut' type='int64'/>
+          <field name='minOut' type='double'/>
+          <field name='maxOut' type='double'/>
+          <field name='sumOut' type='double'/>
+          <field name='meanOut' type='double'/>
+          <field name='stdOut' type='double'/>
+          <field name='varOut' type='double'/>
+          <field name='cssOut' type='double'/>
+          <field name='ussOut' type='double'/>
+          <field name='stderrOut' type='double'/>
+          <field name='cvOut' type='double'/>
+        </fields>
+      </schema>
+        <parameters>
+          <properties>
+           <property name="windowLength">5</property>
+          </properties>
+        </parameters>
+        <input-map>
+          <properties>
+           <property name="input">x_c</property>
+          </properties>
+        </input-map>
+        <output-map>
+          <properties>
+           <property name="nOut">nOut</property>
+           <property name="nmissOut">nmissOut</property>
+           <property name="minOut">minOut</property>
+           <property name="maxOut">maxOut</property>
+           <property name="sumOut">sumOut</property>
+           <property name="meanOut">meanOut</property>
+           <property name="stdOut">stdOut</property>
+           <property name="varOut">varOut</property>
+           <property name="cssOut">cssOut</property>
+           <property name="ussOut">ussOut</property>
+           <property name="stderrOut">stderrOut</property>
+           <property name="cvOut">cvOut</property>
+          </properties>
+        </output-map>
+     <connectors>
+      <connector class='fs' name='sub'>
+       <properties>
+        <property name='type'>sub</property>
+        <property name='fstype'>csv</property>
+        <property name='fsname'>result.out</property>
+        <property name='snapshot'>true</property> 
+        <property name='header'>true</property>
+       </properties>
+      </connector>
+     </connectors>
+    </window-calculate>
+   </windows>
+   <edges>
+    <edge source='w_source' target='w_calculate' role='data'/>
+   </edges>
+  </contquery>
+</contqueries>
+</project>
