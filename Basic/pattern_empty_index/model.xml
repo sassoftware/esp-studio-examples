@@ -21,7 +21,7 @@ output.csv is an output file. When you run the model, the matched patterns are w
     <contquery name="contquery_01" trace="patternWindow_01">
       <windows>
         <window-source index="pi_EMPTY" insert-only="true" name="sourceWindow_01">
-          <description><![CDATA[The sourceWindow_01 window is a Source window. This is where a list of stock trades from the stocktrades.csv file enter the model.]]></description>
+          <description><![CDATA[The sourceWindow_01 window is a Source window. This is where a list of stock trades from the stocktrades.csv file enter the model.  When you pass data into this window, specify the following date format: %Y-%m-%d %H:%M:%S]]></description>
           <schema>
             <fields>
               <field name="ID" type="int32" key="true"/>
