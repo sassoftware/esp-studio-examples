@@ -54,7 +54,7 @@
 				function cleanNumber(telno)
 					local   str = ""
 
-					if (telno ~= "")
+					if (telno ~= "" and telno ~= nil)
 					then
 						str = ""
 						for c in telno:gmatch("[0-9]")
