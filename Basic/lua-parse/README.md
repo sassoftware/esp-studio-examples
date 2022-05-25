@@ -24,7 +24,8 @@ The first two columns in the CSV file contain the opcodes for SAS Event Stream P
 
 ---
 The JSON data consists of sensor data for two devices. One of the devices has data from one sensor, and the other device has data from two sensors, as illustrated in the following figure. 
-IMAGE basicDataStructur.png
+
+![Alt text](https://github.com/sassoftware/esp-studio-examples/blob/main/Basic/lua-parse/basicDataStructure.png "basic data structure")
 
 #### createMulti
 The createMulti window is a Lua window. It contains Lua code that performs the following steps:
