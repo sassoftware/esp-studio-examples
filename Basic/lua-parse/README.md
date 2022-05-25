@@ -1,4 +1,4 @@
-# Generate events from JSON Using the Lua window
+# Generate Events from JSON Using the Lua Window
 ## Overview
 Within a Lua window of SAS Event Stream Processing, you write Lua code to programmatically generate events. The following examples show how to code a Lua window to parse a JSON string in order to generate multiple events from a single event stream.
 - The [basic example project](#basic-example-project) is designed to show how event generation works.
@@ -118,7 +118,7 @@ https://user-images.githubusercontent.com/73890196/170306741-7ce60d49-768b-40df-
 ### Use Case
 Typically, sensor data streams into SAS Event Stream Processing within a JSON opaque string that is streamed over a message broker such as RabbitMQ. You can set up a Lua window to parse the opaque string and use the data to generate events.
 
-In this example, simulated sensor data from a train (speed, location, car ID and date) within an opaque JSON string is received from RabbitMQ. The project transforms this data into multiple events. Specifically, the project does the following:
+In this example, simulated sensor data from a train (speed, location, car ID, and date) within an opaque JSON string is received from RabbitMQ. The project transforms this data into multiple events. Specifically, the project does the following:
 
 1. Configures a message broker to receive the JSON objects.
 2. Sends the JSON object via ```opaquestring``` to a Lua window for processing.
