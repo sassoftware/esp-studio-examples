@@ -10,7 +10,9 @@ There are no prerequisites for this example project. If you do not have access t
 
 ### Workflow
 The following figure illustrates the complete flow of events through the SAS Event Stream Processing project.
-IMAGE basic_workflow.png
+
+![basic example workflow](https://github.com/sassoftware/esp-studio-examples/blob/main/Basic/lua-parse/basic_workflow.png "basic example workflow")
+
 1. The Source window (source) receives the sample input data from a CSV file.
 2. The JSON data embedded in the CSV file is streamed to the Lua window (createMulti).
 3. The Lua window generates multiple events from the JSON data.
@@ -25,7 +27,7 @@ The first two columns in the CSV file contain the opcodes for SAS Event Stream P
 ---
 The JSON data consists of sensor data for two devices. One of the devices has data from one sensor, and the other device has data from two sensors, as illustrated in the following figure. 
 
-![Alt text](https://github.com/sassoftware/esp-studio-examples/blob/main/Basic/lua-parse/basicDataStructure.png "basic data structure")
+![basic example data structure](https://github.com/sassoftware/esp-studio-examples/blob/main/Basic/lua-parse/basicDataStructure.png "basic example data structure")
 
 #### createMulti
 The createMulti window is a Lua window. It contains Lua code that performs the following steps:
@@ -41,7 +43,14 @@ To view project in its entirety and the Lua code in context, see the attached fi
 
 
 ### Test the Project and View the Results
-ADD LINK TO VIDEO
+
+To see a demo of how to test this project and view the results, watch the following video:
+
+https://user-images.githubusercontent.com/73890196/170306741-7ce60d49-768b-40df-af81-10f07b97860b.mp4
+
+
+
+
 ## Advanced Example Project
 ### Use Case
 Typically, sensor data streams into SAS Event Stream Processing within a JSON opaque string that is streamed over a message broker such as RabbitMQ. You can set up a Lua window to parse the opaque string and use the data to generate events.
@@ -58,7 +67,7 @@ To run this example project, you must configure a RabbitMQ message broker to wor
 ### Workflow
 The following figure illustrates the complete flow of events through the SAS Event Stream Processing project.
 
-IMAGE adv_workflow.png
+![advanced example workflow](https://github.com/sassoftware/esp-studio-examples/blob/main/Basic/lua-parse/adv_workflow.png "advanced example workflow")
 
 1. The first Source window (train_data) receives the sample input data from a CSV file.
 2. RabbitMQ subscribes to train_data and converts it to a JSON opaque string.
@@ -87,7 +96,14 @@ Returns results as SAS Event Stream Processing events. |  ```return(events)  end
 To view the project in its entirety and see the Lua code in context, see the attached project file luaParseJson.xml.
 
 ### Test the Project and View the Results
-VIDEO LINK
+To see a demo of how to test this project and view the results, watch the following video:
+
+
+
+https://user-images.githubusercontent.com/73890196/170307157-dbe3ecfa-bd58-42dc-aa66-6145238e43a7.mp4
+
+
+
 ### Next Steps
 You can add windows to the project to further analyze the data. For example, you might add a Filter window to extract speeds above a certain value.
 
