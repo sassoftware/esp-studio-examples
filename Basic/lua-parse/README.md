@@ -32,12 +32,75 @@ The JSON data consists of sensor data for two devices. One of the devices has da
 #### createMulti
 The createMulti window is a Lua window. It contains Lua code that performs the following steps:
 
-Step | Lua Code Section 
------- | ------
-Creates an event ID for each event, beginning with the value 1. | ```local   eventId = 1```     
-Places the parsed JSON data into a Lua table. | ```function create(data,context) local   events = {} local   sensorinfo = parseJsonFrom(context.window,"sensorinfo")```
-Extracts key-value pairs from the Lua table. | ```for index,value in ipairs(sensorinfo) do local e = {}  e.id = tostring(eventId) e.device_id = value.device_id e.sensor_id = value.sensor_id e.value = value.value events[index] = e  eventId = eventId + 1  end```
-Returns results as SAS Event Stream Processing events. |  ```return(events)  end```
+
+<table>
+<tr>
+<th>Step</th> <th>Lua Code Section</th>
+</tr>
+<tr>
+<td> Creates an event ID for each event, beginning with the value 1. </td>
+<td>
+
+
+```
+local   eventId = 1
+```
+
+
+</td>
+</tr>
+<tr>
+<td> Places the parsed JSON data into a Lua table. </td>
+<td>
+
+  
+```
+function create(data,context)
+  local   events = {}
+  local   sensorinfo = parseJsonFrom(context.window,"sensorinfo")
+```
+
+  
+</td>
+</tr>
+<tr>
+<td> Extracts key-value pairs from the Lua table. </td>
+<td>
+
+
+```
+for index,value in ipairs(sensorinfo)
+   do
+      local   e = {}
+
+      e.id = tostring(eventId)
+      e.device_id = value.device_id
+      e.sensor_id = value.sensor_id
+      e.value = value.value
+      events[index] = e
+
+      eventId = eventId + 1
+   end
+```
+
+
+</td>
+</tr>
+<tr>
+<td> Returns results as SAS Event Stream Processing events. </td>
+<td>
+
+
+```
+    return(events) 
+end
+```
+
+
+</td>
+</tr>
+</table>
+
 
 To view project in its entirety and the Lua code in context, see the attached file [luaParseJsonSimple.xml](https://github.com/sassoftware/esp-studio-examples/blob/main/Basic/lua-parse/luaParseJsonSimple.xml).
 
@@ -87,11 +150,69 @@ The order in which connectors start is specified with connector groups. For more
 
 #### parseJson
 The parseJson window is a Lua window. It contains Lua code that performs the following steps:
-Step | Lua Code Section 
------- | ------
-Places the parsed JSON opaque string into a Lua table. | ```function create(data,context) local   events = {}  local sensorinfo = parseJsonFrom(context.window,"sensorinfo")```     
-Extracts key-value pairs from the Lua table. | ```local   index = 1  for i1,v1 in ipairs(sensorinfo)  do  local   e = {}  for i2,v2 in ipairs(v1)  do  for k,v in pairs(v2)  do  e[k] = v  end  end  events[index] = e  index = index + 1  end```
-Returns results as SAS Event Stream Processing events. |  ```return(events)  end```
+
+
+<table>
+<tr>
+<th>Step</th> <th>Lua Code Section</th>
+</tr>
+<tr>
+<td> Places the parsed JSON opaque string into a Lua table. </td>
+<td>
+
+  
+```
+function create(data,context)
+  local   events = {}
+  local   sensorinfo = parseJsonFrom(context.window,"sensorinfo")
+```
+
+  
+</td>
+</tr>
+<tr>
+<td> Extracts key-value pairs from the Lua table. </td>
+<td>
+
+
+```
+local   index = 1
+   for i1,v1 in ipairs(sensorinfo)
+   do
+     local   e = {}
+   
+     for i2,v2 in ipairs(v1)
+     do
+       for k,v in pairs(v2)
+       do
+         e[k] = v
+       end
+     end
+     events[index] = e
+     index = index + 1
+    end
+```
+
+
+</td>
+</tr>
+<tr>
+<td> Returns results as SAS Event Stream Processing events. </td>
+<td>
+
+
+```
+    return(events) 
+end
+```
+
+
+</td>
+</tr>
+</table>
+
+
+
 
 To view the project in its entirety and see the Lua code in context, see the attached project file [luaParseJson.xml](https://github.com/sassoftware/esp-studio-examples/blob/main/Basic/lua-parse/luaParseJson.xml).
 
