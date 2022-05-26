@@ -11,7 +11,7 @@ There are no prerequisites for this example project. If you do not have access t
 ### Workflow
 The following figure illustrates the complete flow of events through the SAS Event Stream Processing project.
 
-![basic example workflow](/img/basic_workflow.png)
+![basic example workflow](img/basic_workflow.png)
 
 1. The Source window (source) receives the sample input data from a CSV file.
 2. The JSON data embedded in the CSV file is streamed to the Lua window (createMulti).
@@ -27,7 +27,7 @@ The first two columns in the CSV file contain the opcodes for SAS Event Stream P
 ---
 The JSON data consists of sensor data for two devices. One of the devices has data from one sensor, and the other device has data from two sensors, as illustrated in the following figure. 
 
-![basic example data structure](https://github.com/sassoftware/esp-studio-examples/blob/main/Basic/lua-parse/basicDataStructure.png "basic example data structure")
+![basic example data structure](img/basicDataStructure.png "basic example data structure")
 
 #### createMulti
 The createMulti window is a Lua window. It contains Lua code that performs the following steps:
@@ -130,7 +130,7 @@ To run this example project, you must configure a RabbitMQ message broker to wor
 ### Workflow
 The following figure illustrates the complete flow of events through the SAS Event Stream Processing project.
 
-![advanced example workflow](https://github.com/sassoftware/esp-studio-examples/blob/main/Basic/lua-parse/adv_workflow.png "advanced example workflow")
+![advanced example workflow](img/adv_workflow.png "advanced example workflow")
 
 1. The first Source window (train_data) receives the sample input data from a CSV file.
 2. RabbitMQ subscribes to train_data and converts it to a JSON opaque string.
