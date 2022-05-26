@@ -11,7 +11,7 @@ There are no prerequisites for this example project. If you do not have access t
 ### Workflow
 The following figure illustrates the complete flow of events through the SAS Event Stream Processing project.
 
-![basic example workflow](https://github.com/sassoftware/esp-studio-examples/blob/main/Basic/lua-parse/basic_workflow.png "basic example workflow")
+![basic example workflow](/img/basic_workflow.png)
 
 1. The Source window (source) receives the sample input data from a CSV file.
 2. The JSON data embedded in the CSV file is streamed to the Lua window (createMulti).
