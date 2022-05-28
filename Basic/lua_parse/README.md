@@ -102,7 +102,7 @@ end
 </table>
 
 
-To view project in its entirety and the Lua code in context, see the attached file [luaParseJsonSimple.xml](https://github.com/sassoftware/esp-studio-examples/blob/main/Basic/lua-parse/luaParseJsonSimple.xml).
+To view project in its entirety and the Lua code in context, see the attached file [luaParseJsonSimple.xml](luaParseJsonSimple.xml).
 
 
 ### Test the Project and View the Results
@@ -139,7 +139,7 @@ The following figure illustrates the complete flow of events through the SAS Eve
 5. The Lua window generates multiple events from the JSON string.
 
 #### train_data
-1. For demonstration purposes, sensor data input is simulated by uploading a CSV file to a Source window (train_data). The CSV data enters this Source window through a file and socket connector.  To view the CSV data, see the attached file [trainData.csv](https://github.com/sassoftware/esp-studio-examples/blob/main/Basic/lua-parse/trainData.csv).
+1. For demonstration purposes, sensor data input is simulated by uploading a CSV file to a Source window (train_data). The CSV data enters this Source window through a file and socket connector.  To view the CSV data, see the attached file [trainData.csv](trainData.csv).
 2. The message broker RabbitMQ connects to train_data using a subscriber connector. RabbitMQ transforms the CSV data into a JSON string.
 
 The order in which connectors start is specified with connector groups. For more information about subscriber and publisher connectors, see [SAS Event Stream Processing: Overview to Connectors](https://documentation.sas.com/?cdcId=espcdc&cdcVersion=v_023&docsetId=espca&docsetTarget=p1nhdjrc9n0nnmn1fxqnyc0nihzz.htm).
@@ -214,7 +214,7 @@ end
 
 
 
-To view the project in its entirety and see the Lua code in context, see the attached project file [luaParseJson.xml](https://github.com/sassoftware/esp-studio-examples/blob/main/Basic/lua-parse/luaParseJson.xml).
+To view the project in its entirety and see the Lua code in context, see the attached project file [luaParseJson.xml](luaParseJson.xml).
 
 ### Test the Project and View the Results
 To see a demo of how to test this project and view the results, watch the following video:
