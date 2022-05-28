@@ -18,7 +18,7 @@ The following figure illustrates the complete flow of events through the SAS Eve
 3. The Lua window generates multiple events from the JSON data.
 
 #### source
-The source window is a Source window that streams data from the file [luaParseJsonSimple.csv](https://github.com/sassoftware/esp-studio-examples/blob/main/Basic/lua-parse/luaParseJsonSimple.csv). That file contains JSON data that is encapsulated within a CSV string.
+The source window is a Source window that streams data from the file [luaParseJsonSimple.csv](luaParseJsonSimple.csv). That file contains JSON data that is encapsulated within a CSV string.
 
 ---
 **NOTE:**
