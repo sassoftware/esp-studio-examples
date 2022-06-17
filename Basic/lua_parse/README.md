@@ -217,10 +217,7 @@ To view the project in its entirety and see the Lua code in context, see the att
 ### Test the Project and View the Results
 To see a demo of how to test this project and view the results, watch the following video:
 
-
-
-https://user-images.githubusercontent.com/73890196/170307157-dbe3ecfa-bd58-42dc-aa66-6145238e43a7.mp4
-
+https://user-images.githubusercontent.com/73890196/174398488-8572d107-8eeb-4861-af0a-1e8d47e4a038.mp4
 
 
 ### Next Steps
