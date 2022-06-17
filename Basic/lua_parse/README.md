@@ -109,9 +109,7 @@ To view project in its entirety and the Lua code in context, see the attached fi
 
 To see a demo of how to test this project and view the results, watch the following video:
 
-https://user-images.githubusercontent.com/73890196/170306741-7ce60d49-768b-40df-af81-10f07b97860b.mp4
-
-
+https://user-images.githubusercontent.com/73890196/174394663-c5fa558f-abd0-4df4-8a8e-e60570e939bc.mp4
 
 
 ## Advanced Example Project
