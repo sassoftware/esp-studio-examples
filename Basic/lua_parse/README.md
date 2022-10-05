@@ -57,7 +57,7 @@ local   eventId = 1
 ```
 function create(data,context)
   local   events = {}
-  local   sensorinfo = parseJsonFrom(context.window,"sensorinfo")
+  local   sensorinfo = esp_parseJsonFrom("sensorinfo")
 ```
 
   
@@ -162,7 +162,7 @@ The parseJson window is a Lua window. It contains Lua code that performs the fol
 ```
 function create(data,context)
   local   events = {}
-  local   sensorinfo = parseJsonFrom(context.window,"sensorinfo")
+  local   sensorinfo = esp_parseJsonFrom("sensorinfo")
 ```
 
   
