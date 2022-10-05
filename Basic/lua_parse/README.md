@@ -4,8 +4,7 @@ Within a Lua window of SAS Event Stream Processing, you write Lua code to progra
 - The [basic example project](#basic-example-project) is designed to show how event generation works.
 - The [advanced example project](#advanced-example-project) is intended to provide a more realistic use case of event generation.
 ---
-**NOTE**
-
+**NOTE:**
 Use these examples with SAS Event Stream Processing 2022.10 and later.
 
 ---
