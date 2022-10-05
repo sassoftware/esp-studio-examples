@@ -3,6 +3,12 @@
 Within a Lua window of SAS Event Stream Processing, you write Lua code to programmatically generate events. The following examples show how to code a Lua window to parse a JSON string in order to generate multiple events from a single event stream.
 - The [basic example project](#basic-example-project) is designed to show how event generation works.
 - The [advanced example project](#advanced-example-project) is intended to provide a more realistic use case of event generation.
+---
+**NOTE**
+
+Use these examples with SAS Event Stream Processing 2022.10 and later.
+
+---
 
 ## Basic Example Project
 ### Prerequisites
