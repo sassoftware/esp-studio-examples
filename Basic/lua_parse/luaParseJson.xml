@@ -159,7 +159,7 @@
           <code><![CDATA[
                 function create(data,context)
                     local   events = {}
-                    local   sensorinfo = parseJsonFrom(context.window,"sensorinfo")
+                    local   sensorinfo = esp_parseJsonFrom("sensorinfo")
                     local   index = 1
 
                     for i1,v1 in ipairs(sensorinfo)
