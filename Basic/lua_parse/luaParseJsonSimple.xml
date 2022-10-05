@@ -30,7 +30,7 @@
             function create(data,context)
 
                 local   events = {}
-                local   sensorinfo = parseJsonFrom(context.window,"sensorinfo")
+                local   sensorinfo = esp_parseJsonFrom("sensorinfo")
 
                 for index,value in ipairs(sensorinfo)
                 do
