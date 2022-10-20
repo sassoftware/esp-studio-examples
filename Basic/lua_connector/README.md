@@ -113,7 +113,7 @@ end
 ## Test the Project and View the Results
 The following figure shows the result of running the project in test mode in SAS Event Stream Processing Studio:
 
-![Output from the lua_connector example in test mode](lua_connector/img/lua_connector_Source_window.png "Output from the lua_connector example in test mode")
+![Output from the lua_connector example in test mode](img/lua_connector_Source_window.png "Output from the lua_connector example in test mode")
 
 The actual events that appear in test mode depend on the events that are available in the RSS feeds at the time when you run the project.
 
