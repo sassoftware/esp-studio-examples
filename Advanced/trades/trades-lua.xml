@@ -63,6 +63,7 @@
               <field name="quantity" type="int32"/>
               <field name="price" type="double"/>
               <field name="totalCost" type="double"/>
+	      <field name="traderID" type="int64"/>
               <field name="time" type="stamp"/>
               <field name="name" type="string"/>
             </fields>
@@ -72,6 +73,7 @@
             <field-expr><![CDATA[quantity]]></field-expr>
             <field-expr><![CDATA[price]]></field-expr>
             <field-expr><![CDATA[price*quantity]]></field-expr>
+            <field-expr><![CDATA[traderID]]></field-expr>
             <field-expr><![CDATA[time]]></field-expr>
             <field-expr><![CDATA[name]]></field-expr>
           </output>
