@@ -13,7 +13,7 @@
       <contqueries>
         <contquery name='contquery' trace='w_data w_calculate'>
           <windows>
-            <window-source name='w_data'> 
+            <window-source name='w_data' index='pi_EMPTY'> 
             <description> 
 		This source window receives the included example input data file via a 
 		file socket connector. The input data stream is placed in three fields 
@@ -39,7 +39,7 @@
                 </connector>
               </connectors>
             </window-source>
-            <window-calculate name='w_calculate' algorithm='TextVectorization'> 
+            <window-calculate name='w_calculate' algorithm='TextVectorization' index='pi_EMPTY'> 
 	    <description> 
 		This calculate window receives data events and publishes word vectors
 		created with the TextVectorization algorith. In this example, the following

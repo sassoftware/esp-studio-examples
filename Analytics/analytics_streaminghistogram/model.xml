@@ -37,7 +37,7 @@
                 </connector>
               </connectors>
             </window-source>
-            <window-calculate name='w_calculate' algorithm='Histogram'> 
+            <window-calculate name='w_calculate' algorithm='Histogram' index='pi_EMPTY'> 
             <description> 
 		This calculate window receives data events from the source window and publishes output
 		variable values for bin centers and heights for quantiles. In this example, the following

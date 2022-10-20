@@ -14,7 +14,7 @@
       <contqueries>
         <contquery name='contquery' trace='w_source w_evaluating'>
           <windows>
-            <window-source name='w_source'> 
+            <window-source name='w_source' index='pi_EMPTY'> 
             <description> 
 		This source window receives data events from the included example input via
 		a file socket connector. The input stream is placed into three fields for
@@ -40,7 +40,7 @@
                 </connector>
               </connectors>
             </window-source>
-            <window-calculate algorithm="TFIDF" name="w_calculate"> 
+            <window-calculate algorithm="TFIDF" name="w_calculate" index='pi_EMPTY'> 
             <description> 
 		This calculate window receives data events from the source window, and publishes
 		calculated transforms according to the TFIDF algorithm properties that are specified. 

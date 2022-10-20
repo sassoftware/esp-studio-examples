@@ -22,7 +22,7 @@
       <contqueries>
         <contquery name='cq_01' trace='w_score1'>
           <windows>
-            <window-source name='w_data' insert-only='true' autogen-key='false'> 
+            <window-source name='w_data' insert-only='true' autogen-key='false' index='pi_EMPTY'> 
             <description> 
 		This source window receives the included example input data file via a file socket connector.
 		The input data stream is placed into nine fields for each observation, as specified in the 

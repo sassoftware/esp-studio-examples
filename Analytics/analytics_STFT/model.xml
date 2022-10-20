@@ -16,7 +16,7 @@
 <contqueries>
   <contquery name='cq_01' include-singletons='true' trace='w_calculate'>
    <windows>
-    <window-source name='w_source' insert-only='true' autogen-key='true'> 
+    <window-source name='w_source' insert-only='true' autogen-key='true' index='pi_EMPTY'> 
      <description> 
 	This source window receives the included example input data file via a file
 	socket connector.The input stream is placed into two fields for each observation:
@@ -44,7 +44,7 @@
       </connector>
      </connectors>
     </window-source>
-    <window-calculate name="w_calculate" algorithm="STFT">
+    <window-calculate name="w_calculate" algorithm="STFT" index='pi_EMPTY'>
       <description> 
 	The calculate window, w_calculate receives data events from the source window. It
 	publishes calculated transforms according to the STFT algorithm properties. In this
