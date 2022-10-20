@@ -43,7 +43,7 @@
                 </connector>
               </connectors>
             </window-source>
-            <window-calculate algorithm="LagMonitor" name="w_calculate"> 
+            <window-calculate algorithm="LagMonitor" name="w_calculate" index='pi_EMPTY'> 
             <description> 
 		This calculate window receives data events including the values of several variables
 		from the source window. It publishes selected lags and computed cross-correlation

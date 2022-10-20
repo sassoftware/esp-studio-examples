@@ -10,7 +10,7 @@
 <contqueries>
   <contquery name='contquery' include-singletons='true' trace='w_source w_calculate'>
    <windows>
-    <window-source name='w_source' insert-only='true'> 
+    <window-source name='w_source' insert-only='true' index='pi_EMPTY'> 
     <description> 
 	This source window receives the included example input data file via a file
 	socket connector. The input stream is placed into two fields for each observation:

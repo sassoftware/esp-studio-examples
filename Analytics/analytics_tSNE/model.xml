@@ -15,7 +15,7 @@
       <contqueries>
         <contquery name='contquery' trace='w_scoring w_training'>
           <windows>
-            <window-source name='w_data' insert-only='true'> 
+            <window-source name='w_data' insert-only='true' index='pi_EMPTY'> 
               <description> 
 		This source window receives the included example data file as input via a 
 		file socket connector. Each observation contains several fields of characteristics

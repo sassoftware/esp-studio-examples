@@ -49,7 +49,7 @@
                 </connector>
               </connectors>
             </window-source>
-            <window-calculate name='w_calculate' algorithm='ChangeDetection'> 
+            <window-calculate name='w_calculate' algorithm='ChangeDetection' index='pi_EMPTY'> 
             <description> 
 		This calculate window receives data from the source window and applies the
 		ChangeDetection algorithm to compute KL divergence. In this example, the 

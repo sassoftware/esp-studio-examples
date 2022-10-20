@@ -13,7 +13,7 @@
 <contqueries>
   <contquery name='contquery' trace='w_calculate'>
    <windows>
-    <window-source name='w_source' insert-only='true' autogen-key='false'> 
+    <window-source name='w_source' insert-only='true' autogen-key='false' index='pi_EMPTY'> 
      <description> 
 	This source window receives input data via a file socket connector. The
 	input stream is placed into three fields for each observation read: an
@@ -40,7 +40,7 @@
      </connectors>
     </window-source>
 
-    <window-calculate name="w_calculate" algorithm="Summary">
+    <window-calculate name="w_calculate" algorithm="Summary" index='pi_EMPTY'>
       <description> 
 	The calculate window, w_calculate calculates univariate summary statistics
 	on data events it receives from the source window and publishes the results to the

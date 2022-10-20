@@ -15,7 +15,7 @@ events.csv is an input file. This file contains the events to be scored.]]></des
   <contqueries>
     <contquery name="contquery" trace="w_scoring w_training">
       <windows>
-        <window-source insert-only="true" name="w_source">
+        <window-source insert-only="true" name="w_source" index='pi_EMPTY'>
           <description><![CDATA[w_source is a Source window. This is where events from the events.csv file enter the model to be scored.]]></description>
           <schema>
             <fields>

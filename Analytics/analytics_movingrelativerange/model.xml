@@ -12,7 +12,7 @@
       <contqueries>
         <contquery name='cq_01' trace='w_calculate'>
           <windows>
-            <window-source name='w_data'> 
+            <window-source name='w_data' index='pi_EMPTY'> 
             <description> 
 		This source window receives the included example input data file via
 		a file socket connector. The input data stream is placed into two fields
@@ -38,7 +38,7 @@
               </connectors>
             </window-source>
 
-            <window-calculate name='w_calculate' algorithm='MRR'>
+            <window-calculate name='w_calculate' algorithm='MRR' index='pi_EMPTY'>
             <description> 
 		This calculate window receives data events from the source window. It 
 		publishes the calculated moving relating range. In this example, the

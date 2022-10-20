@@ -12,7 +12,7 @@
       <contqueries>
         <contquery name='cq_01' trace='w_score w_train'>
           <windows>
-            <window-source name='w_data' insert-only='true'> 
+            <window-source name='w_data' insert-only='true' index='pi_EMPTY'> 
               <description> 
 		This source window receives the included example data via a file socket connector. The input stream
 		is placed into the following fields for each observation: an ID that acts as the data stream's key,

@@ -42,7 +42,7 @@
               </connectors>
             </window-source>
 
-            <window-calculate name='w_calculate' algorithm='FitStat'> 
+            <window-calculate name='w_calculate' algorithm='FitStat' index='pi_EMPTY'> 
               <description> 
 		This calculate window, w_calculate receives data events from the source window. It
 		publishes goodness-of-fit statistics according to the FitStat algorithm properties. In

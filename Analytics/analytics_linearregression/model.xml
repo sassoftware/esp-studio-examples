@@ -14,7 +14,7 @@
       <contqueries>
         <contquery name='cq_01' trace='w_score w_train'>
           <windows>
-            <window-source name='w_data' insert-only='true'> 
+            <window-source name='w_data' insert-only='true' index='pi_EMPTY'> 
 	      <description> 
                 Source window with file socket connector to publish
 		provided example data.

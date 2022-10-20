@@ -15,7 +15,7 @@
       <contqueries>
         <contquery name='cq_01' trace='w_calculate'>
           <windows>
-            <window-source insert-only="true" name='w_data'> 
+            <window-source insert-only="true" name='w_data' index='pi_EMPTY'> 
             <description> 
 		This source window receives the included example input file via a file socket
 		connector. The input data stream is placed into seven fields for each observation: 
@@ -46,7 +46,7 @@
               </connectors>
             </window-source>
 
-            <window-calculate name='w_calculate' algorithm='SST'>
+            <window-calculate name='w_calculate' algorithm='SST' index='pi_EMPTY'>
             <description> 
 		This calculate window receives data events and publishes the computed principal
 		eigenvectors. In this example, the following algorithm parameters govern the 

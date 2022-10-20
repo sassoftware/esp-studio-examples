@@ -26,7 +26,7 @@
   <contqueries>
     <contquery name="cq1" trace="Score1">
       <windows>
-        <window-source pubsub="true" name="Source1" insert-only='true'> 
+        <window-source pubsub="true" name="Source1" insert-only='true' index='pi_EMPTY'> 
         <description> 
 		This Source window receives the included example input data file via a file socket
 		connector. The input data stream is placed into two fields for each observation:
