@@ -14,7 +14,7 @@
       <contqueries>
         <contquery name='contquery' trace='w_source w_evaluating'>
           <windows>
-            <window-source name='w_source' index='pi_EMPTY'> 
+            <window-source name='w_source' insert-only='true' index='pi_EMPTY'> 
             <description> 
 		This source window receives data events from the included example input via
 		a file socket connector. The input stream is placed into three fields for
