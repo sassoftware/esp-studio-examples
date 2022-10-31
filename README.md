@@ -134,6 +134,7 @@ The following examples in the [Advanced](/Advanced) directory contain practical 
 
 The following examples demonstrate how you can use Lua code in projects.
 - lua_compute
+- lua_connector
 - lua_parse
 - pattern_empty_index
 
