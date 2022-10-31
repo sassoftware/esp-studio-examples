@@ -110,7 +110,6 @@ The SAS Help Center contains step-by-step instructions for the following example
 - geofence: see [Using a Geofence](https://documentation.sas.com/?cdcId=espcdc&cdcVersion=default&docsetId=espstudio&docsetTarget=n09oxfcf19hkf1n1ef15i41vegc6.htm) in SAS Help Center
 - join: see [Join Example](https://documentation.sas.com/?cdcId=espcdc&cdcVersion=default&docsetId=esmuse&docsetTarget=p1fvkzlm2erh7fn1r8t6ljgvyxr7.htm) in SAS Help Center
 - lua_compute: see [Computing with a Lua Window](https://documentation.sas.com/?cdcId=espcdc&cdcVersion=default&docsetId=espstudio&docsetTarget=p0840f260ug6vpn1tlcwl0hb1rgq.htm) in SAS Help Center
-- object_tracker: see [Performing Multi-Object Tracking (MOT)](https://documentation.sas.com/?cdcId=espcdc&cdcVersion=default&docsetId=espstudio&docsetTarget=n1oh5ucv9qq7w4n1lbby38gtvs6z.htm) in SAS Help Center
 - onnx_object_detection: see [Detecting Objects by Using an ONNX Model](https://documentation.sas.com/?cdcId=espcdc&cdcVersion=default&docsetId=espstudio&docsetTarget=n1idmli0zjcev7n1vfb0j8cf0dpg.htm) in SAS Help Center
 - pattern_empty_index: see [Using Lua to Identify Trading Patterns in a Stock Market](https://documentation.sas.com/?cdcId=espcdc&cdcVersion=default&docsetId=espstudio&docsetTarget=n1v79ohw75168xn1328w83irahgg.htm) in SAS Help Center
 - removeState: see [Transitioning a Model from Stateful to Stateless](https://documentation.sas.com/?cdcId=espcdc&cdcVersion=default&docsetId=espstudio&docsetTarget=p00d63veku1ehvn12hfz88m7xzkj.htm) in SAS Help Center
