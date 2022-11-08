@@ -6,7 +6,7 @@ This repository provides XML code examples that use SAS Event Stream Processing 
 
 ## Using the Examples
 
-The directory for each example contains all the files that you need to run the project. Some examples are accompanied with documentation in the SAS Help Center, with steps about how to use those specific examples. For any other examples, follow these general steps: 
+The directory for each example contains all the files that you need to run the project. Some examples are accompanied with a README or documentation in the SAS Help Center, with steps about how to use those specific examples. For any other examples, follow these general steps: 
 
 1. Save the contents of the directory for a specific example to a convenient location on your computer.
 
