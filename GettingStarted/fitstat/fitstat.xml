@@ -18,7 +18,7 @@ This project contains a Source window that receives scored data to be analysed, 
             </fields>
           </schema>
         </window-source>
-        <window-calculate algorithm="FitStat" pubsub="true" name="w_calculate">
+        <window-calculate algorithm="FitStat" pubsub="true" index="pi_EMPTY" name="w_calculate">
           <description><![CDATA[The Calculate window receives data events from the Source window. It publishes goodness-of-fit statistics according to the FitStat algorithm's properties. In the Calculate window used in this model, the FitStat algorithm is defined by input-map properties and output-map properties. For input variables in regression models, only one input variable is required. This input variable specifies the predicted response. For classification models, the variables must be listed and must contain the predicted probabilities for each class. In this example, the data from the source window is from a regression model.  In addition, the response variable specifies the target variable. The following output-map properties are also defined:
 
 nOut:		The number of obserations(N).
