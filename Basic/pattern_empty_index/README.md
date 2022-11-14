@@ -43,6 +43,7 @@ Explore the settings for this window:
    - `seller`: This field is the seller of the stock.
    - `buysellflg`: This field is a flag that indicates whether the trade involves buying or selling stock.
    - `trade_time`: This field is the stock trade's timestamp.
+4. Click ![Properties](img/show-properties-icon.png "Properties"). 
 
 ### patternWindow_01
 
