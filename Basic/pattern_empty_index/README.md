@@ -159,7 +159,7 @@ Explore the settings for this window:
 
 When you test the project in SAS Event Stream Processing Studio, you can use the **Publish** button to publish events from the stocktrades.csv file into the sourceWindow_01 window. You must specify the following date format: `%Y-%m-%d %H:%M:%S`. For more information, see [Publish Events from a CSV file](https://go.documentation.sas.com/doc/en/espcdc/default/espstudio/p124n2fohetwqzn109gsdel6o1cj.htm).
 
-Alternatively, before you test the project, you can configure a publisher connector for the sourceWindow_01 window and specify the date format `%Y-%m-%d %H:%M:%S` in the connector's settings.
+Alternatively, before you test the project, you can configure a publisher connector for the sourceWindow_01 window and specify the date format `%Y-%m-%d %H:%M:%S` in the connector's settings. For more information, see [Configure a File and Socket Connector](https://go.documentation.sas.com/doc/en/espcdc/default/espstudio/n0esv2n0cbbpgcn1r281krr1iv6q.htm#n0y87cwr7q5vo6n1qlfcey182vt6).
 
 The results for each window appear on separate tabs in test mode:
 - The **sourceWindow_01** tab lists the stock trades that are received from the input file.
