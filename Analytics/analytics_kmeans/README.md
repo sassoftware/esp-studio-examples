@@ -48,7 +48,7 @@ Select the w_scoring window. In the right pane, in the **Settings** section, exp
 
 When you test the project in SAS Event Stream Processing Studio, you can use the **Publish** button to publish events from the events.csv file into the w_source window. For more information, see [Publish Events from a CSV file](https://go.documentation.sas.com/doc/en/espcdc/default/espstudio/p124n2fohetwqzn109gsdel6o1cj.htm).
 
-Alternatively, before you test the project, you can configure a publisher connector for the w_source window.
+Alternatively, before you test the project, you can configure a publisher connector for the w_source window. For more information, see [Configure a File and Socket Connector](https://go.documentation.sas.com/doc/en/espcdc/default/espstudio/n0esv2n0cbbpgcn1r281krr1iv6q.htm#n0y87cwr7q5vo6n1qlfcey182vt6).
 
 The results for each window appear on separate tabs in test mode. The **w_source** tab displays events to be scored:
 
