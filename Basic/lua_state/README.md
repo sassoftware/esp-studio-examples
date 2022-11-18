@@ -108,6 +108,8 @@ end
 
 In the following animated image, the window to the right shows input events as they are streamed into the trades window. The window to the left shows how the Lua code uses those events to periodically update the stock symbols, based on their price.
 
+![luaState project output](https://github.com/sassoftware/esp-studio-examples/blob/main/Basic/lua_state/lua_state.gif)
+
 ### Next Steps
 
 Now that you have generated events from the stock trade data, you can add windows to the project to analyze the data.
