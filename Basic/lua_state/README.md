@@ -26,13 +26,13 @@ To view the project in its entirety, see the attached file [luaState.xml](luaSta
 
 ### Source Data
 
-The file [luaStateInput.csv](luaStateInput.csv) contains stock trade data. It is formatted as a CSV file to simplify the process for the purposes of this example. In a real-life scenario, this data would likely enter the project via a message broker such as RabbitMQ.
+The file [luaStateInput.csv](luaStateInput.zip) contains stock trade data. It is formatted as a CSV file to simplify the process for the purposes of this example. In a real-life scenario, this data would likely enter the project via a message broker such as RabbitMQ.
 
 ### Workflow
 
 #### trades
 
-The trades window is a Source window. It receives input data from the file [luaStateInput.csv](luaStateInput.csv).
+The trades window is a Source window. It receives input data from the file [luaStateInput.csv](luaStateInput.zip).
 
 #### generateEvents
 
