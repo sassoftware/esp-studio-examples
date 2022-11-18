@@ -1,0 +1,73 @@
+<project name="luaState" index="pi_EMPTY" pubsub="none" threads="4" heartbeat-interval="1">
+  <description><![CDATA[This project demonstrates how to maintain event state in Lua and use it to generate events. It streams stock trade data into the model and uses a Lua window to generate events when a new symbol price exceeds the current maximum price for that symbol.]]></description>
+  <metadata>
+    <meta id="studioUploadedBy">mtldal</meta>
+    <meta id="studioUploaded">1661511060474</meta>
+    <meta id="studioModifiedBy">mtldal</meta>
+    <meta id="studioModified">1661524224874</meta>
+    <meta id="layout">{"cq":{"generateEvents":{"x":50,"y":175},"trades":{"x":50,"y":50}}}</meta>
+  </metadata>
+  <contqueries>
+    <contquery name="cq" trace="generateEvents">
+      <windows>
+        <window-source name="trades">
+          <schema>
+            <fields>
+              <field name="id" type="int64" key="true"/>
+              <field name="symbol" type="string"/>
+              <field name="currency" type="int32"/>
+              <field name="time" type="int64"/>
+              <field name="msecs" type="int32"/>
+              <field name="price" type="double"/>
+              <field name="quant" type="int32"/>
+              <field name="venue" type="int32"/>
+              <field name="broker" type="int32"/>
+              <field name="buyer" type="int32"/>
+              <field name="seller" type="int32"/>
+              <field name="buysellflg" type="int32"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="fs" name="stateInput">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="fsname"><![CDATA[/mnt/data/input/luaStateInput.csv]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-lua events="create" name="generateEvents">
+          <schema>
+            <fields>
+              <field name="symbol" type="string" key="true"/>
+              <field name="max_price" type="double"/>
+            </fields>
+          </schema>
+          <copy/>
+          <use><![CDATA[symbol,price]]></use>
+          <code><![CDATA[
+ local symbolData = {} 
+ function create(data,context) 
+     local event = nil 
+     local maxPrice = symbolData[data.symbol] 
+     
+     if (maxPrice == nil or data.price > maxPrice) then 
+         symbolData[data.symbol] = data.price 
+         event = {} 
+         event.symbol = data.symbol 
+         event.max_price = data.price 
+         event._opcode = "upsert" 
+     end 
+     
+ return(event) 
+ end 
+]]></code>
+        </window-lua>
+      </windows>
+      <edges>
+        <edge source="trades" target="generateEvents"/>
+      </edges>
+    </contquery>
+  </contqueries>
+</project>
