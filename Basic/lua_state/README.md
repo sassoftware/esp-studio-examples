@@ -26,7 +26,7 @@ To view the project in its entirety, see the attached file [luaState.xml](luaSta
 
 ### Source Data
 
-The file [luaStateInput.csv](luaStateInput.zip) contains stock trade data. It is formatted as a CSV file to simplify the process for the purposes of this example. In a real-life scenario, this data would likely enter the project via a message broker such as RabbitMQ.
+The file luaStateInput.csv contains stock trade data. It is formatted as a CSV file to simplify the process for the purposes of this example. In a real-life scenario, this data would likely enter the project via a message broker such as RabbitMQ. To download a ZIP file containing luaStateInput.csv, click [here](luaStateInput.zip).
 
 ### Workflow
 
@@ -41,7 +41,7 @@ The generateEvents window is a Lua window. It contains Lua code that analyzes th
 ---
 
 **NOTE:**
-To optimize performance, the variables `symbol` and `price` have been selected for the **Fields to use in Lua code** option. For more information, see [Working with Lua Windows in SAS Event Stream Processing Studio](https://documentation.sas.com/?cdcId=espcdc&cdcVersion=v_030&docsetId=espstudio&docsetTarget=n1n3kx16nz64jfn1tzkgddvobeus.htm).
+To optimize performance, the variables `symbol` and `price` have been selected for the **Fields to use in Lua code** option. For more information, see [Working with Lua Windows in SAS Event Stream Processing Studio](https://documentation.sas.com/?cdcId=espcdc&cdcVersion=default&docsetId=espstudio&docsetTarget=n1n3kx16nz64jfn1tzkgddvobeus.htm).
 
 ---
 
@@ -118,5 +118,5 @@ Now that you have generated events from the stock trade data, you can add window
 
 For more information, refer to the following resources:
 
-- [Working with Lua Windows in SAS Event Stream Processing Studio](https://documentation.sas.com/?cdcId=espcdc&cdcVersion=v_028&docsetId=espstudio&docsetTarget=n1n3kx16nz64jfn1tzkgddvobeus.htm)
-- [Working with Lua-based Pattern Windows in SAS Event Stream Processing Studio](https://documentation.sas.com/?cdcId=espcdc&cdcVersion=v_028&docsetId=espstudio&docsetTarget=n0wrk2qxns2isen11mlsevb8w0gi.htm)
+- [Working with Lua Windows in SAS Event Stream Processing Studio](https://documentation.sas.com/?cdcId=espcdc&cdcVersion=default&docsetId=espstudio&docsetTarget=n1n3kx16nz64jfn1tzkgddvobeus.htm)
+- [Working with Lua-based Pattern Windows in SAS Event Stream Processing Studio](https://documentation.sas.com/?cdcId=espcdc&cdcVersion=default&docsetId=espstudio&docsetTarget=n0wrk2qxns2isen11mlsevb8w0gi.htm)
