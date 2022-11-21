@@ -11,7 +11,7 @@ Use these examples with SAS Event Stream Processing 2022.10 and later.
 
 ## Basic Example Project
 ### Prerequisites
-There are no prerequisites for this example project. If you do not have access to a persistent volume on your Kubernetes cluster, you can use the Publish button in SAS Event Stream Processing Studio to publish data from the CSV file to the project. For more information, see [Publish Events from a CSV File](https://documentation.sas.com/?cdcId=espcdc&cdcVersion=v_023&docsetId=espstudio&docsetTarget=p124n2fohetwqzn109gsdel6o1cj.htm).
+There are no prerequisites for this example project. If you do not have access to a persistent volume on your Kubernetes cluster, you can use the Publish button in SAS Event Stream Processing Studio to publish data from the CSV file to the project. For more information, see [Publish Events from a CSV File](https://documentation.sas.com/?cdcId=espcdc&cdcVersion=default&docsetId=espstudio&docsetTarget=p124n2fohetwqzn109gsdel6o1cj.htm).
 
 ### Workflow
 The following figure illustrates the complete flow of events through the SAS Event Stream Processing project.
@@ -145,7 +145,7 @@ The following figure illustrates the complete flow of events through the SAS Eve
 1. For demonstration purposes, sensor data input is simulated by uploading a CSV file to a Source window (train_data). The CSV data enters this Source window through a file and socket connector.  To view the CSV data, see the attached file [trainData.csv](trainData.csv).
 2. The message broker RabbitMQ connects to train_data using a subscriber connector. RabbitMQ transforms the CSV data into a JSON string.
 
-The order in which connectors start is specified with connector groups. For more information about subscriber and publisher connectors, see [SAS Event Stream Processing: Overview to Connectors](https://documentation.sas.com/?cdcId=espcdc&cdcVersion=v_023&docsetId=espca&docsetTarget=p1nhdjrc9n0nnmn1fxqnyc0nihzz.htm).
+The order in which connectors start is specified with connector groups. For more information about subscriber and publisher connectors, see [SAS Event Stream Processing: Overview to Connectors](https://documentation.sas.com/?cdcId=espcdc&cdcVersion=default&docsetId=espca&docsetTarget=p1nhdjrc9n0nnmn1fxqnyc0nihzz.htm).
 
 #### pub_win
 1. RabbitMQ publishes a JSON opaque string named "sensorinfo" to the pub_win Source window.
@@ -231,5 +231,5 @@ You can add windows to the project to further analyze the data. For example, you
 ### Additional Resources
 For more information, refer to the following resources:
 
-- [SAS Help Center: Using Lua Windows](https://documentation.sas.com/?cdcId=espcdc&cdcVersion=v_023&docsetId=espcreatewindows&docsetTarget=p0yj92wgv3ssyyn1syatsh9l1t74.htm) 
-- [SAS Help Center: Working with Lua Windows in SAS Event Stream Processing Studio](https://documentation.sas.com/?cdcId=espcdc&cdcVersion=v_023&docsetId=espstudio&docsetTarget=n1n3kx16nz64jfn1tzkgddvobeus.htm)
+- [SAS Help Center: Using Lua Windows](https://documentation.sas.com/?cdcId=espcdc&cdcVersion=default&docsetId=espcreatewindows&docsetTarget=p0yj92wgv3ssyyn1syatsh9l1t74.htm) 
+- [SAS Help Center: Working with Lua Windows in SAS Event Stream Processing Studio](https://documentation.sas.com/?cdcId=espcdc&cdcVersion=default&docsetId=espstudio&docsetTarget=n1n3kx16nz64jfn1tzkgddvobeus.htm)
