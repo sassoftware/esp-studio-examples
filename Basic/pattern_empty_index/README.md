@@ -63,7 +63,6 @@ Explore the settings for this window:
 2. In the table in the **Patterns** section, select the `pattern1` row and click ![Edit](img/edit-input-handler-icon.png "Edit"). <br>The Edit Pattern window is displayed, which enables you to view the pattern’s properties. The Edit Pattern window is a wizard with four pages.
 3. On the **Name, Index Fields, and Time Fields** page, observe the following settings:
      - In the **Index fields** field, the `symbol` field is selected. This field is part of the sourceWindow_01 window and forms an index generation function. All incoming events are grouped by the specified index. Specifying the `symbol` field as the index field means that the code on the **Lua Code** page does not need to specify this field in each Lua function.
-     - The **Allow all open patterns the possibility of timing out with each incoming event, regardless of the event's index value** check box is selected by default.
      - The `trade_time` field is specified as the time field. This field is used to derive the time interval that is specified on the **Logic Expression** page of the wizard. If a time field is not specified, system time is used.
 4. Click **Next**.
 5. On the **Lua Code** page, view the code that specifies the EOI functions and an output function that are required for the pattern:
