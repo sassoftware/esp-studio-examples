@@ -2,7 +2,9 @@
 
 Join stock market trades with the corresponding traders.
 
-A Join window receives events from a left input window and a right input window. It produces a single output stream of joined events. Joined events are created according to a user-specified join type and user-defined join conditions. As this project contains multiple Source windows, when you use the Publish button in test mode, you must publish events for each Source window separately. You cannot publish events to multiple Source windows simultaneously. 
+A Join window receives events from a left input window and a right input window. It produces a single output stream of joined events. Joined events are created according to a user-specified join type and user-defined join conditions. 
+
+As this project contains multiple Source windows, when you use the Publish button in test mode, you must publish events for each Source window separately. You cannot publish events to multiple Source windows simultaneously. 
 
 For more information about how to explore and test this project, see [Using the Examples](https://github.com/sassoftware/esp-studio-examples#using-the-examples). 
 
