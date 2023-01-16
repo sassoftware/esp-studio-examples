@@ -55,7 +55,7 @@
               <properties>
                 <property name="type"><![CDATA[sub]]></property>
                 <property name="snapshot"><![CDATA[true]]></property>
-                <property name="fsname"><![CDATA[/mnt/data/output/result.out]]></property>
+                <property name="fsname"><![CDATA[/mnt/data/output/output.csv]]></property>
                 <property name="fstype"><![CDATA[csv]]></property>
               </properties>
             </connector>
