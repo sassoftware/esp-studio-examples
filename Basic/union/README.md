@@ -74,9 +74,5 @@ The following figure shows the results for the unionWindow tab:
 
 ![unionWindow tab](img/unionWindow.png "unionWindow tab")
 
-Notes:
-- If the project does not run, check that the SAS Event Stream Processing Studio user has Write access to the directory for the output file for the GeofenceMatches window.
-- If the table is empty, check that the publisher connectors for the ANPR, VehicleWatchList, and CriticalInfrastructure windows are set correctly to point to the CSV files.
-
 ## Additional Resources
 For more information, see [SAS Help Center: Using Union Windows](https://documentation.sas.com/?cdcId=espcdc&cdcVersion=default&docsetId=espcreatewindows&docsetTarget=n0nqt12sgro7rnn1jfg4ql0qsafw).
