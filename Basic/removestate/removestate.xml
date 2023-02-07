@@ -21,7 +21,7 @@
           <description><![CDATA[A Remove State window facilitates the transition of a stateful part of a model to a stateless part of a model. A Remove State window converts all events that it receives into Inserts and adds a field named eventNumber. This field is the only key field of a Remove State window.]]></description>
         </window-remove-state>
         <window-copy pubsub="true" index="pi_RBTREE" name="copyWindow">
-          <description><![CDATA[This Copy window retains the data from the Remove State window according to the set retention policy, which in this model, is 30 minutes.]]></description>
+          <description><![CDATA[This Copy window retains the data from the Remove State window according to the set retention policy, which in this model, is 30 seconds.]]></description>
           <retention type="bytime_sliding"><![CDATA[30 seconds]]></retention>
         </window-copy>
       </windows>
