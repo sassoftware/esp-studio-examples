@@ -120,6 +120,7 @@ The following examples demonstrate how you can use Lua code in projects.
 - lua_connector
 - lua_parse
 - lua_state
+- geofence
 - pattern_empty_index
 
 <!--### What's New
