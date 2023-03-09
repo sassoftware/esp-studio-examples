@@ -77,7 +77,7 @@ The following figure shows the results for the TransposeW tab, with the rearrang
 When you use long mode, you obtain the inverse results of wide mode. The Transpose window produces a number of events for each wide event that it receives. Input schema for the Source window must reflect combinations of fields.
 
 Use the resources in the [esp-studio-examples/Advanced/transpose_long/](https://github.com/sassoftware/esp-studio-examples/tree/main/Advanced/transpose_long) directory:
-1. Observe that the [input-long.csv](esp-studio-examples/Advanced/transpose_long/input-long.csv) file contains only one event. The event contains information for just one plane The value and time associated with pitch, yaw, roll, and velocity are included in this event. Latitude and longitude are included too. 
+1. Observe that the [input-long.csv](https://github.com/sassoftware/esp-studio-examples/blob/main/Advanced/transpose_long/input-long.csv) file contains only one event. The event contains information for just one plane The value and time associated with pitch, yaw, roll, and velocity are included in this event. Latitude and longitude are included too. 
 2. Open the project, and view the output schema and settings for the SourceW and TransposeL windows.
 3. Test the example. You must specify the following date format: `%Y-%m-%d %H:%M:%S`.
 
