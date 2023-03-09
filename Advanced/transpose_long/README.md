@@ -1,7 +1,7 @@
-# transpose_long
+# Transposing Data from an Aircraft
 
-Transpose data from an aircraft, in long mode.
+As the Transpose window has two modes, long and wide, this example consists of two parts:
+- The [esp-studio-examples/Advanced/transpose_wide/](https://github.com/sassoftware/esp-studio-examples/tree/main/Advanced/transpose_wide) directory contains the resources for wide mode
+- The [esp-studio-examples/Advanced/transpose_long/](https://github.com/sassoftware/esp-studio-examples/tree/main/Advanced/transpose_long) directory contains the resources for long mode
 
-This project conceptualizes an event as a row that consists of multiple columns. You can use a Transpose window to interchange an event's rows as columns, and columns as rows. You will process information about the pitch, yaw, roll, and velocity of an aircraft in flight.
-
-SAS Help Center contains step-by-step instructions about how to create the project from scratch and how to execute it. For more information, see [Transposing Data from an Aircraft](https://documentation.sas.com/?cdcId=espcdc&cdcVersion=default&docsetId=espstudio&docsetTarget=p0v0dhveocuk5gn186pk01cuhw0b.htm).
+The README in [esp-studio-examples/Advanced/transpose_wide/](https://github.com/sassoftware/esp-studio-examples/tree/main/Advanced/transpose_wide) provides instructions for both wide mode and long mode.
