@@ -1,22 +1,10 @@
 <project name="sailing_example" threads="4" pubsub="auto" heartbeat-interval="1" index="pi_EMPTY">
-  <description><![CDATA[This example shows an event stream of data obtained from a set of boats. The model identifies two geographical areas of interest. One area is an exclusion zone that the boats identified are not permitted to enter. The other is an area where a speed restriction has been applied. For convenience, it is recommended that you import the preprepared model XML file to SAS Event Stream Processing Studio.
-
-This example uses six files listed below:
-
+  <description><![CDATA[This example shows an event stream of data obtained from a set of boats. The model identifies two geographical areas of interest. One area is an exclusion zone that the boats identified are not permitted to enter. The other is an area where a speed restriction has been applied. This example uses the following six files:
 The XML file (sailing_example.xml) is the project used in the example.
 geoArea.csv is an input file. This file contains events relating to the defined areas of interest.
-boat1.csv is an input file. This file contains the event stream of boat 1. The event stream contains time-stamped geographical coordinates of the boat’s movements.
-Note: For demonstration purposes, the time-stamped geographical coordinates used in this example are represented as strings.
-boat2.csv is an input file. This file contains the event stream of boat 2. The event stream contains time-stamped geographical coordinates of the boat’s movements.
-boat3.csv is an input file. This file contains the event stream of boat 3. The event stream contains time-stamped geographical coordinates of the boat’s movements.
-boat4.csv is an input file. This file contains the event stream of boat 4. The event stream contains time-stamped geographical coordinates of the boat’s movements.
-For demonstration purposes, this example uses CSV files containing historical data. When a model similar to the one used in this example is deployed in a live environment, real-time data sources might be used instead. Before attempting to follow the steps in this example to create a sailing data dashboard, ensure that the model is working correctly in test mode. This includes ensuring that the model’s publisher connectors are correctly configured. The CSV files listed previously must be in a location on the server on which SAS Event Stream Processing is running. This model runs on an ESP server. Before you build a sailing data dashboard in SAS Event Stream Processing Studio, ensure that the ESP server is running and configured in SAS Event Stream Processing Studio.]]></description>
+boat1.csv, boat2.csv, boat3.csv, and boat4.csv are input files. These files contains event streams for four boats. The event streams contain geographical coordinates of the boats' movements.]]></description>
   <metadata>
-    <meta id="studioUploadedBy">fsduser</meta>
-    <meta id="studioUploaded">1613049977247</meta>
-    <meta id="studioModifiedBy">fsduser</meta>
-    <meta id="studioModified">1613051080446</meta>
-    <meta id="layout">{"cq1":{"Areas_Of_Interest":{"x":-330,"y":-440},"Boat1":{"x":-460,"y":-730},"Boat2":{"x":-225,"y":-725},"Boat3":{"x":-5,"y":-725},"Boat4":{"x":210,"y":-725},"Compute_ID1":{"x":-460,"y":-590},"Compute_ID2":{"x":-225,"y":-590},"Compute_ID3":{"x":-5,"y":-590},"Compute_ID4":{"x":210,"y":-590},"Filter_Inside_Exclusion_Zone":{"x":-250,"y":-55},"Filter_Speeding_In_Marina":{"x":-30,"y":-55},"Geofence_Area_Check":{"x":-115,"y":-315},"Last_Exclusion_Violation":{"x":-250,"y":70},"Last_Speeding_Event":{"x":-30,"y":70},"Retention_30Min":{"x":-145,"y":-185},"Union_All_Boats":{"x":-115,"y":-440}}}</meta>
+    <meta id="layout">{"cq1":{"Areas_Of_Interest":{"x":-330,"y":-440},"Boat1":{"x":-445,"y":-725},"Boat2":{"x":-225,"y":-725},"Boat3":{"x":-5,"y":-725},"Boat4":{"x":210,"y":-725},"Compute_ID1":{"x":-445,"y":-590},"Compute_ID2":{"x":-225,"y":-590},"Compute_ID3":{"x":-5,"y":-590},"Compute_ID4":{"x":210,"y":-590},"Filter_Inside_Exclusion_Zone":{"x":-230,"y":-55},"Filter_Speeding_In_Marina":{"x":-5,"y":-55},"Geofence_Area_Check":{"x":-115,"y":-315},"Last_Exclusion_Violation":{"x":-230,"y":70},"Last_Speeding_Event":{"x":-5,"y":70},"Retention_30Min":{"x":-115,"y":-185},"Union_All_Boats":{"x":-115,"y":-440}}}</meta>
   </metadata>
   <contqueries>
     <contquery name="cq1" index="pi_EMPTY">
@@ -36,7 +24,6 @@ For demonstration purposes, this example uses CSV files containing historical da
             <connector class="fs" name="Sailing_Data1">
               <properties>
                 <property name="type"><![CDATA[pub]]></property>
-                <property name="dateformat"><![CDATA[%Y-%m-%d %H:%M:%S]]></property>
                 <property name="rate"><![CDATA[5]]></property>
                 <property name="fsname"><![CDATA[boat1.csv]]></property>
                 <property name="fstype"><![CDATA[csv]]></property>
@@ -58,7 +45,6 @@ For demonstration purposes, this example uses CSV files containing historical da
             <connector class="fs" name="Sailing_Data2">
               <properties>
                 <property name="type"><![CDATA[pub]]></property>
-                <property name="dateformat"><![CDATA[%Y-%m-%d %H:%M:%S]]></property>
                 <property name="rate"><![CDATA[5]]></property>
                 <property name="header"><![CDATA[1]]></property>
                 <property name="addcsvopcode"><![CDATA[true]]></property>
@@ -128,7 +114,6 @@ For demonstration purposes, this example uses CSV files containing historical da
             <connector class="fs" name="Sailing_Data3">
               <properties>
                 <property name="type"><![CDATA[pub]]></property>
-                <property name="dateformat"><![CDATA[%Y-%m-%d %H:%M:%S]]></property>
                 <property name="rate"><![CDATA[5]]></property>
                 <property name="header"><![CDATA[1]]></property>
                 <property name="addcsvopcode"><![CDATA[true]]></property>
@@ -172,7 +157,6 @@ For demonstration purposes, this example uses CSV files containing historical da
             <connector class="fs" name="Sailing_Data4">
               <properties>
                 <property name="type"><![CDATA[pub]]></property>
-                <property name="dateformat"><![CDATA[%Y-%m-%d %H:%M:%S]]></property>
                 <property name="rate"><![CDATA[5]]></property>
                 <property name="header"><![CDATA[1]]></property>
                 <property name="addcsvopcode"><![CDATA[true]]></property>
@@ -208,16 +192,6 @@ For demonstration purposes, this example uses CSV files containing historical da
           <geometry desc-fieldname="poly_desc" radius-fieldname="Poly_Radius" data-fieldname="Poly_Data" radius="1000" data-separator=" "/>
           <position x-fieldname="long" y-fieldname="lat" lookupdistance="0"/>
           <output geoid-fieldname="GeoID" geodesc-fieldname="GeoDesc" geodistance-fieldname="GeoDist" geotype-fieldname="GeoType" include-geo-fields="Poly_Data,Poly_Radius"/>
-          <connectors>
-            <connector class="fs" name="Geo_Sub" active="false">
-              <properties>
-                <property name="type"><![CDATA[sub]]></property>
-                <property name="snapshot"><![CDATA[false]]></property>
-                <property name="fsname"><![CDATA[Geo_Sub.csv]]></property>
-                <property name="fstype"><![CDATA[csv]]></property>
-              </properties>
-            </connector>
-          </connectors>
         </window-geofence>
         <window-source pubsub="true" index="pi_EMPTY" name="Areas_Of_Interest">
           <description><![CDATA[This is a Source window that receives an event stream defining the areas of interest that the boats are not permitted to enter.]]></description>
@@ -243,7 +217,7 @@ For demonstration purposes, this example uses CSV files containing historical da
           <expression><![CDATA[GeoID == 1 AND speed > 4]]></expression>
         </window-filter>
         <window-filter pubsub="true" index="pi_HASH" name="Filter_Inside_Exclusion_Zone">
-          <description><![CDATA[There are two Filter windows that identify if any of the boats have entered the exclusion zone and speed restriction zone and if any of the boats were speeding : Filter_Inside_Exclusion_Zone and Last_Speeding_Event.]]></description>
+          <description><![CDATA[There are two Filter windows that identify if any of the boats have entered the exclusion zone and speed restriction zone and if any of the boats were speeding: Filter_Inside_Exclusion_Zone and Last_Speeding_Event.]]></description>
           <expression><![CDATA[GeoID == 2]]></expression>
         </window-filter>
         <window-aggregate pubsub="true" index="pi_HASH" name="Last_Exclusion_Violation">
@@ -306,21 +280,17 @@ For demonstration purposes, this example uses CSV files containing historical da
   <project-connectors>
     <connector-groups>
       <connector-group name="Boat_Data">
-        <connector-entry connector="cq1/Boat1/Sailing_Data1" state="finished"/>
-        <connector-entry connector="cq1/Boat2/Sailing_Data2" state="finished"/>
-        <connector-entry connector="cq1/Boat3/Sailing_Data3" state="finished"/>
-        <connector-entry connector="cq1/Boat4/Sailing_Data4" state="finished"/>
+        <connector-entry connector="cq1/Boat1/Sailing_Data1" state="running"/>
+        <connector-entry connector="cq1/Boat2/Sailing_Data2" state="running"/>
+        <connector-entry connector="cq1/Boat3/Sailing_Data3" state="running"/>
+        <connector-entry connector="cq1/Boat4/Sailing_Data4" state="running"/>
       </connector-group>
       <connector-group name="Areas_Of_Interest">
         <connector-entry connector="cq1/Areas_Of_Interest/Areas_Of_Interest" state="finished"/>
       </connector-group>
-      <connector-group name="Subscribers">
-        <connector-entry connector="cq1/Geofence_Area_Check/Geo_Sub" state="finished"/>
-      </connector-group>
     </connector-groups>
     <edges>
       <edge source="Areas_Of_Interest" target="Boat_Data"/>
-      <edge source="Areas_Of_Interest" target="Subscribers"/>
     </edges>
   </project-connectors>
 </project>
