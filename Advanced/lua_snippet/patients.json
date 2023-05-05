@@ -1,0 +1,24 @@
+[ 
+    {
+        "name":"Patient 1",
+        "monitor_systems": [
+            {
+                "name":"cardiovascular",
+                "doctor":"Doctor 10"
+            },
+            {
+                "name":"respiratory",
+                "doctor":"Doctor 20"
+            }
+        ]
+    },
+    {
+        "name":"Patient 2",
+        "monitor_systems": [
+            {
+                "name":"skeletal",
+                "doctor":"Doctor 30"
+            }
+        ]
+    }
+]
