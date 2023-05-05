@@ -80,4 +80,4 @@ You might see warnings in the Log pane about windows being throttled. You can ig
 ## Additional Resources
 
 - [SAS Help Center: Using Lua Snippets](https://documentation.sas.com/?cdcId=espcdc&cdcVersion=default&docsetId=espcreatewindows&docsetTarget=p0j0tx1h0oqhkyn17ebg6jrab7d3.htm)
-- [SAS Help Center: Working with Project Packages](https://documentation.sas.com/?cdcId=espcdc&cdcVersion=default&docsetId=espstudio&docsetTarget=p15r0obkhw8rrwn1lr0zkqffklb5.htm.htm)
+- [SAS Help Center: Working with Project Packages](https://documentation.sas.com/?cdcId=espcdc&cdcVersion=default&docsetId=espstudio&docsetTarget=p15r0obkhw8rrwn1lr0zkqffklb5.htm)
