@@ -1,4 +1,4 @@
-# Detecting Objects by Using an ONNX Model
+# Detecting Objects by Using an ONNX Model (Tiny Yolo Version 2)
 ## Overview
 This example demonstrates how to use a project to reference an open-source ONNX model, in order to detect objects in still images.
 
