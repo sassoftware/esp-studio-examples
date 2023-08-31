@@ -45,6 +45,9 @@ The following figure shows the results for the Last_Exclusion_Violation tab. It 
 
 Note: If any table remains empty, check that the publisher connectors for all five Source windows are set correctly to point to the CSV files.
 
+## Visualizing Objects in Grafana
+If you are using SAS Event Stream Processing in Microsoft Azure, the sailing boats and areas of interest can be visualized by using Grafana. Import the grafana.json file (provided as part of this example) to Grafana.
+
 ## Additional Resources
 
 - The [Using a Geofence to Find Wanted Vehicles](https://github.com/sassoftware/esp-studio-examples/tree/main/Advanced/geofence) example provides a more detailed discussion of the settings for a Geofence window and for connector orchestration. 
