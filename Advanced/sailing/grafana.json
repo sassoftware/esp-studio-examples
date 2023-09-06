@@ -357,7 +357,7 @@
           {
             "config": {
               "rules": [],
-              "src": "public/maps/sailing-areas-of-interest.geojson",
+              "src": "https://raw.githubusercontent.com/sassoftware/esp-studio-examples/main/Advanced/sailing/sailing-areas-of-interest.geojson",
               "style": {
                 "color": {
                   "fixed": "#C4162A"
