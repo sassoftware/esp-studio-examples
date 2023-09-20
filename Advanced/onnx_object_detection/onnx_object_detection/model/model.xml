@@ -1,0 +1,225 @@
+<project heartbeat-interval="1" luaroot="@ESP_PROJECT_OUTPUT@/luaroot" name="onnx_object_detection" pubsub="auto" threads="4" use-tagged-token="true">
+  <description><![CDATA[This example demonstrates how to use a project to reference an open-source ONNX model, in order to detect objects.]]></description>
+  <metadata>
+    <meta id="studioUploadedBy">anonymousUser</meta>
+    <meta id="studioUploaded">1694773770572</meta>
+    <meta id="studioModifiedBy">anonymousUser</meta>
+    <meta id="studioModified">1694773917979</meta>
+    <meta id="layout">{"contquery":{"w_count_objects":{"x":330,"y":665},"w_data":{"x":190,"y":50},"w_parse_labels":{"x":330,"y":540},"w_post_process":{"x":330,"y":420},"w_pre_process":{"x":190,"y":175},"w_reader":{"x":50,"y":420},"w_score":{"x":190,"y":295}}}</meta>
+    <meta id="studioTags">Example</meta>
+  </metadata>
+  <properties>
+    <property name="CREATE_ANNOTATED_IMAGE"><![CDATA[true]]></property>
+  </properties>
+  <mas-modules>
+    <mas-module module="tensorProcess" language="python" func-names="preprocess,postprocess">
+      <code><![CDATA[import os, sys
+import numpy as np
+
+args_analytics_dir = "@ESP_PROJECT_HOME@/analytics"
+args_model_file = "yolov7/yolov7-tiny_640x640.onnx"
+args_annotated_image = "@CREATE_ANNOTATED_IMAGE@"
+
+#Import ONNX ESP modules
+sys.path.append(args_analytics_dir)
+from _modules.input_preproc import PreProcess
+import _modules.utils as utils
+import _modules.tensor_utils as tensor_utils
+import _modules.show as show
+import cv2
+model_path = os.path.dirname(args_model_file)
+
+#Init Phase
+model_metadata = utils.load_module(args_model_file)
+pre_process = PreProcess(model_metadata.inputs_parameters, model_metadata.onnx_model_type)
+decode_module = utils.load_module(os.path.join(model_path, model_metadata.output_decoder))
+decode_decoder = decode_module.Decoder(model_metadata.output_decoder_parameters, model_metadata.inputs_parameters)
+
+
+def preprocess(id, image):
+    "Output: id, tensor, image_shape"
+
+    img_np = tensor_utils.Image2Array(image)
+    inference_input = pre_process.process(img_np)
+    tensor = tensor_utils.Array2Tensor(inference_input[0])
+
+    return id, tensor, list(img_np.shape)
+
+
+def postprocess(id, tensor1_out, image, image_shape):
+    "Output: id, model_name, model_type, n_objects, coords, coords_type, scores, labels, annotated_image"
+
+    tensor1, tensor1_dims = tensor_utils.Tensor2Array(tensor1_out)
+    tensor1 = tensor1.reshape(*tensor1_dims)
+    tensor1 = np.float32(tensor1)
+    #Expand the tensor since the decoder need to infer tensor shape to iterate the output
+    tensor1_exp = np.expand_dims(tensor1, axis=0)
+
+    #decode signature:
+    # inference_result: tensors, mandatory.
+    # image_shape. Dimension of the infereced image. It is need to normalize output. Not needed for yolov2
+    # isvideo needed for open pose only if data come form cameras or streaming
+    decoded_result =  decode_decoder.decode(tensor1_exp, image_shape)
+
+    boxes, classes, scores = decoded_result
+
+    ret_boxes = []
+    for i in range(len(boxes)):
+        ret_boxes.extend(boxes[i].tolist())
+    ret_label=""
+    for j in range(len(classes)):
+        ret_label+=model_metadata.output_labels[int(classes[j])] + ","
+    ret_scores = np.array(scores).tolist()
+
+    annotated_image = None
+    if args_annotated_image.lower() == "true":
+        img_np = tensor_utils.Image2Array(image)
+        show.draw_bounding_boxes(
+        img_np, ret_boxes, ret_label, ret_scores, model_metadata.output_coord_type, model_metadata.output_labels)
+        # cv2.imwrite(args_demo_dir+"image.jpg", img_np)
+        annotated_image = tensor_utils.Array2Image(img_np)
+
+    return id, model_metadata.onnx_model, model_metadata.onnx_model_type, len(boxes), ret_boxes, model_metadata.output_coord_type, ret_scores, ret_label, annotated_image]]></code>
+    </mas-module>
+  </mas-modules>
+  <contqueries>
+    <contquery name="contquery" timing-threshold="5000">
+      <windows>
+        <window-source index="pi_EMPTY" insert-only="true" name="w_data">
+          <description><![CDATA[w_data is a Source window. This is where video frames enter the project.]]></description>
+          <schema>
+            <fields>
+              <field key="true" name="id" type="int64"/>
+              <field name="image" type="blob"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="videocap" name="video_publisher">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="publishrate"><![CDATA[10]]></property>
+                <property name="resize_x"><![CDATA[960]]></property>
+                <property name="resize_y"><![CDATA[540]]></property>
+                <property name="blocksize"><![CDATA[1]]></property>
+                <property name="filename"><![CDATA[@ESP_PROJECT_HOME@/test_files/PeopleWalking.mp4]]></property>
+                <property name="publishformat"><![CDATA[jpeg]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-calculate index="pi_EMPTY" produces-only-inserts="true" name="w_pre_process" algorithm="MAS">
+          <description><![CDATA[w_pre_process is a Calculate window. The Python code referenced by this window preprocesses the frames into tensors, so that the data can be processed by the ONNX model.]]></description>
+          <schema>
+            <fields>
+              <field key="true" name="id" type="int64"/>
+              <field name="image" type="blob"/>
+              <field name="tensor" type="blob"/>
+              <field name="image_shape" type="array(i64)"/>
+            </fields>
+          </schema>
+          <mas-map>
+            <window-map module="tensorProcess" function="preprocess" revision="0" source="w_data"/>
+          </mas-map>
+        </window-calculate>
+        <window-model-reader model-type="onnx" name="w_reader">
+          <description><![CDATA[w_reader is a Model Reader window. This window reads the ONNX model and passes it to the w_score window.]]></description>
+          <parameters>
+            <properties>
+              <property name="reference"><![CDATA[@ESP_PROJECT_HOME@/analytics/yolov7/yolov7-tiny_640x640.onnx]]></property>
+              <property name="execProvider"><![CDATA[cuda]]></property>
+              <property name="cudaDeviceId"><![CDATA[0]]></property>
+            </properties>
+          </parameters>
+        </window-model-reader>
+        <window-score name="w_score">
+          <description><![CDATA[w_score is a Score window. This window executes the ONNX model’s code when data passes through the window. The input data is in tensor format. The window outputs a second set of tensors.]]></description>
+          <schema>
+            <fields>
+              <field key="true" name="id" type="int64"/>
+              <field name="image" type="blob"/>
+              <field name="tensor1_out" type="blob"/>
+              <field name="image_shape" type="array(i64)"/>
+            </fields>
+          </schema>
+          <models>
+            <offline model-type="onnx">
+              <input-map>
+                <properties>
+                  <property name="images"><![CDATA[tensor]]></property>
+                </properties>
+              </input-map>
+              <output-map>
+                <properties>
+                  <property name="output"><![CDATA[tensor1_out]]></property>
+                </properties>
+              </output-map>
+            </offline>
+          </models>
+        </window-score>
+        <window-calculate index="pi_EMPTY" produces-only-inserts="true" name="w_post_process" algorithm="MAS">
+          <description><![CDATA[w_post_process is a Calculate window. The Python code referenced by this window converts the model output (tensor format) to more usable formats.]]></description>
+          <schema>
+            <fields>
+              <field key="true" name="id" type="int64"/>
+              <field name="image" type="blob"/>
+              <field name="model_name" type="string"/>
+              <field name="model_type" type="string"/>
+              <field name="n_objects" type="double"/>
+              <field name="coords" type="array(dbl)"/>
+              <field name="coords_type" type="string"/>
+              <field name="scores" type="array(dbl)"/>
+              <field name="labels" type="string"/>
+              <field name="annotated_image" type="blob"/>
+            </fields>
+          </schema>
+          <mas-map>
+            <window-map module="tensorProcess" function="postprocess" revision="0" source="w_score"/>
+          </mas-map>
+        </window-calculate>
+        <window-functional index="pi_EMPTY" name="w_parse_labels">
+          <description><![CDATA[w_parse_labels is a Functional window. This window splits a comma-separated string that contains labels into separate events, so that each event contains one label. The labels relate to objects that were detected in video frames.]]></description>
+          <schema>
+            <fields>
+              <field key="true" name="id" type="int64"/>
+              <field key="true" name="subid" type="int64"/>
+              <field name="label" type="string"/>
+            </fields>
+          </schema>
+          <generate><![CDATA[0]]></generate>
+          <event-loops>
+            <event-loop-regex name="Loop" data="split_label">
+              <use-text><![CDATA[$labels]]></use-text>
+              <regex group="0"><![CDATA[([^,]+)]]></regex>
+              <function-context>
+                <functions>
+                  <function name="label"><![CDATA[$split_label]]></function>
+                  <function name="subid"><![CDATA[eventNumber()]]></function>
+                </functions>
+              </function-context>
+            </event-loop-regex>
+          </event-loops>
+        </window-functional>
+        <window-aggregate index="pi_HASH" name="w_count_objects">
+          <description><![CDATA[w_count objects is an Aggregate window. This window counts the labels.]]></description>
+          <schema>
+            <fields>
+              <field key="true" name="label" type="string"/>
+              <field name="counter" type="int64"/>
+            </fields>
+          </schema>
+          <output>
+            <field-expr><![CDATA[ESP_aCountNonNull(label)]]></field-expr>
+          </output>
+        </window-aggregate>
+      </windows>
+      <edges>
+        <edge role="data" source="w_data" target="w_pre_process"/>
+        <edge role="model" source="w_reader" target="w_score"/>
+        <edge role="data" source="w_pre_process" target="w_score"/>
+        <edge role="data" source="w_score" target="w_post_process"/>
+        <edge source="w_post_process" target="w_parse_labels"/>
+        <edge source="w_parse_labels" target="w_count_objects"/>
+      </edges>
+    </contquery>
+  </contqueries>
+</project>
