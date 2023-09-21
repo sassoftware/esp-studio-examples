@@ -1,0 +1,243 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 2,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "sasesp-plugin",
+        "uid": "PCF60FE10BF4FA2E7"
+      },
+      "gridPos": {
+        "h": 20,
+        "w": 18,
+        "x": 0,
+        "y": 0
+      },
+      "id": 123124,
+      "interval": "100ms",
+      "maxDataPoints": 1,
+      "options": {
+        "autoPlay": true,
+        "buttons": [],
+        "controls": true,
+        "height": 0,
+        "heightMode": "auto",
+        "name": "annotated_image",
+        "toolbar": false,
+        "width": 0,
+        "widthMode": "original",
+        "zoomType": "default"
+      },
+      "targets": [
+        {
+          "cqName": "contquery",
+          "datasource": {
+            "type": "sasesp-plugin",
+            "uid": "PCF60FE10BF4FA2E7"
+          },
+          "fields": [
+            "annotated_image"
+          ],
+          "projectName": "onnx_object_detection",
+          "refId": "A",
+          "serverUrl": "ws://esps-onnx-5fobject-5fdetection:80",
+          "windowName": "w_post_process"
+        }
+      ],
+      "title": "Annotated image",
+      "type": "volkovlabs-image-panel"
+    },
+    {
+      "datasource": {
+        "type": "sasesp-plugin",
+        "uid": "PCF60FE10BF4FA2E7"
+      },
+      "description": "Object type has to be detected in the last 5 minutes to appear in the panel",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "#054a99",
+            "mode": "fixed"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 20,
+        "w": 6,
+        "x": 18,
+        "y": 0
+      },
+      "hideTimeOverride": false,
+      "id": 123125,
+      "maxDataPoints": 100000,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        },
+        "xField": "label",
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "9.5.3",
+      "targets": [
+        {
+          "cqName": "contquery",
+          "datasource": {
+            "type": "sasesp-plugin",
+            "uid": "PCF60FE10BF4FA2E7"
+          },
+          "fields": [
+            "label", "counter"
+          ],
+          "projectName": "onnx_object_detection",
+          "refId": "A",
+          "serverUrl": "ws://esps-onnx-5fobject-5fdetection:80",
+          "windowName": "w_count_objects"
+        }
+      ],
+      "timeFrom": "5m",
+      "title": "Total object count",
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "counter": {
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "aggregate"
+              },
+              "label": {
+                "aggregations": [],
+                "operation": "groupby"
+              }
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "desc": true,
+                "field": "counter (lastNotNull)"
+              }
+            ]
+          }
+        }
+      ],
+      "type": "barchart"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now",
+    "to": "now"
+  },
+  "timepicker": {
+    "hidden": false,
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ],
+    "time_options": [
+      "5m",
+      "15m",
+      "1h",
+      "6h",
+      "12h",
+      "24h",
+      "2d",
+      "7d",
+      "30d"
+    ],
+    "type": "timepicker"
+  },
+  "timezone": "browser",
+  "title": "ONNX Object Detection",
+  "uid": "b054bce8-552f-4487-821e-f4c4d10d0637",
+  "version": 26,
+  "weekStart": ""
+}
