@@ -177,9 +177,9 @@
           "fields": [
             "speed"
           ],
-          "projectName": "_example_sailing",
+          "projectName": "sailing",
           "refId": "A",
-          "serverUrl": "ws://esps--5fexample-5fsailing:80",
+          "serverUrl": "ws://esps-sailing:80",
           "windowName": "Boat1"
         }
       ],
@@ -463,9 +463,9 @@
             "uid": "${DS_SAS_EVENT STREAM PROCESSING STUDIO}"
           },
           "fields": [],
-          "projectName": "_example_sailing",
+          "projectName": "sailing",
           "refId": "A",
-          "serverUrl": "ws://esps--5fexample-5fsailing:80",
+          "serverUrl": "ws://esps-sailing:80",
           "windowName": "Filter_Inside_Exclusion_Zone"
         }
       ],
@@ -589,9 +589,9 @@
           },
           "fieldName": "speed",
           "fields": [],
-          "projectName": "_example_sailing",
+          "projectName": "sailing",
           "refId": "A",
-          "serverUrl": "ws://esps--5fexample-5fsailing:80",
+          "serverUrl": "ws://esps-sailing:80",
           "windowName": "Boat2"
         }
       ],
@@ -792,9 +792,9 @@
           },
           "fieldName": "speed",
           "fields": [],
-          "projectName": "_example_sailing",
+          "projectName": "sailing",
           "refId": "A",
-          "serverUrl": "ws://esps--5fexample-5fsailing:80",
+          "serverUrl": "ws://esps-sailing:80",
           "windowName": "Boat3"
         }
       ],
@@ -992,9 +992,9 @@
           },
           "fieldName": "speed",
           "fields": [],
-          "projectName": "_example_sailing",
+          "projectName": "sailing",
           "refId": "A",
-          "serverUrl": "ws://esps--5fexample-5fsailing:80",
+          "serverUrl": "ws://esps-sailing:80",
           "windowName": "Boat4"
         }
       ],
@@ -1189,9 +1189,9 @@
           },
           "fieldName": "BoatNumber",
           "fields": [],
-          "projectName": "_example_sailing",
+          "projectName": "sailing",
           "refId": "A",
-          "serverUrl": "ws://esps--5fexample-5fsailing:80",
+          "serverUrl": "ws://esps-sailing:80",
           "windowName": "Last_Speeding_Event"
         }
       ],
@@ -1371,9 +1371,9 @@
           },
           "fieldName": "BoatNumber",
           "fields": [],
-          "projectName": "_example_sailing",
+          "projectName": "sailing",
           "refId": "A",
-          "serverUrl": "ws://esps--5fexample-5fsailing:80",
+          "serverUrl": "ws://esps-sailing:80",
           "windowName": "Last_Exclusion_Violation"
         }
       ],
