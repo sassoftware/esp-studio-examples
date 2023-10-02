@@ -183,7 +183,7 @@ After an ONNX model is used to detect objects, tracking the detected objects ove
 Geofences are virtual perimeters and can be used, for example, to trigger alerts when persons are detected in prohibited areas or when cars are parked in the wrong spot. For more information, see [Using Geofence Windows](https://go.documentation.sas.com/doc/en/espcdc/v_037/espcreatewindows/p0xru6q01dkxknn1t8gqo2q4zfu6.htm).
 
 ### Visualizing Objects in Grafana
-If you are using SAS Event Stream Processing in Microsoft Azure, the detected objects can be visualized by using Grafana. Import the [grafana.json](grafana.json) to Grafana. 
+If you are using SAS Event Stream Processing in Microsoft Azure, the detected objects can be visualized by using Grafana. Import the [grafana.json](grafana.json) file to Grafana. 
 
 ---
 **NOTE:**
