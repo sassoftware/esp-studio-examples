@@ -1,4 +1,53 @@
 {
+  "__inputs": [
+    {
+      "name": "DS_SAS_EVENT STREAM PROCESSING STUDIO",
+      "label": "SAS Event Stream Processing Studio",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "sasesp-plugin",
+      "pluginName": "SAS Event Stream Processing"
+    }
+  ],
+  "__elements": {},
+  "__requires": [
+    {
+      "type": "panel",
+      "id": "gauge",
+      "name": "Gauge",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "geomap",
+      "name": "Geomap",
+      "version": ""
+    },
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "9.4.7"
+    },
+    {
+      "type": "datasource",
+      "id": "sasesp-plugin",
+      "name": "SAS Event Stream Processing",
+      "version": "7.41.1"
+    },
+    {
+      "type": "panel",
+      "id": "table",
+      "name": "Table",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "timeseries",
+      "name": "Time series",
+      "version": ""
+    }
+  ],
   "annotations": {
     "list": [
       {
@@ -24,7 +73,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 9,
+  "id": null,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -44,7 +93,7 @@
     {
       "datasource": {
         "type": "sasesp-plugin",
-        "uid": "PCF60FE10BF4FA2E7"
+        "uid": "${DS_SAS_EVENT STREAM PROCESSING STUDIO}"
       },
       "fieldConfig": {
         "defaults": {
@@ -123,14 +172,14 @@
           "cqName": "cq1",
           "datasource": {
             "type": "sasesp-plugin",
-            "uid": "3cXPZz-Vk"
+            "uid": "${DS_SAS_EVENT STREAM PROCESSING STUDIO}"
           },
           "fields": [
             "speed"
           ],
-          "projectName": "sailing_example",
+          "projectName": "_example_sailing",
           "refId": "A",
-          "serverUrl": "ws://esps-sailing-5fexample:80",
+          "serverUrl": "ws://esps--5fexample-5fsailing:80",
           "windowName": "Boat1"
         }
       ],
@@ -213,7 +262,7 @@
         "showThresholdLabels": true,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "9.5.7",
+      "pluginVersion": "9.4.7",
       "targets": [
         {
           "datasource": {
@@ -255,7 +304,7 @@
     {
       "datasource": {
         "type": "sasesp-plugin",
-        "uid": "PCF60FE10BF4FA2E7"
+        "uid": "${DS_SAS_EVENT STREAM PROCESSING STUDIO}"
       },
       "fieldConfig": {
         "defaults": {
@@ -405,23 +454,19 @@
           "zoom": 12
         }
       },
-      "pluginVersion": "9.5.7",
+      "pluginVersion": "9.4.7",
       "targets": [
         {
           "cqName": "cq1",
           "datasource": {
             "type": "sasesp-plugin",
-            "uid": "3cXPZz-Vk"
+            "uid": "${DS_SAS_EVENT STREAM PROCESSING STUDIO}"
           },
-          "fields": [
-            "lat",
-            "BoatNumber",
-            "long"
-          ],
-          "projectName": "sailing_example",
+          "fields": [],
+          "projectName": "_example_sailing",
           "refId": "A",
-          "serverUrl": "ws://esps-sailing-5fexample:80",
-          "windowName": "Union_All_Boats"
+          "serverUrl": "ws://esps--5fexample-5fsailing:80",
+          "windowName": "Filter_Inside_Exclusion_Zone"
         }
       ],
       "title": "Locations",
@@ -461,7 +506,7 @@
     {
       "datasource": {
         "type": "sasesp-plugin",
-        "uid": "PCF60FE10BF4FA2E7"
+        "uid": "${DS_SAS_EVENT STREAM PROCESSING STUDIO}"
       },
       "fieldConfig": {
         "defaults": {
@@ -540,15 +585,13 @@
           "cqName": "cq1",
           "datasource": {
             "type": "sasesp-plugin",
-            "uid": "3cXPZz-Vk"
+            "uid": "${DS_SAS_EVENT STREAM PROCESSING STUDIO}"
           },
           "fieldName": "speed",
-          "fields": [
-            "speed"
-          ],
-          "projectName": "sailing_example",
+          "fields": [],
+          "projectName": "_example_sailing",
           "refId": "A",
-          "serverUrl": "ws://esps-sailing-5fexample:80",
+          "serverUrl": "ws://esps--5fexample-5fsailing:80",
           "windowName": "Boat2"
         }
       ],
@@ -630,7 +673,7 @@
         "showThresholdLabels": true,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "9.5.7",
+      "pluginVersion": "9.4.7",
       "targets": [
         {
           "datasource": {
@@ -666,7 +709,7 @@
     {
       "datasource": {
         "type": "sasesp-plugin",
-        "uid": "PCF60FE10BF4FA2E7"
+        "uid": "${DS_SAS_EVENT STREAM PROCESSING STUDIO}"
       },
       "fieldConfig": {
         "defaults": {
@@ -745,15 +788,13 @@
           "cqName": "cq1",
           "datasource": {
             "type": "sasesp-plugin",
-            "uid": "3cXPZz-Vk"
+            "uid": "${DS_SAS_EVENT STREAM PROCESSING STUDIO}"
           },
           "fieldName": "speed",
-          "fields": [
-            "speed"
-          ],
-          "projectName": "sailing_example",
+          "fields": [],
+          "projectName": "_example_sailing",
           "refId": "A",
-          "serverUrl": "ws://esps-sailing-5fexample:80",
+          "serverUrl": "ws://esps--5fexample-5fsailing:80",
           "windowName": "Boat3"
         }
       ],
@@ -833,7 +874,7 @@
         "showThresholdLabels": true,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "9.5.7",
+      "pluginVersion": "9.4.7",
       "targets": [
         {
           "datasource": {
@@ -868,7 +909,7 @@
     {
       "datasource": {
         "type": "sasesp-plugin",
-        "uid": "PCF60FE10BF4FA2E7"
+        "uid": "${DS_SAS_EVENT STREAM PROCESSING STUDIO}"
       },
       "fieldConfig": {
         "defaults": {
@@ -947,15 +988,13 @@
           "cqName": "cq1",
           "datasource": {
             "type": "sasesp-plugin",
-            "uid": "3cXPZz-Vk"
+            "uid": "${DS_SAS_EVENT STREAM PROCESSING STUDIO}"
           },
           "fieldName": "speed",
-          "fields": [
-            "speed"
-          ],
-          "projectName": "sailing_example",
+          "fields": [],
+          "projectName": "_example_sailing",
           "refId": "A",
-          "serverUrl": "ws://esps-sailing-5fexample:80",
+          "serverUrl": "ws://esps--5fexample-5fsailing:80",
           "windowName": "Boat4"
         }
       ],
@@ -1035,7 +1074,7 @@
         "showThresholdLabels": true,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "9.5.7",
+      "pluginVersion": "9.4.7",
       "targets": [
         {
           "datasource": {
@@ -1083,7 +1122,7 @@
     {
       "datasource": {
         "type": "sasesp-plugin",
-        "uid": "PCF60FE10BF4FA2E7"
+        "uid": "${DS_SAS_EVENT STREAM PROCESSING STUDIO}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1140,19 +1179,19 @@
           }
         ]
       },
-      "pluginVersion": "9.5.7",
+      "pluginVersion": "9.4.7",
       "targets": [
         {
           "cqName": "cq1",
           "datasource": {
             "type": "sasesp-plugin",
-            "uid": "3cXPZz-Vk"
+            "uid": "${DS_SAS_EVENT STREAM PROCESSING STUDIO}"
           },
           "fieldName": "BoatNumber",
           "fields": [],
-          "projectName": "sailing_example",
+          "projectName": "_example_sailing",
           "refId": "A",
-          "serverUrl": "ws://esps-sailing-5fexample:80",
+          "serverUrl": "ws://esps--5fexample-5fsailing:80",
           "windowName": "Last_Speeding_Event"
         }
       ],
@@ -1240,7 +1279,7 @@
     {
       "datasource": {
         "type": "sasesp-plugin",
-        "uid": "PCF60FE10BF4FA2E7"
+        "uid": "${DS_SAS_EVENT STREAM PROCESSING STUDIO}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1322,19 +1361,19 @@
           }
         ]
       },
-      "pluginVersion": "9.5.7",
+      "pluginVersion": "9.4.7",
       "targets": [
         {
           "cqName": "cq1",
           "datasource": {
             "type": "sasesp-plugin",
-            "uid": "3cXPZz-Vk"
+            "uid": "${DS_SAS_EVENT STREAM PROCESSING STUDIO}"
           },
           "fieldName": "BoatNumber",
           "fields": [],
-          "projectName": "sailing_example",
+          "projectName": "_example_sailing",
           "refId": "A",
-          "serverUrl": "ws://esps-sailing-5fexample:80",
+          "serverUrl": "ws://esps--5fexample-5fsailing:80",
           "windowName": "Last_Exclusion_Violation"
         }
       ],
@@ -1444,6 +1483,7 @@
     }
   ],
   "refresh": "",
+  "revision": 1,
   "schemaVersion": 38,
   "style": "dark",
   "tags": [],
@@ -1458,6 +1498,6 @@
   "timezone": "",
   "title": "Sailing Dashboard",
   "uid": "LJl3Sro4z",
-  "version": 3,
+  "version": 2,
   "weekStart": ""
 }

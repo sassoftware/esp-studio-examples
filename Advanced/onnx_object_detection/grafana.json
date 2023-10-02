@@ -1,4 +1,41 @@
 {
+  "__inputs": [
+    {
+      "name": "DS_SAS-ESP-DATASOURCE",
+      "label": "sas-esp-datasource",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "sasesp-plugin",
+      "pluginName": "SAS Event Stream Processing"
+    }
+  ],
+  "__elements": {},
+  "__requires": [
+    {
+      "type": "panel",
+      "id": "barchart",
+      "name": "Bar chart",
+      "version": ""
+    },
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "9.5.2"
+    },
+    {
+      "type": "datasource",
+      "id": "sasesp-plugin",
+      "name": "SAS Event Stream Processing",
+      "version": "7.40.0"
+    },
+    {
+      "type": "panel",
+      "id": "volkovlabs-image-panel",
+      "name": "Base64 Image/Video/Audio/PDF",
+      "version": "4.0.0"
+    }
+  ],
   "annotations": {
     "list": [
       {
@@ -18,14 +55,14 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 2,
+  "id": null,
   "links": [],
   "liveNow": false,
   "panels": [
     {
       "datasource": {
         "type": "sasesp-plugin",
-        "uid": "PCF60FE10BF4FA2E7"
+        "uid": "${DS_SAS-ESP-DATASOURCE}"
       },
       "gridPos": {
         "h": 20,
@@ -53,14 +90,14 @@
           "cqName": "contquery",
           "datasource": {
             "type": "sasesp-plugin",
-            "uid": "PCF60FE10BF4FA2E7"
+            "uid": "${DS_SAS-ESP-DATASOURCE}"
           },
           "fields": [
             "annotated_image"
           ],
-          "projectName": "onnx_object_detection",
+          "projectName": "_example_onnx_object_detection",
           "refId": "A",
-          "serverUrl": "ws://esps-onnx-5fobject-5fdetection:80",
+          "serverUrl": "ws://esps--5fexample-5fonnx-5fobject-5fdetection:80",
           "windowName": "w_post_process"
         }
       ],
@@ -70,7 +107,7 @@
     {
       "datasource": {
         "type": "sasesp-plugin",
-        "uid": "PCF60FE10BF4FA2E7"
+        "uid": "${DS_SAS-ESP-DATASOURCE}"
       },
       "description": "Object type has to be detected in the last 5 minutes to appear in the panel",
       "fieldConfig": {
@@ -150,14 +187,15 @@
           "cqName": "contquery",
           "datasource": {
             "type": "sasesp-plugin",
-            "uid": "PCF60FE10BF4FA2E7"
+            "uid": "${DS_SAS-ESP-DATASOURCE}"
           },
           "fields": [
-            "label", "counter"
+            "label",
+            "counter"
           ],
-          "projectName": "onnx_object_detection",
+          "projectName": "_example_onnx_object_detection",
           "refId": "A",
-          "serverUrl": "ws://esps-onnx-5fobject-5fdetection:80",
+          "serverUrl": "ws://esps--5fexample-5fonnx-5fobject-5fdetection:80",
           "windowName": "w_count_objects"
         }
       ],
@@ -238,6 +276,7 @@
   "timezone": "browser",
   "title": "ONNX Object Detection",
   "uid": "b054bce8-552f-4487-821e-f4c4d10d0637",
-  "version": 26,
+  "version": 3,
   "weekStart": ""
+}
 }
