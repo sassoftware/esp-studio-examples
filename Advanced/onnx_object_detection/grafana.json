@@ -95,9 +95,9 @@
           "fields": [
             "annotated_image"
           ],
-          "projectName": "_example_onnx_object_detection",
+          "projectName": "onnx_object_detection",
           "refId": "A",
-          "serverUrl": "ws://esps--5fexample-5fonnx-5fobject-5fdetection:80",
+          "serverUrl": "ws://esps-onnx-5fobject-5fdetection:80",
           "windowName": "w_post_process"
         }
       ],
@@ -193,9 +193,9 @@
             "label",
             "counter"
           ],
-          "projectName": "_example_onnx_object_detection",
+          "projectName": "onnx_object_detection",
           "refId": "A",
-          "serverUrl": "ws://esps--5fexample-5fonnx-5fobject-5fdetection:80",
+          "serverUrl": "ws://esps-onnx-5fobject-5fdetection:80",
           "windowName": "w_count_objects"
         }
       ],
