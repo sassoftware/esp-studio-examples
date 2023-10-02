@@ -1,6 +1,6 @@
-<project name="sailing_example" threads="4" pubsub="auto" heartbeat-interval="1" index="pi_EMPTY">
+<project name="sailing" threads="4" pubsub="auto" heartbeat-interval="1" index="pi_EMPTY">
   <description><![CDATA[This example shows an event stream of data obtained from a set of boats. The model identifies two geographical areas of interest. One area is an exclusion zone that the boats identified are not permitted to enter. The other is an area where a speed restriction has been applied. This example uses the following six files:
-The XML file (sailing_example.xml) is the project used in the example.
+The XML file (sailing.xml) is the project used in the example.
 geoArea.csv is an input file. This file contains events relating to the defined areas of interest.
 boat1.csv, boat2.csv, boat3.csv, and boat4.csv are input files. These files contains event streams for four boats. The event streams contain geographical coordinates of the boats' movements.]]></description>
   <metadata>
