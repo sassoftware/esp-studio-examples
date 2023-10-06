@@ -1,19 +1,23 @@
-<project name="sailing" threads="4" pubsub="auto" heartbeat-interval="1" index="pi_EMPTY">
+<project heartbeat-interval="1" index="pi_EMPTY" luaroot="@ESP_PROJECT_OUTPUT@/luaroot" name="sailing" pubsub="auto" threads="4">
   <description><![CDATA[This example shows an event stream of data obtained from a set of boats. The model identifies two geographical areas of interest. One area is an exclusion zone that the boats identified are not permitted to enter. The other is an area where a speed restriction has been applied. This example uses the following six files:
 The XML file (sailing.xml) is the project used in the example.
 geoArea.csv is an input file. This file contains events relating to the defined areas of interest.
 boat1.csv, boat2.csv, boat3.csv, and boat4.csv are input files. These files contains event streams for four boats. The event streams contain geographical coordinates of the boats' movements.]]></description>
   <metadata>
     <meta id="layout">{"cq1":{"Areas_Of_Interest":{"x":-330,"y":-440},"Boat1":{"x":-445,"y":-725},"Boat2":{"x":-225,"y":-725},"Boat3":{"x":-5,"y":-725},"Boat4":{"x":210,"y":-725},"Compute_ID1":{"x":-445,"y":-590},"Compute_ID2":{"x":-225,"y":-590},"Compute_ID3":{"x":-5,"y":-590},"Compute_ID4":{"x":210,"y":-590},"Filter_Inside_Exclusion_Zone":{"x":-230,"y":-55},"Filter_Speeding_In_Marina":{"x":-5,"y":-55},"Geofence_Area_Check":{"x":-115,"y":-315},"Last_Exclusion_Violation":{"x":-230,"y":70},"Last_Speeding_Event":{"x":-5,"y":70},"Retention_30Min":{"x":-115,"y":-185},"Union_All_Boats":{"x":-115,"y":-440}}}</meta>
+    <meta id="studioTags">Example</meta>
   </metadata>
+  <properties>
+    <property name="EventsPerSecond"><![CDATA[5]]></property>
+  </properties>
   <contqueries>
-    <contquery name="cq1" index="pi_EMPTY">
+    <contquery index="pi_EMPTY" name="cq1">
       <windows>
-        <window-source pubsub="true" index="pi_EMPTY" insert-only="true" name="Boat1">
+        <window-source index="pi_EMPTY" insert-only="true" pubsub="true" name="Boat1">
           <description><![CDATA[There are four Source windows that receive event streams from the four boats identified: Boat1, Boat2, Boat3, and Boat4]]></description>
           <schema>
             <fields>
-              <field name="dateTime" type="string" key="true"/>
+              <field key="true" name="dateTime" type="string"/>
               <field name="heading" type="double"/>
               <field name="speed" type="double"/>
               <field name="lat" type="double"/>
@@ -24,17 +28,17 @@ boat1.csv, boat2.csv, boat3.csv, and boat4.csv are input files. These files cont
             <connector class="fs" name="Sailing_Data1">
               <properties>
                 <property name="type"><![CDATA[pub]]></property>
-                <property name="rate"><![CDATA[5]]></property>
-                <property name="fsname"><![CDATA[boat1.csv]]></property>
+                <property name="rate"><![CDATA[@EventsPerSecond@]]></property>
+                <property name="fsname"><![CDATA[@ESP_PROJECT_HOME@/test_files/boat1.csv]]></property>
                 <property name="fstype"><![CDATA[csv]]></property>
               </properties>
             </connector>
           </connectors>
         </window-source>
-        <window-source pubsub="true" index="pi_EMPTY" insert-only="true" name="Boat2">
+        <window-source index="pi_EMPTY" insert-only="true" pubsub="true" name="Boat2">
           <schema>
             <fields>
-              <field name="dateTime" type="string" key="true"/>
+              <field key="true" name="dateTime" type="string"/>
               <field name="heading" type="double"/>
               <field name="speed" type="double"/>
               <field name="lat" type="double"/>
@@ -45,20 +49,20 @@ boat1.csv, boat2.csv, boat3.csv, and boat4.csv are input files. These files cont
             <connector class="fs" name="Sailing_Data2">
               <properties>
                 <property name="type"><![CDATA[pub]]></property>
-                <property name="rate"><![CDATA[5]]></property>
+                <property name="rate"><![CDATA[@EventsPerSecond@]]></property>
                 <property name="header"><![CDATA[1]]></property>
                 <property name="addcsvopcode"><![CDATA[true]]></property>
                 <property name="addcsvflags"><![CDATA[normal]]></property>
-                <property name="fsname"><![CDATA[boat2.csv]]></property>
+                <property name="fsname"><![CDATA[@ESP_PROJECT_HOME@/test_files/boat2.csv]]></property>
                 <property name="fstype"><![CDATA[csv]]></property>
               </properties>
             </connector>
           </connectors>
         </window-source>
-        <window-compute pubsub="true" index="pi_EMPTY" name="Compute_ID2">
+        <window-compute index="pi_EMPTY" pubsub="true" name="Compute_ID2">
           <schema>
             <fields>
-              <field name="dateTime" type="string" key="true"/>
+              <field key="true" name="dateTime" type="string"/>
               <field name="heading" type="double"/>
               <field name="speed" type="double"/>
               <field name="lat" type="double"/>
@@ -74,14 +78,14 @@ boat1.csv, boat2.csv, boat3.csv, and boat4.csv are input files. These files cont
             <field-expr><![CDATA[2]]></field-expr>
           </output>
         </window-compute>
-        <window-compute pubsub="true" index="pi_EMPTY" name="Compute_ID1">
+        <window-compute index="pi_EMPTY" pubsub="true" name="Compute_ID1">
           <description><![CDATA[There are four Compute windows that assign a boat number to each of the four boats identified: Compute_ID1, Compute_ID2, Compute_ID3, and Compute_ID4. This allows SAS Event Stream Processing to differentiate the boats before joining the streams together for processing.]]></description>
           <expr-initialize>
             <initializer type="string"/>
           </expr-initialize>
           <schema>
             <fields>
-              <field name="dateTime" type="string" key="true"/>
+              <field key="true" name="dateTime" type="string"/>
               <field name="heading" type="double"/>
               <field name="speed" type="double"/>
               <field name="lat" type="double"/>
@@ -97,13 +101,13 @@ boat1.csv, boat2.csv, boat3.csv, and boat4.csv are input files. These files cont
             <field-expr><![CDATA[1]]></field-expr>
           </output>
         </window-compute>
-        <window-union pubsub="true" strict="false" index="pi_EMPTY" name="Union_All_Boats">
+        <window-union index="pi_EMPTY" pubsub="true" strict="false" name="Union_All_Boats">
           <description><![CDATA[This is a Union window that unifies the boats’ event streams.]]></description>
         </window-union>
-        <window-source pubsub="true" index="pi_EMPTY" insert-only="true" name="Boat3">
+        <window-source index="pi_EMPTY" insert-only="true" pubsub="true" name="Boat3">
           <schema>
             <fields>
-              <field name="dateTime" type="string" key="true"/>
+              <field key="true" name="dateTime" type="string"/>
               <field name="heading" type="double"/>
               <field name="speed" type="double"/>
               <field name="lat" type="double"/>
@@ -114,20 +118,20 @@ boat1.csv, boat2.csv, boat3.csv, and boat4.csv are input files. These files cont
             <connector class="fs" name="Sailing_Data3">
               <properties>
                 <property name="type"><![CDATA[pub]]></property>
-                <property name="rate"><![CDATA[5]]></property>
+                <property name="rate"><![CDATA[@EventsPerSecond@]]></property>
                 <property name="header"><![CDATA[1]]></property>
                 <property name="addcsvopcode"><![CDATA[true]]></property>
                 <property name="addcsvflags"><![CDATA[normal]]></property>
-                <property name="fsname"><![CDATA[boat3.csv]]></property>
+                <property name="fsname"><![CDATA[@ESP_PROJECT_HOME@/test_files/boat3.csv]]></property>
                 <property name="fstype"><![CDATA[csv]]></property>
               </properties>
             </connector>
           </connectors>
         </window-source>
-        <window-compute pubsub="true" index="pi_EMPTY" name="Compute_ID3">
+        <window-compute index="pi_EMPTY" pubsub="true" name="Compute_ID3">
           <schema>
             <fields>
-              <field name="dateTime" type="string" key="true"/>
+              <field key="true" name="dateTime" type="string"/>
               <field name="heading" type="double"/>
               <field name="speed" type="double"/>
               <field name="lat" type="double"/>
@@ -143,10 +147,10 @@ boat1.csv, boat2.csv, boat3.csv, and boat4.csv are input files. These files cont
             <field-expr><![CDATA[3]]></field-expr>
           </output>
         </window-compute>
-        <window-source pubsub="true" index="pi_EMPTY" insert-only="true" name="Boat4">
+        <window-source index="pi_EMPTY" insert-only="true" pubsub="true" name="Boat4">
           <schema>
             <fields>
-              <field name="dateTime" type="string" key="true"/>
+              <field key="true" name="dateTime" type="string"/>
               <field name="heading" type="double"/>
               <field name="speed" type="double"/>
               <field name="lat" type="double"/>
@@ -157,20 +161,20 @@ boat1.csv, boat2.csv, boat3.csv, and boat4.csv are input files. These files cont
             <connector class="fs" name="Sailing_Data4">
               <properties>
                 <property name="type"><![CDATA[pub]]></property>
-                <property name="rate"><![CDATA[5]]></property>
+                <property name="rate"><![CDATA[@EventsPerSecond@]]></property>
                 <property name="header"><![CDATA[1]]></property>
                 <property name="addcsvopcode"><![CDATA[true]]></property>
                 <property name="addcsvflags"><![CDATA[normal]]></property>
-                <property name="fsname"><![CDATA[boat4.csv]]></property>
+                <property name="fsname"><![CDATA[@ESP_PROJECT_HOME@/test_files/boat4.csv]]></property>
                 <property name="fstype"><![CDATA[csv]]></property>
               </properties>
             </connector>
           </connectors>
         </window-source>
-        <window-compute pubsub="true" index="pi_EMPTY" name="Compute_ID4">
+        <window-compute index="pi_EMPTY" pubsub="true" name="Compute_ID4">
           <schema>
             <fields>
-              <field name="dateTime" type="string" key="true"/>
+              <field key="true" name="dateTime" type="string"/>
               <field name="heading" type="double"/>
               <field name="speed" type="double"/>
               <field name="lat" type="double"/>
@@ -193,11 +197,11 @@ boat1.csv, boat2.csv, boat3.csv, and boat4.csv are input files. These files cont
           <position x-fieldname="long" y-fieldname="lat" lookupdistance="0"/>
           <output geoid-fieldname="GeoID" geodesc-fieldname="GeoDesc" geodistance-fieldname="GeoDist" geotype-fieldname="GeoType" include-geo-fields="Poly_Data,Poly_Radius"/>
         </window-geofence>
-        <window-source pubsub="true" index="pi_EMPTY" name="Areas_Of_Interest">
+        <window-source index="pi_EMPTY" pubsub="true" name="Areas_Of_Interest">
           <description><![CDATA[This is a Source window that receives an event stream defining the areas of interest that the boats are not permitted to enter.]]></description>
           <schema>
             <fields>
-              <field name="poly_id" type="int64" key="true"/>
+              <field key="true" name="poly_id" type="int64"/>
               <field name="poly_desc" type="string"/>
               <field name="Poly_Data" type="string"/>
               <field name="Poly_Radius" type="double"/>
@@ -207,24 +211,31 @@ boat1.csv, boat2.csv, boat3.csv, and boat4.csv are input files. These files cont
             <connector class="fs" name="Areas_Of_Interest">
               <properties>
                 <property name="type"><![CDATA[pub]]></property>
-                <property name="fsname"><![CDATA[geoArea.csv]]></property>
+                <property name="fsname"><![CDATA[@ESP_PROJECT_HOME@/test_files/geoArea.csv]]></property>
                 <property name="fstype"><![CDATA[csv]]></property>
               </properties>
             </connector>
           </connectors>
         </window-source>
-        <window-filter pubsub="true" index="pi_HASH" name="Filter_Speeding_In_Marina">
-          <expression><![CDATA[GeoID == 1 AND speed > 4]]></expression>
+        <window-filter index="pi_HASH" pubsub="true" name="Filter_Speeding_In_Marina">
+          <use><![CDATA[GeoID,speed]]></use>
+          <code><![CDATA[function filter(data)
+    return data.GeoID == 1 and data.speed > 4
+end]]></code>
         </window-filter>
-        <window-filter pubsub="true" index="pi_HASH" name="Filter_Inside_Exclusion_Zone">
+        <window-filter index="pi_HASH" pubsub="true" name="Filter_Inside_Exclusion_Zone">
           <description><![CDATA[There are two Filter windows that identify if any of the boats have entered the exclusion zone and speed restriction zone and if any of the boats were speeding: Filter_Inside_Exclusion_Zone and Last_Speeding_Event.]]></description>
-          <expression><![CDATA[GeoID == 2]]></expression>
+          <use><![CDATA[GeoID]]></use>
+          <code><![CDATA[function filter(data)
+    return data.GeoID == 2
+end
+          ]]></code>
         </window-filter>
-        <window-aggregate pubsub="true" index="pi_HASH" name="Last_Exclusion_Violation">
+        <window-aggregate index="pi_HASH" pubsub="true" name="Last_Exclusion_Violation">
           <description><![CDATA[There are two Aggregate windows that aggregate the last exclusion violation and the last speeding event : Last_Exclusion_Violation and Last_Speeding_Event]]></description>
           <schema>
             <fields>
-              <field name="BoatNumber" type="int32" key="true"/>
+              <field key="true" name="BoatNumber" type="int32"/>
               <field name="Minimum_Distance" type="double"/>
               <field name="Location_Name" type="string"/>
               <field name="First_dateTime" type="string"/>
@@ -238,10 +249,10 @@ boat1.csv, boat2.csv, boat3.csv, and boat4.csv are input files. These files cont
             <field-expr><![CDATA[ESP_aLast(dateTime)]]></field-expr>
           </output>
         </window-aggregate>
-        <window-aggregate pubsub="true" index="pi_HASH" name="Last_Speeding_Event">
+        <window-aggregate index="pi_HASH" pubsub="true" name="Last_Speeding_Event">
           <schema>
             <fields>
-              <field name="BoatNumber" type="int32" key="true"/>
+              <field key="true" name="BoatNumber" type="int32"/>
               <field name="Max_speed" type="double"/>
               <field name="Location_Name" type="string"/>
               <field name="dateTime" type="string"/>
@@ -253,7 +264,7 @@ boat1.csv, boat2.csv, boat3.csv, and boat4.csv are input files. These files cont
             <field-expr><![CDATA[ESP_aLast(dateTime)]]></field-expr>
           </output>
         </window-aggregate>
-        <window-copy pubsub="true" index="pi_HASH" name="Retention_30Min">
+        <window-copy index="pi_HASH" pubsub="true" name="Retention_30Min">
           <description><![CDATA[This is a Copy window that is used to transition the model from stateless to stateful.]]></description>
           <retention type="bytime_sliding"><![CDATA[30 minutes]]></retention>
         </window-copy>
@@ -267,8 +278,8 @@ boat1.csv, boat2.csv, boat3.csv, and boat4.csv are input files. These files cont
         <edge source="Compute_ID3" target="Union_All_Boats"/>
         <edge source="Boat4" target="Compute_ID4"/>
         <edge source="Compute_ID4" target="Union_All_Boats"/>
-        <edge source="Union_All_Boats" target="Geofence_Area_Check" role="position"/>
-        <edge source="Areas_Of_Interest" target="Geofence_Area_Check" role="geometry"/>
+        <edge role="position" source="Union_All_Boats" target="Geofence_Area_Check"/>
+        <edge role="geometry" source="Areas_Of_Interest" target="Geofence_Area_Check"/>
         <edge source="Geofence_Area_Check" target="Retention_30Min"/>
         <edge source="Retention_30Min" target="Filter_Inside_Exclusion_Zone"/>
         <edge source="Retention_30Min" target="Filter_Speeding_In_Marina"/>
