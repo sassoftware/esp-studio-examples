@@ -48,6 +48,8 @@ Note: If any table remains empty, check that the publisher connectors for all fi
 ## Visualizing Objects in Grafana
 If you are using SAS Event Stream Processing in Microsoft Azure, the sailing boats and areas of interest can be visualized by using Grafana. Import the [grafana.json](grafana.json) file to Grafana. The grafana.json file references the [sailing-areas-of-interest.geojson](sailing-areas-of-interest.geojson) file, which defines the areas of interest.
 
+<img alt="Sailing dashboard" src="img/sailing-dashboard.png"  width="75%" height="75%">
+
 ## Additional Resources
 
 - The [Using a Geofence to Find Wanted Vehicles](https://github.com/sassoftware/esp-studio-examples/tree/main/Advanced/geofence) example provides a more detailed discussion of the settings for a Geofence window and for connector orchestration. 
