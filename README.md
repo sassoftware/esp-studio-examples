@@ -136,6 +136,7 @@ The following examples demonstrate how you can use Lua code in projects.
 - geofence
 - pattern_empty_index
 - trades
+- sailing
 
 <!--### What's New
 
