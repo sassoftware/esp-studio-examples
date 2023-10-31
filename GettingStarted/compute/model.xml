@@ -1,0 +1,60 @@
+<project name="compute" pubsub="auto" threads="1" heartbeat-interval="1" luaroot="@ESP_PROJECT_OUTPUT@/luaroot">
+  <description><![CDATA[Compute windows enable one-to-one transformation of input events to output events through the computational manipulation of input event stream fields. 
+
+You can use Compute windows to project input fields from one event to a new event and to augment this event with fields that result from a calculation. 
+
+This model uses a Compute window to match people from the city of Apex.]]></description>
+  <metadata>
+    <meta id="studioUploadedBy">anonymousUser</meta>
+    <meta id="studioUploaded">1696244927205</meta>
+    <meta id="studioModifiedBy">anonymousUser</meta>
+    <meta id="studioModified">1696245884015</meta>
+    <meta id="layout">{"contQuery":{"computeWindow":{"x":50,"y":175},"sourceWindow":{"x":50,"y":50}}}</meta>
+    <meta id="studioTags">Example</meta>
+  </metadata>
+  <contqueries>
+    <contquery name="contQuery" trace="computeWindow">
+      <windows>
+        <window-source pubsub="true" name="sourceWindow">
+          <description><![CDATA[The Source window in this model receives input data from a CSV file containing a list of people and their location. The input data specifies the name of the person, the person's ID number, and their city's name.]]></description>
+          <schema>
+            <fields>
+              <field name="name" type="string"/>
+              <field name="ID" type="int32" key="true"/>
+              <field name="city" type="string"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="fs" name="input_compute">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="fsname"><![CDATA[@ESP_PROJECT_HOME@/test_files/input-compute.csv]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-compute pubsub="true" name="computeWindow">
+          <description><![CDATA[The Compute window uses expressions to calculate each field. The name and city fields pass through the person's name and city through the event stream. The match field uses the match_string expression function to match the input field "city" with the string "Apex". If a match is found, true is returned. Otherwise, false is returned.]]></description>
+          <schema>
+            <fields>
+              <field name="ID" type="int32" key="true"/>
+              <field name="name" type="string"/>
+              <field name="city" type="string"/>
+              <field name="match" type="int32"/>
+            </fields>
+          </schema>
+          <output>
+            <field-expr><![CDATA[name]]></field-expr>
+            <field-expr><![CDATA[city]]></field-expr>
+            <field-expr><![CDATA[match_string(city, "Apex")]]></field-expr>
+          </output>
+        </window-compute>
+      </windows>
+      <edges>
+        <description/>
+        <edge source="sourceWindow" target="computeWindow"/>
+      </edges>
+    </contquery>
+  </contqueries>
+</project>
