@@ -3,6 +3,8 @@
 
 This example demonstrates how to facilitate the transition of a stateful part of a model to a stateless part of a model. A Remove State window in this example converts all events that it receives into Inserts and adds a field named `eventNumber`.
 
+For more information about how to install and use example projects, see [Using the Examples](https://github.com/sassoftware/esp-studio-examples#using-the-examples).
+
 ## Source Data
 
 The [InputRemove.csv](InputRemove.csv) file contains a list of stock market trades. 
@@ -49,11 +51,7 @@ Explore the settings for the copyWindow window:
 
 ## Test the Project and View the Results
 
-When you test the project in SAS Event Stream Processing Studio, you can use the **Publish** button to publish events from the InputRemove.csv file into the sourceWindow window. For more information, see [Publish Events from a CSV file](https://go.documentation.sas.com/doc/en/espcdc/default/espstudio/p124n2fohetwqzn109gsdel6o1cj.htm).
-
-Alternatively, before you test the project, you can configure a publisher connector for the sourceWindow window. For more information, see [Configure a File and Socket Connector](https://go.documentation.sas.com/doc/en/espcdc/default/espstudio/n0esv2n0cbbpgcn1r281krr1iv6q.htm#n0y87cwr7q5vo6n1qlfcey182vt6).
-
-The results for each window appear in separate tabs in test mode. The following figure shows the results for the sourceWindow tab. This tab displays all events, with various opcodes. 
+When you test the project, the results for each window appear on separate tabs. The following figure shows the results for the sourceWindow tab. This tab displays all events, with various opcodes. 
 
 ![sourceWindow tab](img/sourceWindow.png "sourceWindow tab")
 
