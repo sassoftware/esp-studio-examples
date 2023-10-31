@@ -1,0 +1,48 @@
+<project name="removestate" threads="1" pubsub="auto" heartbeat-interval="1" luaroot="@ESP_PROJECT_OUTPUT@/luaroot">
+  <description><![CDATA[This model demonstrates how to facilitate the transition of a stateful part of a model to a stateless part of a model.]]></description>
+  <metadata>
+    <meta id="studioUploadedBy">anonymousUser</meta>
+    <meta id="studioUploaded">1696245008844</meta>
+    <meta id="studioModifiedBy">anonymousUser</meta>
+    <meta id="studioModified">1696246345281</meta>
+    <meta id="layout">{"cq1":{"copyWindow":{"x":50,"y":295},"removestateWindow":{"x":50,"y":175},"sourceWindow":{"x":50,"y":50}}}</meta>
+    <meta id="studioTags">Example</meta>
+  </metadata>
+  <contqueries>
+    <contquery name="cq1" include-singletons="true" trace="removestateWindow">
+      <windows>
+        <window-source pubsub="true" name="sourceWindow">
+          <description><![CDATA[The Source window in this model receives input data from a CSV file containing stock market trades. The input data specifies a unique ID for each trade, the stock market symbol of the purchased stock, the "true_test" value for each trade and the cost of purchasing the stock for each trade.]]></description>
+          <schema>
+            <fields>
+              <field name="ID" type="int32" key="true"/>
+              <field name="symbol" type="string"/>
+              <field name="true_test" type="int32"/>
+              <field name="price" type="double"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="fs" name="input_removestate">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="fsname"><![CDATA[@ESP_PROJECT_HOME@/test_files/InputRemove.csv]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-remove-state remove="updates deletes retentionUpdates retentionDeletes" pubsub="true" add-log-fields="true" name="removestateWindow">
+          <description><![CDATA[A Remove State window facilitates the transition of a stateful part of a model to a stateless part of a model. A Remove State window converts all events that it receives into Inserts and adds a field named eventNumber. This field is the only key field of a Remove State window.]]></description>
+        </window-remove-state>
+        <window-copy pubsub="true" index="pi_RBTREE" name="copyWindow">
+          <description><![CDATA[This Copy window retains the data from the Remove State window according to the set retention policy, which in this model, is 30 seconds.]]></description>
+          <retention type="bytime_sliding"><![CDATA[30 seconds]]></retention>
+        </window-copy>
+      </windows>
+      <edges>
+        <edge source="sourceWindow" target="removestateWindow"/>
+        <edge source="removestateWindow" target="copyWindow"/>
+      </edges>
+    </contquery>
+  </contqueries>
+</project>
