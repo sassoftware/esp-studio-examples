@@ -8,6 +8,8 @@ Use this example with SAS Event Stream Processing 2022.10 and later.
 
 ---
 
+For more information about how to install and use example projects, see [Using the Examples](https://github.com/sassoftware/esp-studio-examples#using-the-examples).
+
 ## Use Case
 This example provides a simple demonstration of how you can use a Lua connector to feed data into a Source window. In a real-life scenario, a project might also contain additional windows to analyze the data.
 
