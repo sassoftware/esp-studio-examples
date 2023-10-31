@@ -1,7 +1,7 @@
 # Generate Events from JSON Using the Lua Window
 ## Overview
 Within a Lua window of SAS Event Stream Processing, you write Lua code to programmatically generate events. The following examples show how to code a Lua window to parse a JSON string in order to generate multiple events from a single event stream.
-- The [basic example project](#basic-example-project) is designed to show how event generation works.
+- The [basic example project](#basic-example-project) is designed to show how event generation works. This example is included in the `lua_parse_simple_<release>.zip` project package and can be installed directly from SAS Event Stream Processing Studio. For more information, see [Using the Examples](https://github.com/sassoftware/esp-studio-examples#using-the-examples).
 - The [advanced example project](#advanced-example-project) is intended to provide a more realistic use case of event generation.
 ---
 **NOTE:**
@@ -10,8 +10,6 @@ Use these examples with SAS Event Stream Processing 2022.10 and later.
 ---
 
 ## Basic Example Project
-### Prerequisites
-There are no prerequisites for this example project. If you do not have access to a persistent volume on your Kubernetes cluster, you can use the Publish button in SAS Event Stream Processing Studio to publish data from the CSV file to the project. For more information, see [Publish Events from a CSV File](https://documentation.sas.com/?cdcId=espcdc&cdcVersion=default&docsetId=espstudio&docsetTarget=p124n2fohetwqzn109gsdel6o1cj.htm).
 
 ### Workflow
 The following figure illustrates the complete flow of events through the SAS Event Stream Processing project.
