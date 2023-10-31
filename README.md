@@ -30,13 +30,13 @@ When you are using SAS Event Stream Processing 2023.08 or earlier, or when an ex
 2. Import the project XML file to SAS Event Stream Processing Studio. For more information, see [Import a Project](https://go.documentation.sas.com/doc/en/espcdc/default/espstudio/n0qhr0p800gs68n18wbp96pu7txq.htm).
 3. Open the project in SAS Event Stream Processing Studio and examine its contents. You can select each window in turn in the workspace to read brief descriptions of those windows in the right pane.
 4. To pass events from input files into the project, do one of the following:
-   - Configure connectors: Place the input files on the Kubernetes persistent volume and adjust any existing connectors to point to the location of the input files. When the project does not contain any connectors, you must add connectors yourself. For more information, see [Configure a File and Socket Connector](https://go.documentation.sas.com/doc/en/espcdc/default/espstudio/n0esv2n0cbbpgcn1r281krr1iv6q.htm#n0y87cwr7q5vo6n1qlfcey182vt6).
+   - Configure connectors: Place the input files on the Kubernetes persistent volume and adjust any existing connectors to point to the location of the input files. If the project does not contain any connectors, you must add connectors yourself. For more information, see [Configure a File and Socket Connector](https://go.documentation.sas.com/doc/en/espcdc/default/espstudio/n0esv2n0cbbpgcn1r281krr1iv6q.htm#n0y87cwr7q5vo6n1qlfcey182vt6).
    - Publish events directly from an input file: Deactivate any existing connectors. After you run the project in test mode (see step 5), use the **Publish** button to send events from the input files into Source windows. Using the **Publish** button enables you to send events into a running project without placing files on the Kubernetes persistent volume and without configuring connectors. For more information, see [Publish Events from a CSV file](https://go.documentation.sas.com/doc/en/espcdc/default/espstudio/p124n2fohetwqzn109gsdel6o1cj.htm).
 5. Run the project in test mode and view the test results. For more information, see [Running a Test](https://go.documentation.sas.com/doc/en/espcdc/default/espstudio/p1xzbzbnvpspodn1h2jkzo9m9t7d.htm). 
 
 **Note:** 
-- When you use **Publish** button, for projects that contain multiple Source windows, you must publish events for each Source window separately. You cannot publish events to multiple Source windows simultaneously.
-- When connector groups are used (for example, in the `geofence` and `sailing` examples), it is not appropriate to use the **Publish** button. Instad, configure connectors for the project.
+- You cannot use the **Publish** button to publish events to multiple Source windows simultaneously. For projects that contain multiple Source windows, you must publish events for each Source window separately. 
+- When connector groups are used (for example, in the `geofence` and `sailing` examples), it is not appropriate to use the **Publish** button. Instead, configure connectors for the project.
 
 ## Directory Contents
 
