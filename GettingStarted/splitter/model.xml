@@ -1,0 +1,58 @@
+<project name="splitter" pubsub="auto" threads="1" heartbeat-interval="1" luaroot="@ESP_PROJECT_OUTPUT@/luaroot">
+  <description><![CDATA[You can use expressions to define window-output splitter-slot calculations (for example, you can use an expression to evaluate where to send a generated event). In this model, the splitter works with user-defined functions to calculate the slot number to decide which Copy window the event will be sent to.]]></description>
+  <metadata>
+    <meta id="studioUploadedBy">anonymousUser</meta>
+    <meta id="studioUploaded">1696245027300</meta>
+    <meta id="studioModifiedBy">anonymousUser</meta>
+    <meta id="studioModified">1696246435709</meta>
+    <meta id="layout">{"contquery_01":{"CopyWindowEven":{"x":50,"y":175},"CopyWindowOdd":{"x":330,"y":175},"sourceWindow":{"x":190,"y":50}}}</meta>
+    <meta id="studioTags">Example</meta>
+  </metadata>
+  <contqueries>
+    <contquery name="contquery_01" trace="CopyWindowEven CopyWindowOdd">
+      <windows>
+        <window-source index="pi_RBTREE" pubsub="true" name="sourceWindow">
+          <description><![CDATA[The Source window in this model receives input data from a CSV file containing a group of stock market share valuations. The input data specifies the ID number attributed to the company, its stock market symbol, and its share price valuation. A splitter expression is defined which tries to match the stock market symbol "IBM" and its corresponding ID, where its share price valuation is over 100.0. The splitter expression is used in conjunction with three user defined functions. These functions are declared in the splitter expression. The functions return the ID attributed to the company , the company's stock market symbol, and its share price valuation.]]></description>
+          <splitter-expr>
+            <expr-initialize>
+              <udfs>
+                <udf name="udf1" type="int32"><![CDATA[return ID%2]]></udf>
+                <udf name="udf2" type="string"><![CDATA[return upper(symbol)]]></udf>
+                <udf name="udf3" type="double"><![CDATA[return price]]></udf>
+              </udfs>
+            </expr-initialize>
+            <expression><![CDATA[udf1() and (match_string(udf2(), "IBM")) and (udf3() > 100.0)]]></expression>
+          </splitter-expr>
+          <schema>
+            <fields>
+              <field name="ID" type="int32" key="true"/>
+              <field name="symbol" type="string"/>
+              <field name="price" type="double"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="fs" name="input_splitter">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="fsname"><![CDATA[@ESP_PROJECT_HOME@/test_files/input-splitter.csv]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-copy index="pi_RBTREE" pubsub="true" name="CopyWindowEven">
+          <description><![CDATA[This Copy window retains the companies allocated to slot 0.]]></description>
+          <retention type="bycount_sliding"><![CDATA[1000]]></retention>
+        </window-copy>
+        <window-copy index="pi_HASH" pubsub="true" name="CopyWindowOdd">
+          <description><![CDATA[This Copy window retains the companies allocated to slot 1.]]></description>
+          <retention type="bycount_sliding"><![CDATA[1000]]></retention>
+        </window-copy>
+      </windows>
+      <edges>
+        <edge source="sourceWindow" target="CopyWindowEven" slot="0"/>
+        <edge source="sourceWindow" target="CopyWindowOdd" slot="1"/>
+      </edges>
+    </contquery>
+  </contqueries>
+</project>
