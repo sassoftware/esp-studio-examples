@@ -4,11 +4,11 @@ This example demonstrates how to use a Lua-based Pattern window. The model ident
 
 ---
 **NOTE:**
-Use this example with SAS Event Stream Processing 2022.1.2 and later. 
-
-Earlier releases of SAS Event Stream Processing do not support Lua-based Pattern windows. If you are using an earlier release, you can use the model-eel.xml file instead of the model-lua.xml file. The model-eel.xml file contains a Pattern window that uses an Expression Engine Language (EEL) expression. The use of EEL in Pattern windows is legacy functionality. When you pass data into the Source window, you must specify the following date format: %Y-%m-%d %H:%M:%S.
+Use this example with SAS Event Stream Processing 2022.1.2 and later. Earlier releases of SAS Event Stream Processing do not support Lua-based Pattern windows. 
 
 ---
+
+For more information about how to install and use example projects, see [Using the Examples](https://github.com/sassoftware/esp-studio-examples#using-the-examples).
 
 ## Source Data
 The file [stocktrades.csv](stocktrades.csv) contains stock trade data.
@@ -156,11 +156,9 @@ Explore the settings for this window:
 
 ## Test the Project and View the Results
 
-When you test the project in SAS Event Stream Processing Studio, you can use the **Publish** button to publish events from the stocktrades.csv file into the sourceWindow_01 window. You must specify the following date format: `%Y-%m-%d %H:%M:%S`. For more information, see [Publish Events from a CSV file](https://go.documentation.sas.com/doc/en/espcdc/default/espstudio/p124n2fohetwqzn109gsdel6o1cj.htm).
+If you use the **Publish** button to publish events from the stocktrades.csv file into the sourceWindow_01 window, you must specify the following date format: `%Y-%m-%d %H:%M:%S`. For more information, see [Publish Events from a CSV file](https://go.documentation.sas.com/doc/en/espcdc/default/espstudio/p124n2fohetwqzn109gsdel6o1cj.htm).
 
-Alternatively, before you test the project, you can configure a publisher connector for the sourceWindow_01 window and specify the date format `%Y-%m-%d %H:%M:%S` in the connector's settings. For more information, see [Configure a File and Socket Connector](https://go.documentation.sas.com/doc/en/espcdc/default/espstudio/n0esv2n0cbbpgcn1r281krr1iv6q.htm#n0y87cwr7q5vo6n1qlfcey182vt6).
-
-The results for each window appear on separate tabs in test mode:
+When you test the project, the results for each window appear on separate tabs.
 - The **sourceWindow_01** tab lists the stock trades that are received from the input file.
 - The **patternWindow_01** tab lists the matched patterns. After a while, a total of 23 rows appear in this tab.
 
