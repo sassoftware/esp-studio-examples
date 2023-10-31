@@ -15,7 +15,7 @@ This example provides a simple demonstration of how you can use a Lua connector 
 Data is streamed from RSS feeds. No input files are required for this example.
 
 ## Workflow
-The following table explains the Lua code in the connector for the Source window. To view the Lua code in context, see the lua_connector.xml file.
+The following table explains the Lua code in the connector for the Source window. To view the Lua code in context, see the [model.xml](model.xml) file.
 
 <table>
 <tr>
