@@ -11,6 +11,8 @@ Use these examples with SAS Event Stream Processing 2022.10 and later.
 
 ---
 
+For more information about how to install and use example projects, see [Using the Examples](https://github.com/sassoftware/esp-studio-examples#using-the-examples).
+
 ## Example
 
 ### Use Case
@@ -22,7 +24,7 @@ The Acme Stockbroking firm wants to track and analyze the maximum price for all 
 1. Receive the stock trade data.
 2. Use a Lua window to generate events every time a new stock symbol price exceeds the current maximum price for that stock symbol.
 
-To view the project in its entirety, see the attached file [luaState.xml](luaState.xml).
+To view the project in its entirety, see the [model.xml](model.xml) file.
 
 ### Source Data
 
@@ -36,7 +38,7 @@ The trades window is a Source window. It receives input data from the file [luaS
 
 #### generateEvents
 
-The generateEvents window is a Lua window. It contains Lua code that analyzes the input data and generates multiple events. To view the Lua code in context, see the attached file [luaState.xml](luaState.xml).
+The generateEvents window is a Lua window. It contains Lua code that analyzes the input data and generates multiple events. To view the Lua code in context, see the [model.xml](model.xml) file.
 
 ---
 
@@ -106,7 +108,7 @@ end
 
 ### Test the Project and View the Results
 
-In the following animated image, the window to the right shows input events as they are streamed into the trades window. The window to the left shows how the Lua code uses those events to periodically update the stock symbols, based on their price.
+When you test the project, the results for each window appear in separate tabs. In the following animated image, the window to the right shows input events as they are streamed into the trades window. The window to the left shows how the Lua code uses those events to periodically update the stock symbols, based on their price.
 
 ![luaState project output](https://github.com/sassoftware/esp-studio-examples/blob/main/Basic/lua_state/lua_state.gif)
 
