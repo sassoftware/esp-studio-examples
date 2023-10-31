@@ -1,0 +1,101 @@
+<project name="union" pubsub="auto" threads="3" heartbeat-interval="1" luaroot="@ESP_PROJECT_OUTPUT@/luaroot">
+  <description><![CDATA[A Union window unites two or more event streams using a strict policy or a loose policy. This model contains a Union window that uses a strict policy to merge three event streams of stock market trades together. Input windows that stream events to a Union window must have the same schema.]]></description>
+  <metadata>
+    <meta id="studioUploadedBy">anonymousUser</meta>
+    <meta id="studioUploaded">1696245052579</meta>
+    <meta id="studioModifiedBy">anonymousUser</meta>
+    <meta id="studioModified">1696246525025</meta>
+    <meta id="layout">{"contquery_01":{"sourceWindow_01":{"x":260,"y":-40},"sourceWindow_02":{"x":-160,"y":-45},"unionWindow":{"x":50,"y":175}}}</meta>
+    <meta id="studioTags">Example</meta>
+  </metadata>
+  <contqueries>
+    <contquery name="contquery_01" trace="unionWindow">
+      <windows>
+        <window-source index="pi_HASH" pubsub="true" name="sourceWindow_01">
+          <description><![CDATA[The first Source window in this model receives input data from two CSV files each containing a list of stock market trades. The input data specifies a unique ID for the trade, the company's stock market symbol, and the price paid for the stock.]]></description>
+          <schema>
+            <fields>
+              <field name="ID" type="int32" key="true"/>
+              <field name="symbol" type="string"/>
+              <field name="price" type="double"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="fs" name="input_union1">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="fsname"><![CDATA[@ESP_PROJECT_HOME@/test_files/stockpricelist1.csv]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
+              </properties>
+            </connector>
+            <connector class="fs" name="input_union2">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="fsname"><![CDATA[@ESP_PROJECT_HOME@/test_files/stockpricelist2.csv]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-source index="pi_HASH" pubsub="true" name="sourceWindow_02">
+          <description><![CDATA[The second Source window in this model receives input data from a CSV file containing a list of stock market trades. The input data specifies a unique ID for the trade, the company's stock market symbol, and the price paid for the stock.]]></description>
+          <schema>
+            <fields>
+              <field name="ID" type="int32" key="true"/>
+              <field name="symbol" type="string"/>
+              <field name="price" type="double"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="fs" name="input_union3">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="fsname"><![CDATA[@ESP_PROJECT_HOME@/test_files/stockpricelist3.csv]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-union index="pi_HASH" strict="true" pubsub="true" name="unionWindow">
+          <description><![CDATA[The Union window in this model merges the three event streams of stock market trades.  As strict policy is enabled, the key merge from each window must semantically merge cleanly.]]></description>
+          <connectors>
+            <connector class="fs" name="output_union">
+              <properties>
+                <property name="type"><![CDATA[sub]]></property>
+                <property name="snapshot"><![CDATA[true]]></property>
+                <property name="fsname"><![CDATA[@ESP_PROJECT_OUTPUT@/output.csv]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-union>
+      </windows>
+      <edges>
+        <description/>
+        <edge source="sourceWindow_01" target="unionWindow"/>
+        <edge source="sourceWindow_02" target="unionWindow"/>
+      </edges>
+    </contquery>
+  </contqueries>
+  <project-connectors>
+    <connector-groups>
+      <connector-group name="CG_sub">
+        <connector-entry connector="contquery_01/unionWindow/output_union" state="running"/>
+      </connector-group>
+      <connector-group name="CG_pub_sw_01_1">
+        <connector-entry connector="contquery_01/sourceWindow_01/input_union1" state="finished"/>
+      </connector-group>
+      <connector-group name="CG_pub_sw_02">
+        <connector-entry connector="contquery_01/sourceWindow_02/input_union3" state="finished"/>
+      </connector-group>
+      <connector-group name="CG_pub_sw_01_2">
+        <connector-entry connector="contquery_01/sourceWindow_01/input_union2" state="finished"/>
+      </connector-group>
+    </connector-groups>
+    <edges>
+      <edge source="CG_sub" target="CG_pub_sw_01_1"/>
+      <edge source="CG_pub_sw_01_1" target="CG_pub_sw_02"/>
+      <edge source="CG_pub_sw_02" target="CG_pub_sw_01_2"/>
+    </edges>
+  </project-connectors>
+</project>
