@@ -8,6 +8,8 @@ Use this example with SAS Event Stream Processing 2021.2.1 and later.
 
 ---
 
+For more information about how to install and use example projects, see [Using the Examples](https://github.com/sassoftware/esp-studio-examples#using-the-examples). 
+
 ## Use Case
 
 The model handles customer information for a telecommunications company. A Lua window called TransformData is configured to perform several actions:
@@ -161,11 +163,7 @@ Explore the settings for this window:
 
 ## Test the Project and View the Results
 
-When you test the project in SAS Event Stream Processing Studio, you can use the **Publish** button to publish events from the lua_compute.csv file into the Customers window. For more information, see [Publish Events from a CSV file](https://go.documentation.sas.com/doc/en/espcdc/default/espstudio/p124n2fohetwqzn109gsdel6o1cj.htm).
-
-Alternatively, before you test the project, you can configure a publisher connector for the Customers window. For more information, see [Configure a File and Socket Connector](https://go.documentation.sas.com/doc/en/espcdc/default/espstudio/n0esv2n0cbbpgcn1r281krr1iv6q.htm#n0y87cwr7q5vo6n1qlfcey182vt6).
-
-The results for each window appear in separate tabs in test mode. The following figure shows the customer data in the **Customers** tab. Note the following details:
+When you test the project, the results for each window appear in separate tabs. The following figure shows the customer data in the **Customers** tab. Note the following details:
 - Each customer’s surname is in title case.
 - The telephone numbers were not entered using the same format.
 - The customers Hermione Grandeur and Draco Molefay have no entry for `telno`.
