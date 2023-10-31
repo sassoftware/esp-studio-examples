@@ -22,22 +22,21 @@ For more information about how the example works, return to the SAS Event Stream
 
 When the **Install example** button is not available but the example's directory contains a project package ZIP file, you can manually import the project package to SAS Event Stream Processing Studio, but only when you are using SAS Event Stream Processing 2023.09 or later. For more information, see [Import a Project](https://go.documentation.sas.com/doc/en/**espcdc/default/espstudio/n0qhr0p800gs68n18wbp96pu7txq.htm).
 
-**Note:** The remainder of the files in each example's directory might differ slightly from the files in the project package. For example, the project XML file might not include connectors.
-
 For more information about project packages in general, see [Project Package](https://go.documentation.sas.com/doc/en/espcdc/default/espstudio/p0y6v0lhrr57zjn1c6de7k129uet.htm).
 
 ### Importing Examples Manually
-
-Some examples in this repository do not include a project package. To use these examples:
-1. Save the contents of the directory for a specific example to a convenient location on your computer.
+When you are using SAS Event Stream Processing 2023.08 or earlier, or when an example's directory does not include a project package, you can import an example manually:
+1. Save the contents of the example's directory to a convenient location on your computer.
 2. Import the project XML file to SAS Event Stream Processing Studio. For more information, see [Import a Project](https://go.documentation.sas.com/doc/en/espcdc/default/espstudio/n0qhr0p800gs68n18wbp96pu7txq.htm).
-3. Open the project in SAS Event Stream Processing Studio and examine its contents. You can select each window in turn in the workspace to read brief descriptions of those windows in the right pane. 
-4. Run the project in test mode. For more information, see [Running a Test](https://go.documentation.sas.com/doc/en/espcdc/default/espstudio/p1xzbzbnvpspodn1h2jkzo9m9t7d.htm).</br>**Note:** When you first enter the test mode you do not see data streaming through the model. This is expected behavior unless publisher connectors have been configured. In step 5, you publish events from the project's CSV file and data streams through the project.
-5. When you run a project in test mode, in most cases you can publish events from the project's corresponding CSV file by clicking the **Publish** button. This enables you to send events to a Source window without configuring a publisher connector. The CSV file can reside in a convenient location on your computer without having to upload it to a Kubernetes persistent volume. For more information, see [Publish Events from a CSV file](https://go.documentation.sas.com/doc/en/espcdc/default/espstudio/p124n2fohetwqzn109gsdel6o1cj.htm). </br>**Note:** For projects that contain multiple Source windows, you must publish events for each Source window separately. You cannot publish events to multiple Source windows simultaneously. 
+3. Open the project in SAS Event Stream Processing Studio and examine its contents. You can select each window in turn in the workspace to read brief descriptions of those windows in the right pane.
+4. To pass events from input files into the project, do one of the following:
+   - Configure connectors: Place the input files on the Kubernetes persistent volume and adjust any existing connectors to point to the location of the input files. When the project does not contain any connectors, you must add connectors yourself. For more information, see [Configure a File and Socket Connector](https://go.documentation.sas.com/doc/en/espcdc/default/espstudio/n0esv2n0cbbpgcn1r281krr1iv6q.htm#n0y87cwr7q5vo6n1qlfcey182vt6).
+   - Publish events directly from an input file: Deactivate any existing connectors. After you run the project in test mode (see step 5), use the **Publish** button to send events from the input files into Source windows. Using the **Publish** button enables you to send events into a running project without placing files on the Kubernetes persistent volume and without configuring connectors. For more information, see [Publish Events from a CSV file](https://go.documentation.sas.com/doc/en/espcdc/default/espstudio/p124n2fohetwqzn109gsdel6o1cj.htm).
+5. Run the project in test mode and view the test results. For more information, see [Running a Test](https://go.documentation.sas.com/doc/en/espcdc/default/espstudio/p1xzbzbnvpspodn1h2jkzo9m9t7d.htm). 
 
-Alternatively, you can configure publisher connectors prior to running the project in test mode. For more information, see [Configure a File and Socket Connector](https://go.documentation.sas.com/doc/en/espcdc/default/espstudio/n0esv2n0cbbpgcn1r281krr1iv6q.htm#n0y87cwr7q5vo6n1qlfcey182vt6).
-
-**Important:** When connector groups are used (for example, in the `geofence` and `sailing` examples), it is not appropriate to publish events from the project's CSV file when in test mode. Instead, it is recommended that you configure publisher connectors to the relevant CSV file and connector groups in SAS Event Processing Modeler. Follow the instructions for each specific example.
+**Note:** 
+- When you use **Publish** button, for projects that contain multiple Source windows, you must publish events for each Source window separately. You cannot publish events to multiple Source windows simultaneously.
+- When connector groups are used (for example, in the `geofence` and `sailing` examples), it is not appropriate to use the **Publish** button. Instad, configure connectors for the project.
 
 ## Directory Contents
 
