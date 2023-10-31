@@ -108,7 +108,7 @@ end
 
 ### Test the Project and View the Results
 
-When you test the project, the results for each window appear in separate tabs. In the following animated image, the window to the right shows input events as they are streamed into the trades window. The window to the left shows how the Lua code uses those events to periodically update the stock symbols, based on their price.
+When you test the project, the results for each window appear on separate tabs. In the following animated image, the window to the right shows input events as they are streamed into the trades window. The window to the left shows how the Lua code uses those events to periodically update the stock symbols, based on their price.
 
 ![luaState project output](https://github.com/sassoftware/esp-studio-examples/blob/main/Basic/lua_state/lua_state.gif)
 
