@@ -163,7 +163,7 @@ Explore the settings for this window:
 
 ## Test the Project and View the Results
 
-When you test the project, the results for each window appear in separate tabs. The following figure shows the customer data in the **Customers** tab. Note the following details:
+When you test the project, the results for each window appear on separate tabs. The following figure shows the customer data in the **Customers** tab. Note the following details:
 - Each customer’s surname is in title case.
 - The telephone numbers were not entered using the same format.
 - The customers Hermione Grandeur and Draco Molefay have no entry for `telno`.
