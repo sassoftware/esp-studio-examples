@@ -5,6 +5,8 @@ This example merges three event streams of stock market trades together. A Union
 
 This example also demonstrates the use of connector orchestration.
 
+For more information about how to install and use example projects, see [Using the Examples](https://github.com/sassoftware/esp-studio-examples#using-the-examples).
+
 ## Source Data
 
 The [stockpricelist1.csv](stockpricelist1.csv), [stockpricelist2.csv](stockpricelist2.csv), and [stockpricelist3.csv](stockpricelist3.csv) files contain lists of stock prices. 
@@ -59,13 +61,9 @@ Explore the settings for the unionWindow window:
 
 ## Test the Project and View the Results
 
-This project includes connector orchestration. As a result, it is recommended that you do not use the **Publish** button in SAS Event Stream Processing Studio's test mode to publish events from CSV files to the Source windows. Instead, edit the file paths in the connectors:
-1. Edit the publisher connectors in the sourceWindow_01 and sourceWindow_02 windows so that they refer to the location in your system where you placed the CSV files. 
-2. Edit the subscriber connector in the unionWindow window so that it refers to a location where the output file can be written. Ensure that the user who tests the project has Write access to that directory. 
+This project includes connector orchestration. As a result, it is recommended that you do not use the **Publish** button in SAS Event Stream Processing Studio's test mode to publish events from CSV files to the Source windows.
 
-For more information, see [SAS Help Center: Configure a File and Socket Connector](https://go.documentation.sas.com/doc/en/espcdc/default/espstudio/n0esv2n0cbbpgcn1r281krr1iv6q.htm#n0y87cwr7q5vo6n1qlfcey182vt6).
-
-The results for each window appear in separate tabs in test mode:
+When you test the project, the results for each window appear on separate tabs:
 - The **sourceWindow_01** tab displays the first event stream.
 - The **sourceWindow_02** tab displays the second event stream.
 - The **unionWindow** tab displays the unified event stream.
