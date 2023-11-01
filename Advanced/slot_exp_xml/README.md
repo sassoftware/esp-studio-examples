@@ -5,6 +5,8 @@ This example enables you to send stock market events across a set of output slot
 
 Filtering events using window splitters with only one output slot can be more efficient than using multiple Filter windows. This is because the filtering is performed at the window splitter only, rather than multiple times for each filter. For example, performing an alpha-split across a set of trades results in less data movement and data processing than performing an alpha-split across multiple Filter windows.
 
+For more information about how to install and use example projects, see [Using the Examples](https://github.com/sassoftware/esp-studio-examples#using-the-examples).
+
 ## Source Data
 
 The [stocktrades.csv](stocktrades.csv) file contains a list of stock prices. 
@@ -59,11 +61,7 @@ Explore the settings for the cw_01, cw_02, and cw_03 windows:
 
 ## Test the Project and View the Results
 
-When you test the project in SAS Event Stream Processing Studio, you can use the **Publish** button to publish events from the stocktrades.csv file into the src_win window. For more information, see [Publish Events from a CSV file](https://go.documentation.sas.com/doc/en/espcdc/default/espstudio/p124n2fohetwqzn109gsdel6o1cj.htm).
-
-Alternatively, before you test the project, you can configure a publisher connector for the src_win window. For more information, see [Configure a File and Socket Connector](https://go.documentation.sas.com/doc/en/espcdc/default/espstudio/n0esv2n0cbbpgcn1r281krr1iv6q.htm#n0y87cwr7q5vo6n1qlfcey182vt6).
-
-The results for each window appear in separate tabs in test mode:
+When you test the project, the results for each window appear on separate tabs:
 - The **scr_win** tab displays all events.  
 - The **compute_win** tab displays all events and also the `counter` variable that is assigned to each event.
 - The **cw_01** tab displays the events that are allocated to slot `0`.
