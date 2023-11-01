@@ -1,0 +1,138 @@
+<project name="trades_lua" threads="4" pubsub="auto" heartbeat-interval="1" luaroot="@ESP_PROJECT_OUTPUT@/luaroot">
+  <description><![CDATA[This model can be used to identify large securities transactions and the traders who were involved in those trades.]]></description>
+  <metadata>
+    <meta id="studioUploadedBy">anonymousUser</meta>
+    <meta id="studioUploaded">1696245034065</meta>
+    <meta id="studioModifiedBy">anonymousUser</meta>
+    <meta id="studioModified">1696246455835</meta>
+    <meta id="layout">{"trades_cq":{"AddTraderName":{"x":330,"y":295},"BySecurity":{"x":610,"y":540},"LargeTrades":{"x":470,"y":175},"LargeTradesCopy":{"x":890,"y":295},"TotalCost":{"x":470,"y":420},"TotalCostCopy":{"x":330,"y":540},"Traders":{"x":50,"y":420},"Trades":{"x":470,"y":50}}}</meta>
+    <meta id="studioTags">Example</meta>
+  </metadata>
+  <contqueries>
+    <contquery name="trades_cq">
+      <windows>
+        <window-source index="pi_EMPTY" insert-only="true" name="Trades">
+          <description><![CDATA[This Source window is where the stock trades from the trades.csv file enter the model. When data is passed into this window, the following date format must be used: %d/%b/%Y:%H:%M:%S]]></description>
+          <schema>
+            <fields>
+              <field name="tradeID" type="string" key="true"/>
+              <field name="security" type="string"/>
+              <field name="quantity" type="int32"/>
+              <field name="price" type="double"/>
+              <field name="traderID" type="int64"/>
+              <field name="time" type="stamp"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="fs" name="input_trades">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="dateformat"><![CDATA[%d/%b/%Y:%H:%M:%S]]></property>
+                <property name="fsname"><![CDATA[@ESP_PROJECT_HOME@/test_files/trades.csv]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-source index="pi_EMPTY" insert-only="true" name="Traders">
+          <description><![CDATA[This Source window is where the trader names from the traders.csv file enter the model.]]></description>
+          <schema>
+            <fields>
+              <field name="ID" type="int64" key="true"/>
+              <field name="name" type="string"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="fs" name="input_traders">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="fsname"><![CDATA[@ESP_PROJECT_HOME@/test_files/traders.csv]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-filter index="pi_EMPTY" name="LargeTrades">
+          <description><![CDATA[This Filter window filters out all trades that are not in the specified range.]]></description>
+          <use><![CDATA[quantity]]></use>
+          <code><![CDATA[
+			function filter(data)
+				return data.quantity >= 100
+			end
+		  ]]></code>
+        </window-filter>
+        <window-join index="pi_EMPTY" name="AddTraderName">
+          <description><![CDATA[This Join window combines the large trades with their corresponding trader names.]]></description>
+          <join type="leftouter" no-regenerates="true">
+            <conditions>
+              <fields left="traderID" right="ID"/>
+            </conditions>
+          </join>
+          <output>
+            <field-selection name="security" source="l_security"/>
+            <field-selection name="quantity" source="l_quantity"/>
+            <field-selection name="price" source="l_price"/>
+            <field-selection name="traderID" source="l_traderID"/>
+            <field-selection name="time" source="l_time"/>
+            <field-selection name="name" source="r_name"/>
+          </output>
+        </window-join>
+        <window-copy output-insert-only="true" name="LargeTradesCopy">
+          <description><![CDATA[This Copy window retains a list of all large trades.]]></description>
+          <retention type="bytime_sliding"><![CDATA[30 minutes]]></retention>
+        </window-copy>
+        <window-compute index="pi_EMPTY" name="TotalCost">
+          <description><![CDATA[This Compute window shows the total cost of each transaction. You can use this information to identify high-value transactions.]]></description>
+          <schema>
+            <fields>
+              <field name="tradeID" type="string" key="true"/>
+              <field name="security" type="string"/>
+              <field name="quantity" type="int32"/>
+              <field name="price" type="double"/>
+              <field name="totalCost" type="double"/>
+              <field name="traderID" type="int64"/>
+              <field name="time" type="stamp"/>
+              <field name="name" type="string"/>
+            </fields>
+          </schema>
+          <output>
+            <field-expr><![CDATA[security]]></field-expr>
+            <field-expr><![CDATA[quantity]]></field-expr>
+            <field-expr><![CDATA[price]]></field-expr>
+            <field-expr><![CDATA[price*quantity]]></field-expr>
+            <field-expr><![CDATA[traderID]]></field-expr>
+            <field-expr><![CDATA[time]]></field-expr>
+            <field-expr><![CDATA[name]]></field-expr>
+          </output>
+        </window-compute>
+        <window-copy output-insert-only="true" name="TotalCostCopy">
+          <description><![CDATA[This Copy window retains a list of the total costs of each transaction in accordance with the retention policy.]]></description>
+          <retention type="bytime_sliding"><![CDATA[30 minutes]]></retention>
+        </window-copy>
+        <window-aggregate name="BySecurity">
+          <description><![CDATA[This Aggregate window shows all the inserts, deletes, and update blocks for the large trades.]]></description>
+          <schema>
+            <fields>
+              <field name="security" type="string" key="true"/>
+              <field name="quantityTotal" type="double"/>
+              <field name="costTotal" type="double"/>
+            </fields>
+          </schema>
+          <output>
+            <field-expr><![CDATA[ESP_aSum(quantity)]]></field-expr>
+            <field-expr><![CDATA[ESP_aSum(totalCost)]]></field-expr>
+          </output>
+        </window-aggregate>
+      </windows>
+      <edges>
+        <edge source="Trades" target="LargeTrades"/>
+        <edge source="LargeTrades" target="AddTraderName" role="left"/>
+        <edge source="Traders" target="AddTraderName" role="right"/>
+        <edge source="LargeTrades" target="LargeTradesCopy"/>
+        <edge source="AddTraderName" target="TotalCost"/>
+        <edge source="TotalCost" target="TotalCostCopy"/>
+        <edge source="TotalCost" target="BySecurity"/>
+      </edges>
+    </contquery>
+  </contqueries>
+</project>
