@@ -1,0 +1,162 @@
+<project name="geofence_lua" threads="8" pubsub="auto" heartbeat-interval="1" luaroot="@ESP_PROJECT_OUTPUT@/luaroot">
+  <description><![CDATA[This example creates a model that displays a list of wanted vehicles found in close proximity of critical infrastructure sites. The model performs the following actions:
+
+streams a list of vehicles, including vehicle locations
+streams a list of vehicles that are included on a vehicle watch list
+streams a list of critical infrastructure sites, including site locations
+processes the list of vehicles and attempts to match any wanted vehicles that are in close proximity to critical infrastructure sites
+produces a list of wanted vehicles found in close proximity to critical infrastructure sites]]></description>
+  <metadata>
+    <meta id="studioUploadedBy">anonymousUser</meta>
+    <meta id="studioUploaded">1696244939262</meta>
+    <meta id="studioModifiedBy">anonymousUser</meta>
+    <meta id="studioModified">1696245968466</meta>
+    <meta id="layout">{"cq1":{"ANPR":{"x":330,"y":50},"CriticalInfrastructure":{"x":610,"y":420},"Geofence":{"x":470,"y":295},"GeofenceMatches":{"x":330,"y":420},"VehicleWatchlist":{"x":50,"y":295},"WantedVehicleMatch":{"x":330,"y":175}}}</meta>
+    <meta id="studioTags">Example</meta>
+  </metadata>
+  <contqueries>
+    <contquery name="cq1">
+      <windows>
+        <window-source pubsub="true" insert-only="true" autogen-key="true" name="ANPR">
+          <description><![CDATA[The ANPR window is a Source window. This is where a list of all vehicles within close proximity of critical infrastructure sites from the anpr.csv file enter the model.]]></description>
+          <schema>
+            <fields>
+              <field name="vrm" type="string" key="false"/>
+              <field name="lat" type="double" key="false"/>
+              <field name="long" type="double" key="false"/>
+              <field name="date" type="stamp" key="false"/>
+              <field name="pkey" type="string" key="true"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="fs" name="anpr_csv_read">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="fsname"><![CDATA[@ESP_PROJECT_HOME@/test_files/anpr.csv]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
+                <property name="dateformat"><![CDATA[%Y-%m-%d %H:%M:%S]]></property>
+                <property name="header"><![CDATA[1]]></property>
+                <property name="ignorecsvparseerrors"><![CDATA[true]]></property>
+                <property name="noautogenfield"><![CDATA[true]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-source pubsub="true" name="VehicleWatchlist">
+          <description><![CDATA[The VehicleWatchList window is a Source window. This is where a list of all vehicles on the vehicle watch list from the wantedvehicle.csv file enter the model.]]></description>
+          <schema>
+            <fields>
+              <field name="vrm" type="string" key="true"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="fs" name="vehicle_watchlist">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="fsname"><![CDATA[@ESP_PROJECT_HOME@/test_files/wantedvehicle.csv]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
+                <property name="header"><![CDATA[1]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-join pubsub="true" name="WantedVehicleMatch">
+          <description><![CDATA[The WantedVehicleMatch window is a Join window. This is where a list of all vehicles found within close proximity of critical infrastructure sites, and a list of all wanted vehicles are merged into one list.]]></description>
+          <join type="inner">
+            <conditions>
+              <fields left="vrm" right="vrm"/>
+            </conditions>
+          </join>
+          <output>
+            <field-selection name="vrm" source="l_vrm"/>
+            <field-selection name="lat" source="l_lat"/>
+            <field-selection name="long" source="l_long"/>
+            <field-selection name="date" source="l_date"/>
+          </output>
+        </window-join>
+        <window-geofence pubsub="true" name="Geofence">
+          <description><![CDATA[The Geofence window is a Geofence window. This is where geofencing information that relates to the matched vehicles enter the model.]]></description>
+          <geofence coordinate-type="geographic" autosize-mesh="true" max-meshcells-per-geometry="500" log-invalid-geometry="true"/>
+          <geometry x-fieldname="long" y-fieldname="lat" radius="100" data-separator=" "/>
+          <position x-fieldname="long" y-fieldname="lat" lookupdistance="100"/>
+          <output geoid-fieldname="geoid"/>
+        </window-geofence>
+        <window-source pubsub="true" name="CriticalInfrastructure">
+          <description><![CDATA[The CriticalInfrastructure window is a Source window. This is where a list of sites that contain critical infrastructure from the infrastructure.csv file enter the model.]]></description>
+          <schema>
+            <fields>
+              <field name="name" type="string" key="true"/>
+              <field name="lat" type="double" key="false"/>
+              <field name="long" type="double" key="false"/>
+              <field name="location" type="string" key="false"/>
+              <field name="county" type="string" key="false"/>
+              <field name="region" type="string" key="false"/>
+              <field name="type" type="string" key="false"/>
+              <field name="capacity" type="string" key="false"/>
+              <field name="opened" type="string" key="false"/>
+              <field name="closed" type="string" key="false"/>
+              <field name="demolished" type="string" key="false"/>
+              <field name="notes" type="string" key="false"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="fs" name="infrastructure_csv_reader">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="fsname"><![CDATA[@ESP_PROJECT_HOME@/test_files/infrastructure.csv]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
+                <property name="header"><![CDATA[1]]></property>
+                <property name="ignorecsvparseerrors"><![CDATA[true]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-filter pubsub="true" name="GeofenceMatches">
+          <description><![CDATA[The GeofenceMatches window is a Filter window. This is where matches with null values are filtered out.]]></description>
+          <use><![CDATA[geoid]]></use>
+          <code><![CDATA[function filter(data)
+    return data.geoid ~= nil
+end]]></code>
+          <connectors>
+            <connector class="fs" name="sub">
+              <properties>
+                <property name="type"><![CDATA[sub]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
+                <property name="fsname"><![CDATA[@ESP_PROJECT_OUTPUT@/result.out]]></property>
+                <property name="snapshot"><![CDATA[true]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-filter>
+      </windows>
+      <edges>
+        <edge source="ANPR" target="WantedVehicleMatch"/>
+        <edge source="VehicleWatchlist" target="WantedVehicleMatch"/>
+        <edge source="WantedVehicleMatch" target="Geofence"/>
+        <edge source="CriticalInfrastructure" target="Geofence"/>
+        <edge source="Geofence" target="GeofenceMatches"/>
+      </edges>
+    </contquery>
+  </contqueries>
+  <project-connectors>
+    <connector-groups>
+      <connector-group name="sub1">
+        <connector-entry connector="cq1/GeofenceMatches/sub" state="running"/>
+      </connector-group>
+      <connector-group name="pub1">
+        <connector-entry connector="cq1/ANPR/anpr_csv_read" state="finished"/>
+      </connector-group>
+      <connector-group name="pub2">
+        <connector-entry connector="cq1/CriticalInfrastructure/infrastructure_csv_reader" state="finished"/>
+      </connector-group>
+      <connector-group name="pub3">
+        <connector-entry connector="cq1/VehicleWatchlist/vehicle_watchlist" state="finished"/>
+      </connector-group>
+    </connector-groups>
+    <edges>
+      <edge source="sub1" target="pub1 pub2 pub3"/>
+      <edge source="pub2" target="pub1"/>
+      <edge source="pub2" target="pub3"/>
+    </edges>
+  </project-connectors>
+</project>
