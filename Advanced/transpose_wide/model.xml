@@ -1,0 +1,47 @@
+<project name="transpose_wide" threads="2" pubsub="auto" heartbeat-interval="1" luaroot="@ESP_PROJECT_OUTPUT@/luaroot">
+  <description><![CDATA[This example processes data from an aircraft in flight. A Transpose window is used to interchange an event’s rows as columns, and rows as columns. The Transpose window has two modes: long and wide. This project processes aircraft data in wide mode.]]></description>
+  <metadata>
+    <meta id="studioUploadedBy">anonymousUser</meta>
+    <meta id="studioUploaded">1696245046388</meta>
+    <meta id="studioModifiedBy">anonymousUser</meta>
+    <meta id="studioModified">1696246505468</meta>
+    <meta id="layout">{"transpose_cq":{"SourceW":{"x":50,"y":50},"TransposeW":{"x":50,"y":175}}}</meta>
+    <meta id="studioTags">Example</meta>
+  </metadata>
+  <contqueries>
+    <contquery name="transpose_cq" trace="TransposeW">
+      <windows>
+        <window-source pubsub="true" index="pi_EMPTY" insert-only="true" name="SourceW">
+          <description><![CDATA[This is a Source window, where aircraft events from the input-wide.csv file enter the model. When data is passed into this window, the following date format must be used: %Y-%m-%d %H:%M:%S]]></description>
+          <schema>
+            <fields>
+              <field name="ID" type="int64" key="true"/>
+              <field name="PlaneID" type="string"/>
+              <field name="TAG" type="string"/>
+              <field name="value" type="double"/>
+              <field name="time" type="stamp"/>
+              <field name="lat" type="double"/>
+              <field name="long" type="double"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="fs" name="input_transpose_wide">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="dateformat"><![CDATA[%Y-%m-%d %H:%M:%S]]></property>
+                <property name="fsname"><![CDATA[@ESP_PROJECT_HOME@/test_files/input-wide.csv]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-transpose clear-timeout="never" pubsub="true" mode="wide" tag-name="TAG" tags-included="pitch,roll,yaw,velocity" tag-values="value,time" group-by="PlaneID" name="TransposeW">
+          <description><![CDATA[This is a Transpose window, where the transposition of the aircraft events occurs. You can configure the attributes of the Transpose window to govern the rearrangement of data.]]></description>
+        </window-transpose>
+      </windows>
+      <edges>
+        <edge source="SourceW" target="TransposeW"/>
+      </edges>
+    </contquery>
+  </contqueries>
+</project>
