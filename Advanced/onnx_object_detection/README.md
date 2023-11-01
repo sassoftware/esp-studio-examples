@@ -209,7 +209,7 @@ Source URL: https://github.com/PINTO0309/PINTO_model_zoo/tree/main/307_YOLOv7
 
 ### Video Credits and Copyright
 
-| File Name     | Original Names                        | Copyright                 | s                                                        |
+| File Name     | Original Names                        | Copyright                 | Notes                                                        |
 | ------------- | ------------------------------------ | ------------------------- | ------------------------------------------------------------ |
 | PeopleWalking.mp4 | K13614_18989_1820284_2018Q3BrollSonya6500_day1_C0031.mp4 and K13624_18989_1820284_2018Q3BrollCard4_day1_9013.mp4 | © 2021 SAS Institute Inc. All Rights Reserved. | To be used only in the context of this Demo. |
 
