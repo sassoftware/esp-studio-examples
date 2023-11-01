@@ -117,13 +117,9 @@ end
 
 ## Test the Project and View the Results
 
-This project includes connector orchestration. As a result, it is recommended that you do not use the **Publish** button in SAS Event Stream Processing Studio's test mode to publish events from CSV files to the Source windows.
-
-If you import the project manually, adjust the connectors in the project as follows:
-- Edit the publisher connectors in the ANPR, VehicleWatchList, and CriticalInfrastructure windows so that they refer to the location in your system where you placed the CSV files. 
-- Edit the subscriber connector in the GeofenceMatches window so that it refers to a location where the output file can be written. Ensure that the user who tests the project has Write access to that directory. 
-
-For more information, see [SAS Help Center: Configure a File and Socket Connector](https://go.documentation.sas.com/doc/en/espcdc/default/espstudio/n0esv2n0cbbpgcn1r281krr1iv6q.htm#n0y87cwr7q5vo6n1qlfcey182vt6).
+If you do not use the **Install example** button in SAS Event Stream Processing Studio, note that this project includes connector orchestration. As a result, it is recommended that you do not use the **Publish** button in SAS Event Stream Processing Studio's test mode to publish events from CSV files to the Source windows. Instead, you must adjust the connectors in the project:
+1. Edit the publisher connectors in the ANPR, VehicleWatchList, and CriticalInfrastructure windows so that they refer to the location in your system where you placed the CSV files. For more information, see [SAS Help Center: Configure a File and Socket Connector](https://go.documentation.sas.com/doc/en/espcdc/default/espstudio/n0esv2n0cbbpgcn1r281krr1iv6q.htm#n0y87cwr7q5vo6n1qlfcey182vt6).
+2. Edit the subscriber connector in the GeofenceMatches window so that it refers to a location where the output file can be written. Ensure that the user who tests the project has Write access to that directory. 
 
 When you test the project, the results for each window appear on separate tabs:
 - The **ANPR** tab lists all vehicles within close proximity of critical infrastructure sites
