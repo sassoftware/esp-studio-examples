@@ -11,6 +11,8 @@ Earlier releases of SAS Event Stream Processing do not support some of the Lua c
 
 ---
 
+For more information about how to install and use example projects, see [Using the Examples](https://github.com/sassoftware/esp-studio-examples#using-the-examples).
+
 ## Source Data
 
 The [patients.json](patients.json) file contains patient data. In addition, three of the four Source windows have Lua connectors that contain their own data, and the connectors inject that data into the model. When a model similar to the one used in this example is deployed in a live environment, real-time data sources would be used instead.
@@ -55,14 +57,9 @@ View the Lua snippet used in this project:
 
 ## Test the Project and View the Results
 
-Before you can test this example, you must edit the Lua snippet to point to the location where the patients.json file is located. An easy way to achieve this is to upload the patients.json file to a project package:
-1. Click ![Project](img/button-project-package.png "Project") on the left toolbar and then click **Create package**. 
-2. Select the **test_files** folder and click ![Project](img/button-upload.png "Project") to upload the patients.json file to that folder.
-3. Navigate to the **patients.json** file and click ![Project](img/button-copy-path.png "Project"). The following path is copied to the clipboard: `@ESP_PROJECT_HOME@/test_files/patients.json`.
-4. Go to the Lua snippet and edit the code to replace the existing file reference `patients.json` with the path from the clipboard.
-5. Save the project.
+If you do not use the **Install example** button in SAS Event Stream Processing Studio, you must edit the Lua snippet to point to the location where the `patients.json` file is located on your system.
 
-When you test the project, the results for each window appear in separate tabs in test mode. In the following text, the tabs are discussed in a different order than in which the tabs appear in the user interface:
+When you test the project, the results for each window appear on separate tabs. In the following text, the tabs are discussed in a different order than in which the tabs appear in the user interface:
 - The **metrics** tab shows statistics related to patient health, including upper and lower limits for acceptable levels.
 - The **patients** tab shows patient IDs.
 - The **statistic** tab shows randomly generated values for statistics for each patient.
