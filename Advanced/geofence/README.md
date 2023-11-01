@@ -4,15 +4,15 @@ This example uses Join, Geofence, and Filter windows to match wanted vehicles th
 
 ---
 **NOTE:**
-Use this example with SAS Event Stream Processing 2022.10 and later. 
-
-This example contains a Lua-based Filter window. Earlier releases of SAS Event Stream Processing do not support Lua-based Filter windows. If you are using an earlier release, you can use the ANPR-eel.xml file instead of the ANPR-lua.xml file. The ANPR-eel.xml file contains a Filter window that uses an Expression Engine Language (EEL) expression. The use of EEL in Filter windows is legacy functionality.
+Use this example with SAS Event Stream Processing 2022.10 and later. This example contains a Lua-based Filter window. Earlier releases of SAS Event Stream Processing do not support Lua-based Filter windows. 
 
 ---
 
+For more information about how to install and use example projects, see [Using the Examples](https://github.com/sassoftware/esp-studio-examples#using-the-examples).
+
 ## Use Case
 
-The [ANPR-lua.xml](ANPR-lua.xml) project performs the following actions:
+The [model.xml](model.xml) project performs the following actions:
 
 - Streams a list of vehicles, including vehicle locations.
 - Streams a list of vehicles that are included on a vehicle watch list.
@@ -117,13 +117,15 @@ end
 
 ## Test the Project and View the Results
 
-This project includes connector orchestration. As a result, it is recommended that you do not use the **Publish** button in SAS Event Stream Processing Studio's test mode to publish events from CSV files to the Source windows. Instead, edit the file paths in the connectors:
-1. Edit the publisher connectors in the ANPR, VehicleWatchList, and CriticalInfrastructure windows so that they refer to the location in your system where you placed the CSV files. 
-2. Edit the subscriber connector in the GeofenceMatches window so that it refers to a location where the output file can be written. Ensure that the user who tests the project has Write access to that directory. 
+This project includes connector orchestration. As a result, it is recommended that you do not use the **Publish** button in SAS Event Stream Processing Studio's test mode to publish events from CSV files to the Source windows.
+
+If you import the project manually, adjust the connectors in the project as follows:
+- Edit the publisher connectors in the ANPR, VehicleWatchList, and CriticalInfrastructure windows so that they refer to the location in your system where you placed the CSV files. 
+- Edit the subscriber connector in the GeofenceMatches window so that it refers to a location where the output file can be written. Ensure that the user who tests the project has Write access to that directory. 
 
 For more information, see [SAS Help Center: Configure a File and Socket Connector](https://go.documentation.sas.com/doc/en/espcdc/default/espstudio/n0esv2n0cbbpgcn1r281krr1iv6q.htm#n0y87cwr7q5vo6n1qlfcey182vt6).
 
-The results for each window appear in separate tabs in test mode:
+When you test the project, the results for each window appear on separate tabs:
 - The **ANPR** tab lists all vehicles within close proximity of critical infrastructure sites
 - The **VehicleWatchlist** tab lists all vehicles on the vehicle watch list
 - The **WantedVehicleMatch** tab combines a list of all vehicles found within close proximity of critical infrastructure sites with a list of all wanted vehicles.
