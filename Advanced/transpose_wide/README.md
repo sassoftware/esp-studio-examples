@@ -9,6 +9,8 @@ As the Transpose window has two modes, long and wide, this example consists of t
 
 In the following instructions wide mode first is discussed first.
 
+For more information about how to install and use example projects, see [Using the Examples](https://github.com/sassoftware/esp-studio-examples#using-the-examples).
+
 ## Source Data for Wide Mode
 
 The [input-wide.csv](input-wide.csv) file contains event streams from the aircraft in flight.
@@ -57,11 +59,9 @@ Explore the settings for the TransposeW window:
 
 ## Test the Project and View the Results for Wide Mode
 
-When you test the project in SAS Event Stream Processing Studio, you can use the **Publish** button to publish events from the input-wide.csv file into the SourceW window. You must specify the following date format: `%Y-%m-%d %H:%M:%S`.  For more information, see [Publish Events from a CSV file](https://go.documentation.sas.com/doc/en/espcdc/default/espstudio/p124n2fohetwqzn109gsdel6o1cj.htm).
+If you do not use the **Install example** button in SAS Event Stream Processing Studio, note that if you use the **Publish** button to publish events from the `input-wide.csv` file into the SourceW window, you must specify the following date format: `%Y-%m-%d %H:%M:%S`. For more information, see [Publish Events from a CSV file](https://go.documentation.sas.com/doc/en/espcdc/default/espstudio/p124n2fohetwqzn109gsdel6o1cj.htm).
 
-Alternatively, before you test the project, you can configure a publisher connector for the SourceW window and specify the date format `%Y-%m-%d %H:%M:%S` in the connector's settings. For more information, see [Configure a File and Socket Connector](https://go.documentation.sas.com/doc/en/espcdc/default/espstudio/n0esv2n0cbbpgcn1r281krr1iv6q.htm#n0y87cwr7q5vo6n1qlfcey182vt6).
-
-The results for each window appear in separate tabs in test mode. The following figure shows the results for the SourceW tab. This tab displays the events received from the aircraft. Information relating to each plane is located on several rows. For example, the pitch for `turboprop #1` is on the first row but the yaw for the same plane is on the tenth row.
+When you test the project, the results for each window appear on separate tabs. The following figure shows the results for the SourceW tab. This tab displays the events received from the aircraft. Information relating to each plane is located on several rows. For example, the pitch for `turboprop #1` is on the first row but the yaw for the same plane is on the tenth row.
 
 ![SourceW tab](img/SourceW-wide.png "SourceW tab")
 
@@ -79,7 +79,7 @@ When you use long mode, you obtain the inverse results of wide mode. The Transpo
 Use the resources in the [esp-studio-examples/Advanced/transpose_long/](https://github.com/sassoftware/esp-studio-examples/tree/main/Advanced/transpose_long) directory:
 1. Observe that the [input-long.csv](https://github.com/sassoftware/esp-studio-examples/blob/main/Advanced/transpose_long/input-long.csv) file contains only one event. The event contains information for just one plane The value and time associated with pitch, yaw, roll, and velocity are included in this event. Latitude and longitude are included too. 
 2. Open the project, and view the output schema and settings for the SourceW and TransposeL windows.
-3. Test the example. You must specify the following date format: `%Y-%m-%d %H:%M:%S`.
+3. Test the example. If you use the **Publish** button to publish events from the `input-long.csv` file into the SourceW window, you must specify the following date format: `%Y-%m-%d %H:%M:%S`.
 
 The following figure shows the results for the SourceW tab.
 
