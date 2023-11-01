@@ -61,7 +61,7 @@ Explore the settings for the unionWindow window:
 
 ## Test the Project and View the Results
 
-This project includes connector orchestration. As a result, it is recommended that you do not use the **Publish** button in SAS Event Stream Processing Studio's test mode to publish events from CSV files to the Source windows.
+If you do not use the **Install example** button in SAS Event Stream Processing Studio, note that this project includes connector orchestration and as a result, it is recommended that you do not use the **Publish** button in SAS Event Stream Processing Studio's test mode to publish events from CSV files to the Source windows. Instead, adjust the connectors in the project so that they refer to the location in your system where you placed the CSV files.
 
 When you test the project, the results for each window appear on separate tabs:
 - The **sourceWindow_01** tab displays the first event stream.
