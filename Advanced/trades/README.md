@@ -10,6 +10,6 @@ Use this example with SAS Event Stream Processing 2022.10 and later. This exampl
 
 ---
 
-If you do not use the **Install example** button in SAS Event Stream Processing Studio, note that if you use the **Publish** button to publish events from the `trades.csv` file into the Trades window, you must specify the following date format: `%Y-%m-%d %H:%M:%S`. For more information, see [Publish Events from a CSV file](https://go.documentation.sas.com/doc/en/espcdc/default/espstudio/p124n2fohetwqzn109gsdel6o1cj.htm).
+If you do not use the **Install example** button in SAS Event Stream Processing Studio, note that if you use the **Publish** button to publish events from the `trades.csv` file into the Trades window, you must specify the following date format: `%d/%b/%Y:%H:%M:%S`. For more information, see [Publish Events from a CSV file](https://go.documentation.sas.com/doc/en/espcdc/default/espstudio/p124n2fohetwqzn109gsdel6o1cj.htm).
 
 
