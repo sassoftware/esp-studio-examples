@@ -9,10 +9,10 @@ Use this example with SAS Event Stream Processing 2023.09 and later.
 ---
 
 ## Source Data and Other Files
-- PeopleWalking.mp4 is the video that is used as input for this example. 
-- model.xml is the project associated with this example.
-- input_preproc.py, tensor_utils.py, and utils.py are Python modules for changing the images into a format that is suitable for the ONNX model and for changing the images back into a format that is suitable for SAS Event Stream Processing. show.py contains Python code to visualize the detections that the model has made. 
-- yolov7-tiny_640x640.onnx, yolov7-tiny_640x640.py, and Yolov7_decoder.py are an open source ONNX model and associated Python modules for detecting objects in images or videos.
+- `PeopleWalking.mp4` is the video that is used as input for this example. 
+- `model.xml` is the project associated with this example.
+- `input_preproc.py`, `tensor_utils.py`, and `utils.py` are Python modules for changing the images into a format that is suitable for the ONNX model and for changing the images back into a format that is suitable for SAS Event Stream Processing. show.py contains Python code to visualize the detections that the model has made. 
+- `yolov7-tiny_640x640.onnx`, `yolov7-tiny_640x640.py`, and `Yolov7_decoder.py` are an open source ONNX model and associated Python modules for detecting objects in images or videos.
 
 For more information about the source of the above files, see [Source of the Model and Video Files](#source-of-the-model-and-video-files).
 
@@ -53,7 +53,7 @@ Explore the settings for this window:
    - `image`: This field holds the video frames.
 5. Click ![Properties](img/show-properties-icon.png "Properties"). 
 6. Expand **Input Data (Publisher) Connectors**.
-7. Double-click the `video_publisher` Video Capture connector.<br/>The Connector Configuration window appears.<br/>The **Filename** field shows that the window reads incoming events from the PeopleWalking.mp4 file. The **Publishformat** field is set to `jpeg`, meaning that the frames from the video are published in JPEG encoding.
+7. Double-click the `video_publisher` Video Capture connector.<br/>The Connector Configuration window appears.<br/>The **Filename** field shows that the window reads incoming events from the `PeopleWalking.mp4` file. The **Publishformat** field is set to `jpeg`, meaning that the frames from the video are published in JPEG encoding.
 8. Click **All properties**. Observe that the **publishrate** field is set to 10, meaning that 10 frames per second are published to the project. The **resize_x** and **resize_y** fields are set to 960 and 540 respectively, to define the resolution of the frames that are published. 
 9. Click **Cancel** to close the All Properties window.
 10.	Click **Cancel** to close the Connector Configuration window.
@@ -64,7 +64,7 @@ The input data provided in this example is to be used only with this project. Us
 
 ---
 
-You can replace the PeopleWalking.mp4 file with your own video file, RTSP (Real-Time Streaming Protocol) stream, or another input stream. When the PeopleWalking.mp4 file is used, the example detects a variety of objects, such as persons, traffic lights, cars, buses, and handbags.
+You can replace the `PeopleWalking.mp4` file with your own video file, RTSP (Real-Time Streaming Protocol) stream, or another input stream. When the `PeopleWalking.mp4` file is used, the example detects a variety of objects, such as persons, traffic lights, cars, buses, and handbags.
 
 ### w_pre_process
 
@@ -93,7 +93,7 @@ Expand **User-Defined Properties**. The user-defined property that is referenced
 Explore the settings for this window:
 1. Click the w_reader window.
 2. In the right pane, expand **Settings**.
-   - The yolov7-tiny_640x640.onnx file is the model that is used to detect objects in the input images.<br/>You could replace this model with another model. However, changing the model would require you to also adjust other files in this example, including the Python code.
+   - The `yolov7-tiny_640x640.onnx` file is the model that is used to detect objects in the input images.<br/>You could replace this model with another model. However, changing the model would require you to also adjust other files in this example, including the Python code.
    - The selected execution provider is CUDA, which means that hardware acceleration is used. </br>SAS Event Stream Processing Studio does not detect which execution providers have been deployed. Contact your system administrator for more information about which execution providers are available to you.
 
 ### w_score 
@@ -202,7 +202,7 @@ Some of the files in this example are reused from the SAS Software GitHub reposi
 ### ONNX Model Source
 Model Family: YOLOv7<br>
 Model Name: 80 classes object detection<br>	
-File Name: yolov7-tiny_640x640.onnx<br>
+File Name: `yolov7-tiny_640x640.onnx`<br>
 Provider: https://github.com/PINTO0309/<br>	
 License: GNU version 3<br>
 Source URL: https://github.com/PINTO0309/PINTO_model_zoo/tree/main/307_YOLOv7
@@ -211,7 +211,7 @@ Source URL: https://github.com/PINTO0309/PINTO_model_zoo/tree/main/307_YOLOv7
 
 | File Name     | Original Names                        | Copyright                 | Notes                                                        |
 | ------------- | ------------------------------------ | ------------------------- | ------------------------------------------------------------ |
-| PeopleWalking.mp4 | K13614_18989_1820284_2018Q3BrollSonya6500_day1_C0031.mp4 and K13624_18989_1820284_2018Q3BrollCard4_day1_9013.mp4 | © 2021 SAS Institute Inc. All Rights Reserved. | To be used only in the context of this Demo. |
+| `PeopleWalking.mp4` | `K13614_18989_1820284_2018Q3BrollSonya6500_day1_C0031.mp4` and `K13624_18989_1820284_2018Q3BrollCard4_day1_9013.mp4` | © 2021 SAS Institute Inc. All Rights Reserved. | To be used only in the context of this Demo. |
 
 
 ### Video and Image Restrictions
