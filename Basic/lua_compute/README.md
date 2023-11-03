@@ -30,7 +30,7 @@ The following figure shows the diagram of the project:
 
 ### Customers
 
-The Customers window streams customer information from the lua_compute.csv file to the TransformData window.
+The Customers window streams customer information from the `lua_compute.csv` file to the TransformData window.
 
 Explore the settings for the Customers window:
 1. Open the project in SAS Event Stream Processing Studio and select the Customers window. 
