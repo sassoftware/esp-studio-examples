@@ -28,7 +28,7 @@ To view the project in its entirety, see the [model.xml](model.xml) file.
 
 ### Source Data
 
-The file luaStateInput.csv contains stock trade data. It is formatted as a CSV file to simplify the process for the purposes of this example. In a real-life scenario, this data would likely enter the project via a message broker such as RabbitMQ. To download a ZIP file containing luaStateInput.csv, click [here](luaStateInput.zip).
+The file `luaStateInput.csv` contains stock trade data. It is formatted as a CSV file to simplify the process for the purposes of this example. In a real-life scenario, this data would likely enter the project via a message broker such as RabbitMQ. To download a ZIP file containing `luaStateInput.csv`, click [here](luaStateInput.zip).
 
 ### Workflow
 
