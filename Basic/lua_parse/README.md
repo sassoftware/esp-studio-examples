@@ -1,7 +1,7 @@
 # Generate Events from JSON Using the Lua Window
 ## Overview
 Within a Lua window of SAS Event Stream Processing, you write Lua code to programmatically generate events. The following examples show how to code a Lua window to parse a JSON string in order to generate multiple events from a single event stream.
-- The [basic example project](#basic-example-project) is designed to show how event generation works. This example is included in the `lua_parse_simple_<release>.zip` project package and can be installed directly from SAS Event Stream Processing Studio. For more information, see [Using the Examples](https://github.com/sassoftware/esp-studio-examples#using-the-examples).
+- The [basic example project](#basic-example-project) is designed to show how event generation works. This example is included in the `lua_parse_simple<release>.zip` project package and can be installed directly from SAS Event Stream Processing Studio. For more information, see [Using the Examples](https://github.com/sassoftware/esp-studio-examples#using-the-examples).
 - The [advanced example project](#advanced-example-project) is intended to provide a more realistic use case of event generation.
 ---
 **NOTE:**
@@ -105,7 +105,7 @@ end
 </table>
 
 
-To view project in its entirety and the Lua code in context, see the attached file [luaParseJsonSimple.xml](luaParseJsonSimple.xml).
+To view project in its entirety and the Lua code in context, see the [luaParseJsonSimple.xml](luaParseJsonSimple.xml) file.
 
 
 ### Test the Project and View the Results
@@ -140,7 +140,7 @@ The following figure illustrates the complete flow of events through the SAS Eve
 5. The Lua window generates multiple events from the JSON string.
 
 #### train_data
-1. For demonstration purposes, sensor data input is simulated by uploading a CSV file to a Source window (train_data). The CSV data enters this Source window through a file and socket connector.  To view the CSV data, see the attached file [trainData.csv](trainData.csv).
+1. For demonstration purposes, sensor data input is simulated by uploading a CSV file to a Source window (train_data). The CSV data enters this Source window through a file and socket connector.  To view the CSV data, see the [trainData.csv](trainData.csv) file.
 2. The message broker RabbitMQ connects to train_data using a subscriber connector. RabbitMQ transforms the CSV data into a JSON string.
 
 The order in which connectors start is specified with connector groups. For more information about subscriber and publisher connectors, see [SAS Event Stream Processing: Overview to Connectors](https://documentation.sas.com/?cdcId=espcdc&cdcVersion=default&docsetId=espca&docsetTarget=p1nhdjrc9n0nnmn1fxqnyc0nihzz.htm).
@@ -215,7 +215,7 @@ end
 
 
 
-To view the project in its entirety and see the Lua code in context, see the attached project file [luaParseJson.xml](luaParseJson.xml).
+To view the project in its entirety and see the Lua code in context, see the project file [luaParseJson.xml](luaParseJson.xml).
 
 ### Test the Project and View the Results
 To see a demo of how to test this project and view the results, watch the following video:
