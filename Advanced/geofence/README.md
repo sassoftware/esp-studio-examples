@@ -38,7 +38,7 @@ The following figure shows the diagram of the project:
 
 ### ANPR
 
-The ANPR window streams information about all vehicles within close proximity of critical infrastructure sites from the anpr.csv file to the WantedVehicleMatch window.
+The ANPR window streams information about all vehicles within close proximity of critical infrastructure sites from the `anpr.csv file` to the WantedVehicleMatch window.
 
 Explore the settings for the ANPR window:
 1. Open the project in SAS Event Stream Processing Studio and select the ANPR window. 
@@ -52,7 +52,7 @@ Explore the settings for the ANPR window:
 
 ### VehicleWatchList
 
-The VehicleWatchList window streams information about wanted vehicles from the wantedvehicle.csv file to the WantedVehicleMatch window.
+The VehicleWatchList window streams information about wanted vehicles from the `wantedvehicle.csv` file to the WantedVehicleMatch window.
 
 Explore the settings for the VehicleWatchList window:
 1. Select the VehicleWatchList window.
@@ -106,7 +106,7 @@ function filter(data)
     return data.geoid ~= nil
 end
  ```
-5. Expand **Subscriber Connectors**. Observe that there is a subscriber connector that writes output to a file called result.out. <br/>Later in these steps you observe how connector orchestration affects the order in which connectors are executed.
+5. Expand **Subscriber Connectors**. Observe that there is a subscriber connector that writes output to a file called `result.out`. <br/>Later in these steps you observe how connector orchestration affects the order in which connectors are executed.
 
 ### Connector Orchestration
 
