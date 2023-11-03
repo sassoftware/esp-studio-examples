@@ -22,7 +22,7 @@ The following figure shows the diagram of the project:
 
 ![Diagram of the project](img/studio_transpose_1.png "Diagram of the project")
 
-- The SourceW window is a Source window. This is where aircraft events from the input-wide.csv file enter the model.
+- The SourceW window is a Source window. This is where aircraft events from the `input-wide.csv` file enter the model.
 - The TransposeW is a Transpose Window. This is where the transposition of the aircraft events occurs. The attributes of the Transpose window govern the rearrangement of data. 
 
 ### SourceW
