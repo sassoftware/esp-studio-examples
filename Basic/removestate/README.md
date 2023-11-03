@@ -14,7 +14,7 @@ The following figure shows the diagram of the project:
 
 ![Diagram of the project](img/removestateExample.png "Diagram of the project")
 
-- The sourceWindow window is a Source window. This is where events from the InputRemove.csv file enter the model.
+- The sourceWindow window is a Source window. This is where events from the `InputRemove.csv` file enter the model.
 - The removestateWindow is a Remove State Window. This is where the model transitions to stateless.
 - The copyWindow window is a Copy window. This is where information is retained, to show the transition to a stateless model.
 
