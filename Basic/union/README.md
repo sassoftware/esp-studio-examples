@@ -16,9 +16,9 @@ The following figure shows the diagram of the project:
 
 ![Diagram of the project](img/union-window-example.png "Diagram of the project")
 
-- The sourceWindow_01 window is a Source window. This is where a list of stock prices from the stockpricelist1.csv file and a list of stock prices the stockpricelist2.csv file enter the model.
-- The sourceWindow_01 window is a Source window. This is where a list of stock prices from the stockpricelist3.csv file enters the model.
-- The unionWindow window is a Union window. This is where the multiple lists of stock prices are merged into one list. This window also writes the results of the merge to the output.csv file.
+- The sourceWindow_01 window is a Source window. This is where a list of stock prices from the `stockpricelist1.csv` file and a list of stock prices the `stockpricelist2.csv` file enter the model.
+- The sourceWindow_01 window is a Source window. This is where a list of stock prices from the `stockpricelist3.csv` file enters the model.
+- The unionWindow window is a Union window. This is where the multiple lists of stock prices are merged into one list. This window also writes the results of the merge to the `output.csv` file.
 
 ### sourceWindow_01
 
@@ -47,7 +47,7 @@ Explore the settings for the unionWindow window:
 1. Select the unionWindow window. 
 2. In the right pane, expand **State**. Observe that the window is stateful.
 3. Expand **Union**. Observe that the strict policy is used for key merging. Because this window is stateful and the strict policy is used, Inserts with duplicated keys and Deletes with non-existing keys generate an error and are processed as bad records. The input files in this example do not contain such events. For more information about how different combinations of settings in the **State** and **Union** sections affect events, see [SAS Help Center: Using Union Windows](https://documentation.sas.com/?cdcId=espcdc&cdcVersion=default&docsetId=espcreatewindows&docsetTarget=n0nqt12sgro7rnn1jfg4ql0qsafw).
-4. Expand **Subscriber Connectors**. Observe that there is a subscriber connector that writes output to a file called output.csv.
+4. Expand **Subscriber Connectors**. Observe that there is a subscriber connector that writes output to a file called `output.csv`.
 
 ### Connector Orchestration
 
@@ -61,7 +61,9 @@ Explore the settings for the unionWindow window:
 
 ## Test the Project and View the Results
 
-If you do not use the **Install example** button in SAS Event Stream Processing Studio, note that this project includes connector orchestration and as a result, it is recommended that you do not use the **Publish** button in SAS Event Stream Processing Studio's test mode to publish events from CSV files to the Source windows. Instead, adjust the connectors in the project so that they refer to the location in your system where you placed the CSV files.
+If you do not use the **Install example** button in SAS Event Stream Processing Studio, note that this project includes connector orchestration and as a result, it is recommended that you do not use the **Publish** button in SAS Event Stream Processing Studio's test mode to publish events from CSV files to the Source windows. Instead, adjust the connectors in the project:
+1. Edit the publisher connectors in the sourceWindow_01 and sourceWindow_02 windows so that they refer to the location in your system where you placed the CSV files. For more information, see [SAS Help Center: Configure a File and Socket Connector](https://go.documentation.sas.com/doc/en/espcdc/default/espstudio/n0esv2n0cbbpgcn1r281krr1iv6q.htm#n0y87cwr7q5vo6n1qlfcey182vt6).
+2. Edit the subscriber connector in the unionWindow window so that it refers to a location where the output file can be written. Ensure that the user who tests the project has Write access to that directory. 
 
 When you test the project, the results for each window appear on separate tabs:
 - The **sourceWindow_01** tab displays the first event stream.
