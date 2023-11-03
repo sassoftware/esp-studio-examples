@@ -16,7 +16,7 @@ The following figure shows the diagram of the project:
 
 ![Diagram of the project](img/studio_slots_1.png "Diagram of the project")
 
-- The src_win window is a Source window. This is where a list of securities transactions from the stocktrades.csv file enter the model.
+- The src_win window is a Source window. This is where a list of securities transactions from the `stocktrades.csv` file enter the model.
 - The compute_win window is a Compute window. This window determines which output slot or slots should be used for each stock market event. 
 - The cw_01 window is a Copy window. The window retains the events that are allocated to slot 0.
 - The cw_02 window is a Copy window. The window retains the events that are allocated to slot 1.
