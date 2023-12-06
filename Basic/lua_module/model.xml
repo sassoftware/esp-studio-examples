@@ -1,0 +1,113 @@
+<project name="lua_module" threads="1" pubsub="auto" heartbeat-interval="1" luaroot="@ESP_PROJECT_OUTPUT@/luaroot">
+  <description><![CDATA[This example demonstrates how you can define useful functions in a Lua module at project level and reference those functions from other Lua code in the project.]]></description>
+  <metadata>
+    <meta id="layout">{"cq1":{"Lua":{"x":50,"y":175},"Source":{"x":50,"y":50}}}</meta>
+    <meta id="studioUploadedBy">user1</meta>
+    <meta id="studioUploaded">1700833397341</meta>
+    <meta id="studioModifiedBy">user1</meta>
+    <meta id="studioModified">1700833502311</meta>
+    <meta id="studioTags">Example</meta>
+  </metadata>
+  <lua-modules>
+    <lua-module name="logger">
+      <description><![CDATA[This Lua module defines logging functions.]]></description>
+      <code><![CDATA[Logger = {
+            _context = nil
+        }
+
+        function Logger:new(context)
+            o = {}
+            setmetatable(o,self)
+            self.__index = self
+            self._context = context or "mylogger"
+            return o
+        end
+
+        function Logger:error(msg,line)
+            esp_logMessage(self._context,msg,"error",line)
+        end
+
+        function Logger:warn(msg,line)
+            esp_logMessage(self._context,msg,"warn",line)
+        end
+
+        function Logger:fatal(msg,line)
+            esp_logMessage(self._context,msg,"fatal",line)
+        end
+
+        function Logger:info(msg,line)
+            esp_logMessage(self._context,msg,"info",line)
+        end
+
+        function Logger:debug(msg,line)
+            esp_logMessage(self._context,msg,"debug",line)
+        end
+
+        function Logger:trace(msg,line)
+            esp_logMessage(self._context,msg,"trace",line)
+        end]]></code>
+    </lua-module>
+  </lua-modules>
+  <contqueries>
+    <contquery name="cq1">
+      <windows>
+        <window-source name="Source">
+          <description><![CDATA[The Source window streams information from the lua_module.csv file to the Lua window.]]></description>
+          <schema>
+            <fields>
+              <field name="id" type="string" key="true"/>
+              <field name="dividend" type="int32"/>
+              <field name="divisor" type="int32"/>
+              <field name="quotient" type="double"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="fs" name="pub">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="fsname"><![CDATA[@ESP_PROJECT_HOME@/test_files/lua_module.csv]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-lua events="create" require="logger" name="Lua">
+          <description><![CDATA[The Lua window performs division calculations and references a Lua module that defines the logging functionality.]]></description>
+          <schema>
+            <fields>
+              <field name="id" type="string" key="true"/>
+              <field name="dividend" type="int32"/>
+              <field name="divisor" type="int32"/>
+              <field name="quotient" type="double"/>
+            </fields>
+          </schema>
+          <copy><![CDATA[id,dividend,divisor]]></copy>
+          <use><![CDATA[dividend,divisor]]></use>
+          <code><![CDATA[
+
+    function create(data)
+
+        local   e = {}
+        local   dividend = data["dividend"]
+        local   divisor = data["divisor"]
+
+        if (divisor == 0)
+        then
+            local   logger = Logger:new("modules.example")
+            logger:error("division by 0, "..tostring(dividend).."/"..tostring(divisor))
+            return nil
+        end
+
+        e["quotient"] = dividend / divisor
+
+        return(e)
+    end
+  ]]></code>
+        </window-lua>
+      </windows>
+      <edges>
+        <edge source="Source" target="Lua"/>
+      </edges>
+    </contquery>
+  </contqueries>
+</project>
