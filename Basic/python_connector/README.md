@@ -80,8 +80,10 @@ def publish():
     # loop through starship results
     for result in response['results']:
         keep_keys = [
-            'name', 'model', 'manufacturer', 'cost_in_credits', 'length', 'max_atmosphering_speed', 'crew', 
-            'passengers', 'cargo_capacity', 'consumables','hyperdrive_rating', 'MGLT', 'starship_class'
+            'name', 'model', 'manufacturer', 'cost_in_credits',
+            'length', 'max_atmosphering_speed', 'crew', 'passengers',
+            'cargo_capacity', 'consumables','hyperdrive_rating', 'MGLT',
+            'starship_class'
             ]
         event = dict((k, result[k]) for k in keep_keys if k in result)
         events.append(event)
