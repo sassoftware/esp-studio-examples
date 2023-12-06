@@ -59,9 +59,12 @@ The [Basic](/Basic) directory contains projects that demonstrate how to use a fe
 | ------ | ------ |
 | [lua_compute](/Basic/lua_compute) | Use Lua code to modify user data.<br>The Lua window in this example is used as an alternative to a Compute window. <br>**Note:** Use this example with SAS Event Stream Processing 2021.2.1 and later.|
 | [lua_connector](/Basic/lua_connector) | Use a Lua connector.<br>This example contains a Source window with a Lua connector that reads RSS feeds from scientific sites and publishes them into the project. <br>**Note:** Use this example with SAS Event Stream Processing 2022.10 and later.|
+| [lua_module](/Basic/lua_module) | Use a Lua module.<br>This example demonstrates how you can define useful functions in a Lua module at project level and reference those functions from other Lua code in the project. <br>**Note:** Use this example with SAS Event Stream Processing 2023.12 and later.|
 | [lua_parse](/Basic/lua_parse) | Use Lua code to parse JSON data and generate multiple events.<br>This example contains two projects. The Lua window in these projects is used as an alternative to a Functional window. The Basic Example Project contains step-by-step instructions about how to run the project. The Advanced Example Project is for demonstration purposes. <br>**Note:** Use these examples with SAS Event Stream Processing 2022.10 and later.|
 | [lua_state](/Basic/lua_state) | Use Lua code to maintain and use event state to generate events.<br>The Lua window in this project generates events every time a new stock symbol price exceeds the current maximum price for that stock symbol. <br>**Note:** Use these examples with SAS Event Stream Processing 2022.10 and later.|
 | [pattern_empty_index](/Basic/pattern_empty_index) | Identify increases in a stock's price within a specific time interval.<br>The Pattern window uses Lua code to define events of interest (EOI) to be matched. <br>**Note:** Use this example with SAS Event Stream Processing 2022.1.2 and later.|
+| [python_compute](/Basic/python_compute) | Use Python code to modify user data.<br>The Python window in this example is used as an alternative to a Compute window. <br>**Note:** Use this example with SAS Event Stream Processing 2023.12 and later.|
+| [python_connector](/Basic/python_connector) | Use a Python connector.<br>This example contains a Source window with a Python connector that calls a JSON API to read Star Wars data and publish that data into the project every five seconds. <br>**Note:** Use this example with SAS Event Stream Processing 2023.12 and later.|
 | [removestate](/Basic/removestate) | Transition a model from stateful to stateless.<br>This example demonstrates how to facilitate the transition of a stateful part of a model to a stateless part of a model.|
 | [union](/Basic/union) | Merge three event streams of stock market trades together.<br> A Union window unites two or more event streams using a strict policy or a loose policy.|
 
@@ -129,6 +132,7 @@ The following examples in the [Advanced](/Advanced) directory contain practical 
 The following examples demonstrate how you can use Lua code in projects.
 - lua_compute
 - lua_connector
+- lua_module
 - lua_parse
 - lua_snippet
 - lua_state
@@ -136,6 +140,12 @@ The following examples demonstrate how you can use Lua code in projects.
 - pattern_empty_index
 - trades
 - sailing
+
+### Examples that Contain Python Code
+
+The following examples demonstrate how you can use Python code in projects.
+- python_compute
+- python_connector
 
 <!--### What's New
 
