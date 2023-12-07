@@ -8,6 +8,8 @@ Use this example with SAS Event Stream Processing 2023.12 and later.
 
 ---
 
+For more information about how to install and use example projects, see [Using the Examples](https://github.com/sassoftware/esp-studio-examples#using-the-examples). 
+
 ## Use Case
 
 The model handles customer information for a telecommunications company. A Python window called TransformData is configured to perform several actions:
