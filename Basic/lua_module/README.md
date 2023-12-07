@@ -8,6 +8,8 @@ Use this example with SAS Event Stream Processing 2023.12 and later.
 
 ---
 
+For more information about how to install and use example projects, see [Using the Examples](https://github.com/sassoftware/esp-studio-examples#using-the-examples). 
+
 ## Use Case
 
 The Lua window in this project performs division calculations and logs an error message when there is an attempt to divide a number by zero. To log the error, the Lua window references a Lua module that defines the logging functionality. 
