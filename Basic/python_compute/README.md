@@ -1,6 +1,6 @@
 # Computing with a Python Window
 ## Overview
-This example demonstrates how you can use Python code to modify user data. The Python window in this example is used as an alternative to a Compute window.
+This example demonstrates how you can use Python code to modify user data. The Python window in this example serves as an alternative to a Compute window to enable a one-to-one transformation of input events to output events.
 
 ---
 **NOTE:**
@@ -13,10 +13,10 @@ Use this example with SAS Event Stream Processing 2023.12 and later.
 The model handles customer information for a telecommunications company. A Python window called TransformData is configured to perform several actions:
 
 - Capitalize each customer’s surname.
-- Determine each customer’s preferred method of communication and save this to a new field, `notify`.
+- Determine each customer’s preferred method of communication and save it to a new field, `notify`.
   - If the customer has a telephone number, then set the preferred method of communication to `sms`.
   - If the customer does not have a telephone number but does have an email address, then set the preferred method of communication to `email`.
-- Convert each telephone number to a standard format by reading in the final ten digits and removing all numerical characters.
+- Convert each telephone number to a standard format by reading the final ten digits and removing all numerical characters.
 
 ## Source Data
 The file [python_compute.csv](python_compute.csv) contains customer information.
