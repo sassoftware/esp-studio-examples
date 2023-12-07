@@ -1,6 +1,6 @@
 # Computing with a Lua Window
 ## Overview
-This example demonstrates how you can use Lua code to modify user data. The Lua window in this example is used as an alternative to a Compute window.
+This example demonstrates how you can use Lua code to modify user data. The Lua window in this example serves as an alternative to a Compute window to enable a one-to-one transformation of input events to output events.
 
 ---
 **NOTE:**
@@ -15,10 +15,10 @@ For more information about how to install and use example projects, see [Using t
 The model handles customer information for a telecommunications company. A Lua window called TransformData is configured to perform several actions:
 
 - Capitalize each customer’s surname.
-- Determine each customer’s preferred method of communication and save this to a new field, `notify`.
+- Determine each customer’s preferred method of communication and save it to a new field, `notify`.
   - If the customer has a telephone number, then set the preferred method of communication to `sms`.
   - If the customer does not have a telephone number but does have an email address, then set the preferred method of communication to `email`.
-- Convert each telephone number to a standard format by reading in the final ten digits and removing all numerical characters.
+- Convert each telephone number to a standard format by reading the final ten digits and removing all numerical characters.
 
 ## Source Data
 The file [lua_compute.csv](lua_compute.csv) contains customer information.
