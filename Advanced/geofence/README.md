@@ -4,7 +4,7 @@ This example uses Join, Geofence, and Filter windows to match wanted vehicles th
 
 ---
 **NOTE:**
-Use this example with SAS Event Stream Processing 2022.10 and later. This example contains a Lua-based Filter window. Earlier releases of SAS Event Stream Processing do not support Lua-based Filter windows. 
+Use this example with SAS Event Stream Processing 2024.01 and later. This example contains a Python-based Filter window. Earlier releases of SAS Event Stream Processing do not support Python-based Filter windows. 
 
 ---
 
@@ -98,13 +98,12 @@ The GeofenceMatches window filters out matches with null values.
 Explore the settings for the GeofenceMatches window:
 1. Select the GeofenceMatches window.
 2. In the right pane, expand **Filter**. 
-3. Observe that the filter type is set to Lua and the `geoid` field is selected for use in the Lua code. Recall that `geoid` was specified in the output schema of the Geofence window. 
-4. Observe the following Lua code, which filters out matches with null values:
+3. Observe that the filter type is set to Python and the `geoid` field is selected for use in the Python code. Recall that `geoid` was specified in the output schema of the Geofence window. 
+4. Observe the following Python code, which filters out matches with null values:
 
  ```
-function filter(data)
-    return data.geoid ~= nil
-end
+    def filter(event,context):
+    return "geoid" in event and event["geoid"] is not None
  ```
 5. Expand **Subscriber Connectors**. Observe that there is a subscriber connector that writes output to a file called `result.out`. <br/>Later in these steps you observe how connector orchestration affects the order in which connectors are executed.
 
