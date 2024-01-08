@@ -1,4 +1,4 @@
-<project name="geofence_lua" threads="8" pubsub="auto" heartbeat-interval="1" luaroot="@ESP_PROJECT_OUTPUT@/luaroot">
+<project name="geofence" threads="8" pubsub="auto" heartbeat-interval="1" luaroot="@ESP_PROJECT_OUTPUT@/luaroot">
   <description><![CDATA[This example creates a model that displays a list of wanted vehicles found in close proximity of critical infrastructure sites. The model performs the following actions:
 
 streams a list of vehicles, including vehicle locations
@@ -7,10 +7,6 @@ streams a list of critical infrastructure sites, including site locations
 processes the list of vehicles and attempts to match any wanted vehicles that are in close proximity to critical infrastructure sites
 produces a list of wanted vehicles found in close proximity to critical infrastructure sites]]></description>
   <metadata>
-    <meta id="studioUploadedBy">anonymousUser</meta>
-    <meta id="studioUploaded">1696244939262</meta>
-    <meta id="studioModifiedBy">anonymousUser</meta>
-    <meta id="studioModified">1696245968466</meta>
     <meta id="layout">{"cq1":{"ANPR":{"x":330,"y":50},"CriticalInfrastructure":{"x":610,"y":420},"Geofence":{"x":470,"y":295},"GeofenceMatches":{"x":330,"y":420},"VehicleWatchlist":{"x":50,"y":295},"WantedVehicleMatch":{"x":330,"y":175}}}</meta>
     <meta id="studioTags">Example</meta>
   </metadata>
@@ -114,9 +110,8 @@ produces a list of wanted vehicles found in close proximity to critical infrastr
         <window-filter pubsub="true" name="GeofenceMatches">
           <description><![CDATA[The GeofenceMatches window is a Filter window. This is where matches with null values are filtered out.]]></description>
           <use><![CDATA[geoid]]></use>
-          <code><![CDATA[function filter(data)
-    return data.geoid ~= nil
-end]]></code>
+          <code><![CDATA[def filter(event,context):
+   return "geoid" in event and event["geoid"] is not None]]></code>
           <connectors>
             <connector class="fs" name="sub">
               <properties>
