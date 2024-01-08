@@ -75,7 +75,7 @@ The [Advanced](/Advanced) directory contains projects that demonstrate the use o
 | Example | Description |
 | ------ | ------ |
 | [activitytracker](/Advanced/activitytracker) | Use a job template to deploy a project to an edge server.<br>This example processes GPS data from activity tracker devices worn by players in a football match. The example demonstrates how you can publish a project in SAS Event Stream Processing Studio to make it available in SAS Event Stream Manager, and then use a job template to deploy the project to an edge server. |
-| [geofence](/Advanced/geofence) |Display a list of wanted vehicles found near critical infrastructure sites.<br>This example uses Join, Geofence, and Filter windows to match wanted vehicles that are in close proximity to critical infrastructure sites.|
+| [geofence](/Advanced/geofence) |Display a list of wanted vehicles found near critical infrastructure sites.<br>This example uses Join, Geofence, and Filter windows to match wanted vehicles that are in close proximity to critical infrastructure sites. <br>**Note:** Use this example with SAS Event Stream Processing 2024.01 and later.|
 | [lua_snippet](/Advanced/lua_snippet) |Use a Lua snippet.<br>This example simulates health-care data streaming into a model and detects measurements that fall outside a specified range. A Lua snippet in the project subscribes to windows, stores values, and reads a JSON file. Lua connectors are also used to generate and inject data. <br>**Note:** Use this example with SAS Event Stream Processing 2023.04 and later.|
 | [onnx_object_detection](/Advanced/onnx_object_detection) | Use an ONNX model to detect objects.<br>This example demonstrates how to use a project to reference an open-source ONNX model, in order to detect objects in a video. <br>**Note:** Use this example with SAS Event Stream Processing 2023.09 and later.|
 | [sailing](/Advanced/sailing) | Visualize data obtained from a set of boats.<br>This example identifies two geographical areas of interest. One area is an exclusion zone that the boats identified are not permitted to enter. The other is an area where a speed restriction has been applied.|
@@ -136,7 +136,6 @@ The following examples demonstrate how you can use Lua code in projects.
 - lua_parse
 - lua_snippet
 - lua_state
-- geofence
 - pattern_empty_index
 - trades
 - sailing
@@ -146,6 +145,7 @@ The following examples demonstrate how you can use Lua code in projects.
 The following examples demonstrate how you can use Python code in projects.
 - python_compute
 - python_connector
+- geofence
 
 <!--### What's New
 
