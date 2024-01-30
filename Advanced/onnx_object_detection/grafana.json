@@ -1,41 +1,4 @@
 {
-  "__inputs": [
-    {
-      "name": "DS_SAS-ESP-DATASOURCE",
-      "label": "sas-esp-datasource",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "sasesp-plugin",
-      "pluginName": "SAS Event Stream Processing"
-    }
-  ],
-  "__elements": {},
-  "__requires": [
-    {
-      "type": "panel",
-      "id": "barchart",
-      "name": "Bar chart",
-      "version": ""
-    },
-    {
-      "type": "grafana",
-      "id": "grafana",
-      "name": "Grafana",
-      "version": "9.5.2"
-    },
-    {
-      "type": "datasource",
-      "id": "sasesp-plugin",
-      "name": "SAS Event Stream Processing",
-      "version": "7.40.0"
-    },
-    {
-      "type": "panel",
-      "id": "volkovlabs-image-panel",
-      "name": "Base64 Image/Video/Audio/PDF",
-      "version": "4.0.0"
-    }
-  ],
   "annotations": {
     "list": [
       {
@@ -55,18 +18,18 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": null,
+  "id": 1,
   "links": [],
   "liveNow": false,
   "panels": [
     {
       "datasource": {
         "type": "sasesp-plugin",
-        "uid": "${DS_SAS-ESP-DATASOURCE}"
+        "uid": "PCF60FE10BF4FA2E7"
       },
       "gridPos": {
-        "h": 20,
-        "w": 18,
+        "h": 24,
+        "w": 24,
         "x": 0,
         "y": 0
       },
@@ -79,7 +42,8 @@
         "controls": true,
         "height": 0,
         "heightMode": "auto",
-        "name": "annotated_image",
+        "name": "image",
+        "scale": "auto",
         "toolbar": false,
         "width": 0,
         "widthMode": "original",
@@ -90,149 +54,19 @@
           "cqName": "contquery",
           "datasource": {
             "type": "sasesp-plugin",
-            "uid": "${DS_SAS-ESP-DATASOURCE}"
+            "uid": "PCF60FE10BF4FA2E7"
           },
           "fields": [
-            "annotated_image"
+            "image"
           ],
           "projectName": "onnx_object_detection",
           "refId": "A",
           "serverUrl": "ws://esps-onnx-5fobject-5fdetection:80",
-          "windowName": "w_post_process"
+          "windowName": "w_annotate"
         }
       ],
       "title": "Annotated image",
       "type": "volkovlabs-image-panel"
-    },
-    {
-      "datasource": {
-        "type": "sasesp-plugin",
-        "uid": "${DS_SAS-ESP-DATASOURCE}"
-      },
-      "description": "Object type has to be detected in the last 5 minutes to appear in the panel",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "fixedColor": "#054a99",
-            "mode": "fixed"
-          },
-          "custom": {
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "fillOpacity": 80,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineWidth": 1,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 20,
-        "w": 6,
-        "x": 18,
-        "y": 0
-      },
-      "hideTimeOverride": false,
-      "id": 123125,
-      "maxDataPoints": 100000,
-      "options": {
-        "barRadius": 0,
-        "barWidth": 0.97,
-        "fullHighlight": false,
-        "groupWidth": 0.7,
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": false
-        },
-        "orientation": "auto",
-        "showValue": "auto",
-        "stacking": "none",
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        },
-        "xField": "label",
-        "xTickLabelRotation": 0,
-        "xTickLabelSpacing": 0
-      },
-      "pluginVersion": "9.5.3",
-      "targets": [
-        {
-          "cqName": "contquery",
-          "datasource": {
-            "type": "sasesp-plugin",
-            "uid": "${DS_SAS-ESP-DATASOURCE}"
-          },
-          "fields": [
-            "label",
-            "counter"
-          ],
-          "projectName": "onnx_object_detection",
-          "refId": "A",
-          "serverUrl": "ws://esps-onnx-5fobject-5fdetection:80",
-          "windowName": "w_count_objects"
-        }
-      ],
-      "timeFrom": "5m",
-      "title": "Total object count",
-      "transformations": [
-        {
-          "id": "groupBy",
-          "options": {
-            "fields": {
-              "counter": {
-                "aggregations": [
-                  "lastNotNull"
-                ],
-                "operation": "aggregate"
-              },
-              "label": {
-                "aggregations": [],
-                "operation": "groupby"
-              }
-            }
-          }
-        },
-        {
-          "id": "sortBy",
-          "options": {
-            "fields": {},
-            "sort": [
-              {
-                "desc": true,
-                "field": "counter (lastNotNull)"
-              }
-            ]
-          }
-        }
-      ],
-      "type": "barchart"
     }
   ],
   "refresh": "",
