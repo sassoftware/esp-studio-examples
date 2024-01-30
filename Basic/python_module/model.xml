@@ -1,0 +1,155 @@
+<project heartbeat-interval="1" luaroot="@ESP_PROJECT_OUTPUT@/luaroot" name="python_module" pubsub="auto" threads="1">
+      
+    <description><![CDATA[This example demonstrates how you can define useful functions in a Python module at project level and reference those functions from other Python code in the project.]]></description>
+      
+    <metadata>
+            
+        <meta id="layout">{"cq1":{"Python":{"x":50,"y":175},"Source":{"x":50,"y":50}}}</meta>
+            
+        <meta id="studioUploadedBy">user1</meta>
+            
+        <meta id="studioUploaded">1704387881198</meta>
+            
+        <meta id="studioModifiedBy">user1</meta>
+            
+        <meta id="studioModified">1704389519847</meta>
+            
+        <meta id="studioTags">Example</meta>
+          
+    </metadata>
+      
+    <python-modules>
+            
+        <python-module name="logger">
+                  
+            <description><![CDATA[This Python module defines logging functions.]]></description>
+                  
+            <code><![CDATA[import esp
+
+class Logger:
+
+    def __init__(self,context):
+        self._context = context if context != None else "mylogger"
+
+    def error(self,msg,line = None):
+        esp.logMessage(logcontext=self._context,message=msg,level="error",line=line)
+
+    def warn(self,msg,line = None):
+        esp.logMessage(logcontext=self._context,message=msg,level="warn",line=line)
+
+    def fatal(self,msg,line = None):
+        esp.logMessage(logcontext=self._context,message=msg,level="fatal",line=line)
+
+    def info(self,msg,line = None):
+        esp.logMessage(logcontext=self._context,message=msg,level="info",line=line)
+
+    def debug(self,msg,line = None):
+        esp.logMessage(logcontext=self._context,message=msg,level="debug",line=line)
+
+    def trace(self,msg,line = None):
+        esp.logMessage(logcontext=self._context,message=msg,level="trace",line=line)]]></code>
+                
+        </python-module>
+          
+    </python-modules>
+      
+    <contqueries>
+            
+        <contquery name="cq1">
+                  
+            <windows>
+                        
+                <window-source name="Source">
+                              
+                    <description><![CDATA[The Source window streams information from the python_module.csv file to the Python window.]]></description>
+                              
+                    <schema>
+                                    
+                        <fields>
+                                          
+                            <field key="true" name="id" type="string"/>
+                                          
+                            <field name="dividend" type="int32"/>
+                                          
+                            <field name="divisor" type="int32"/>
+                                          
+                            <field name="quotient" type="double"/>
+                                        
+                        </fields>
+                                  
+                    </schema>
+                              
+                    <connectors>
+                                    
+                        <connector class="fs" name="pub">
+                                          
+                            <properties>
+                                                
+                                <property name="type"><![CDATA[pub]]></property>
+                                                
+                                <property name="fsname"><![CDATA[@ESP_PROJECT_HOME@/test_files/python_module.csv]]></property>
+                                                
+                                <property name="fstype"><![CDATA[csv]]></property>
+                                              
+                            </properties>
+                                        
+                        </connector>
+                                  
+                    </connectors>
+                            
+                </window-source>
+                        
+                <window-python events="create" name="Python">
+                              
+                    <description><![CDATA[The Python window performs division calculations and references a Python module that defines the logging functionality.]]></description>
+                              
+                    <schema>
+                                    
+                        <fields>
+                                          
+                            <field key="true" name="id" type="string"/>
+                                          
+                            <field name="dividend" type="int32"/>
+                                          
+                            <field name="divisor" type="int32"/>
+                                          
+                            <field name="quotient" type="double"/>
+                                        
+                        </fields>
+                                  
+                    </schema>
+                              
+                    <copy><![CDATA[id,dividend,divisor]]></copy>
+                              
+                    <code><![CDATA[from logger import Logger
+
+def create(data,context):
+
+    e = {}
+    dividend = data["dividend"]
+    divisor = data["divisor"]
+
+    if (divisor == 0):
+        logger = Logger("modules.example")
+        logger.error("division by 0, " + str(dividend) + "/" + str(divisor))
+        return None
+
+    e["quotient"] = dividend / divisor
+
+    return(e)]]></code>
+                            
+                </window-python>
+                      
+            </windows>
+                  
+            <edges>
+                        
+                <edge source="Source" target="Python"/>
+                      
+            </edges>
+                
+        </contquery>
+          
+    </contqueries>
+    
+</project>
