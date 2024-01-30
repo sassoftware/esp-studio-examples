@@ -4,15 +4,15 @@ This example demonstrates how to use a project to reference an open-source ONNX 
 
 ---
 **NOTE:**
-Use this example with SAS Event Stream Processing 2023.09 and later.
+Use this example with SAS Event Stream Processing 2024.02 and later.
 
 ---
 
 ## Source Data and Other Files
-- `PeopleWalking.mp4` is the video that is used as input for this example. 
+- `video.mp4` is the video that is used as input for this example. 
 - `model.xml` is the project associated with this example.
-- `input_preproc.py`, `tensor_utils.py`, and `utils.py` are Python modules for changing the images into a format that is suitable for the ONNX model and for changing the images back into a format that is suitable for SAS Event Stream Processing. show.py contains Python code to visualize the detections that the model has made. 
-- `yolov7-tiny_640x640.onnx`, `yolov7-tiny_640x640.py`, and `Yolov7_decoder.py` are an open source ONNX model and associated Python modules for detecting objects in images or videos.
+- `yolov7-tiny_640x640.onnx` (within the project package ZIP file) is an open source ONNX model for object detection. 
+- `labels.txt` contains the list of classes that the model can detect. 
 
 For more information about the source of the above files, see [Source of the Model and Video Files](#source-of-the-model-and-video-files).
 
@@ -25,7 +25,7 @@ Check that the following system prerequisites are met. For more information, con
 - A supported version of ONNX Runtime has been deployed. For more information, see [Working with ONNX Models](https://go.documentation.sas.com/doc/en/espcdc/default/espan/p0b1zsgwrsirbln1typkfoz428y9.htm).
 - A persistent volume is available. In a Kubernetes environment, using ONNX models requires that when SAS Event Stream Processing is deployed, it is configured to access persistent volumes. This configuration involves applying overlays. For more information, see [Managing Persistent Volumes (PVs)](https://go.documentation.sas.com/doc/en/espcdc/default/espex/n19tbdmek5u0rdn1f31lktl95r27.htm#n1liey9g57i1ntn19mkd4pnpt7pd).
 
-The example is configured to use CUDA (Compute Unified Device Architecture) as the execution provider. For more information, see [Understanding Execution Providers](https://go.documentation.sas.com/doc/en/espcdc/default/espan/n04g09la3oqh59n0zls2jzllfgyf.htm). If CUDA is not available, you could adjust the w_reader window to change the execution provider to CPU.
+The example is configured to use CUDA (Compute Unified Device Architecture) as the execution provider. For more information, see [Specifying Execution Providers](https://go.documentation.sas.com/doc/en/espcdc/default/espan/n04g09la3oqh59n0zls2jzllfgyf.htm). If CUDA is not available, you could adjust the w_reader window to change the execution provider to CPU.
 
 This example is not intended for use with an ESP server that is running on an edge server.
 
@@ -35,12 +35,12 @@ The following figure shows the diagram of the project:
 ![Diagram of the project](img/onnx_example_object_detection.png "Diagram of the project")
 
 - w_data is a Source window. This is where individual frames from the input video enter the project.
-- w_pre_process is a Calculate window. The Python code referenced by this window converts the frames into tensors, so that the data can be processed by the ONNX model. A tensor is an n-dimensional array that contains the same type of data. The Python code referenced by this window can also perform other conversion tasks such as changing image size and image orientation. In general, a project that references an ONNX model is likely to require pre-processing of data before that data is ready to be scored.
-- w_reader is a Model Reader window. This window reads the ONNX model and passes it to the w_score window.
-- w_score is a Score window. This window executes the ONNX model when data passes through the window. The input data is in tensor format. The data is scored: that is, objects are detected in images and labels are assigned to the objects. The output from this window includes a second set of tensors.
-- w_post_process is a Calculate window. The Python code referenced by this window converts the model output (tensor format) into easier formats, so that the outputs can be handled by subsequent windows. Also, this window draws the bounding boxes of the detected objects. In general, a project that references an ONNX model is likely to require post-processing of data after scoring has taken place.
-- w_parse_labels is a Functional window. This window splits a comma-separated string that contains labels into separate events, so that each event contains one label. The labels relate to objects that were detected in images.
-- w_count objects is an Aggregate window. This window counts the labels.
+- w_reader is a Model Reader window. This window reads the ONNX model and passes it to the w_score window. Pre-processing steps that need to be applied to the incoming events before scoring are also defined in this window. 
+- w_score is a Score window. This window executes the ONNX model when data passes through the window. The events from the w_reader window are pre-processed (as defined in the w_reader window) and converted to a tensor format. A tensor is an n-dimensional array that contains the same type of data. The output from the w_score window is another tensor.
+- w_postprocess is a Python window. The Python code converts the model output (tensor format) into easier formats, so that the outputs can be handled by subsequent windows. In general, a project that references an ONNX model is likely to require post-processing of data after scoring has taken place.
+- w_object_tracker is an Object Tracker window that enables you to track objects over time. 
+- w_annotate is a Python window. The Python code in this window annotates the image with the results from the model. 
+- w_counter is a Counter window that provides an indication of the overall performance.
 
 ### w_data
 
@@ -53,8 +53,14 @@ Explore the settings for this window:
    - `image`: This field holds the video frames.
 5. Click ![Properties](img/show-properties-icon.png "Properties"). 
 6. Expand **Input Data (Publisher) Connectors**.
-7. Double-click the `video_publisher` Video Capture connector.<br/>The Connector Configuration window appears.<br/>The **Filename** field shows that the window reads incoming events from the `PeopleWalking.mp4` file. The **Publishformat** field is set to `jpeg`, meaning that the frames from the video are published in JPEG encoding.
-8. Click **All properties**. Observe that the **publishrate** field is set to 10, meaning that 10 frames per second are published to the project. The **resize_x** and **resize_y** fields are set to 960 and 540 respectively, to define the resolution of the frames that are published. 
+7. Double-click the `video_publisher` Video Capture connector.<br/>The Connector Configuration window appears.
+    - The **Filename** field shows that the window reads incoming events from the `video.mp4` file.
+    - The **Publishformat** field is set to `wide`, meaning that the frames from the video are published in wide encoding. Wide encoding is an uncompressed format that results in higher overall performance.
+8. Click **All properties**. 
+    - Observe that the **inputrate** field is set to 10, meaning that 10 frames per second are read from the video. 
+    - The **publishrate** field determines how many events are sent to the project per second. Because this field does not have a value, it defaults to the value of the **inputrate** field.
+    - The fields **resize_x** and **resize_y** are set to `@PUBLISH_WIDTH@` and `@PUBLISH_HEIGHT@` respectively, which define the resolution of the published frames. The values of these user-defined properties can be found at project level.
+    - The **repeatcount** field is set to 999 to repeat the video many times. If your environment includes Grafana, repeating the video makes it is easier to see the annotated video in Grafana. If this field were set to 0, the Video Capture publisher would be finished quickly and it would be harder to see the results in Grafana. For more information, see [Visualizing Objects in Grafana](#visualizing-objects-in-grafana). 
 9. Click **Cancel** to close the All Properties window.
 10.	Click **Cancel** to close the Connector Configuration window.
 
@@ -64,79 +70,73 @@ The input data provided in this example is to be used only with this project. Us
 
 ---
 
-You can replace the `PeopleWalking.mp4` file with your own video file, RTSP (Real-Time Streaming Protocol) stream, or another input stream. When the `PeopleWalking.mp4` file is used, the example detects a variety of objects, such as persons, traffic lights, cars, buses, and handbags.
+You can replace the `video.mp4` file with your own video file, RTSP (Real-Time Streaming Protocol) stream, or another input stream.
 
-### w_pre_process
-
-Explore the settings for this window:
-1. Click the w_pre_process window.
-2. In the right pane, expand **Settings**.<br/>This window uses a user-specified calculation. That is, an online algorithm is not used.
-3. In the **Handlers** section, double-click the `w_data` handler.<br/>The Input Handler window appears. Input handlers process incoming event streams in your project. The handler type is `SAS Micro Analytic Service`. The `tensorProcess` module is selected. The `tensorProcess` module (which is defined at the project level) contains two functions: `preprocess` and `postprocess`. The `preprocess` function is selected; this means that the `preprocess` function is used the handle data that comes in from the w_data window.
-4. Click **Cancel**.
-
-### tensorProcess Module
-
-In general, a project that references an ONNX model is likely to require pre-processing of data before the data is ready to be scored, and post-processing of the data that has been scored. In this example, the Python code that performs this pre-processing and post-processing is referenced from the `tensorProcess` module.
-
-Explore the tensorProcess Module:
-1. Click ![Project](img/project-properties-button.png "Project") on the toolbar. Project-level properties are displayed in the right pane.
-2. Expand **SAS Micro Analytic Service Modules**.
-3. Double-click the `tensorProcess` row in the table.<br/>The SAS Micro Analytic Service Module window appears. A SAS Micro Analytic Service module is a named block of code that you execute within a SAS Event Stream Processing project. The **Embedded code** field contains the Python code that is referenced from the w_pre_process and w_post_process windows.
-4. Click **Cancel**.
-
-### Project’s User-Defined Properties
-
-Expand **User-Defined Properties**. The user-defined property that is referenced in the Python code (`CREATE_ANNOTATED_IMAGE`) is defined here.
 
 ### w_reader
 
 Explore the settings for this window:
 1. Click the w_reader window.
 2. In the right pane, expand **Settings**.
-   - The `yolov7-tiny_640x640.onnx` file is the model that is used to detect objects in the input images.<br/>You could replace this model with another model. However, changing the model would require you to also adjust other files in this example, including the Python code.
+   - The `yolov7-tiny_640x640.onnx` file is the model that is used to detect objects in the input images.<br/>You could replace this model with another model. However, changing the model would require you to also adjust other parts of the example project, including Python code.
    - The selected execution provider is CUDA, which means that hardware acceleration is used. </br>SAS Event Stream Processing Studio does not detect which execution providers have been deployed. Contact your system administrator for more information about which execution providers are available to you.
+3. Expand **Pre-processing**. The **Enable pre-processing** check box is selected and the pre-processing steps are defined below it. These settings are applied to each event that arrives in the w_reader window. In this example, four steps are defined: resize, color, normalize, and encode. These steps are necessary for the ONNX model to function properly. The order of the steps is also important. 
 
 ### w_score 
 
 Explore the settings for this window:
 1. Click the w_score window.
 2. In the right pane, expand **Settings**. The **Model source** field is set to `Offline`, which allows the **Model type** field to be set to `ONNX`. The ONNX model is not specified here: the model is selected in the w_reader window and passed to the w_score window.
-3. Click ![Output Schema](img/output-schema-icon.png "Output Schema") to display the window’s schema. The schema differs from the schema of the w_source window in that the schema for the w_score window also contains a field called `tensor1_out`, with a field type of `blob`. The data for this field contains the scored events. In addition, there is a field called `image_shape`, which was calculated in the w_pre_process window and contains the image resolution in tensor format. Some ONNX models require this field as an additional input, but this field is not used for the Tiny YOLO version 7 model. 
+3. Click ![Output Schema](img/output-schema-icon.png "Output Schema") to display the window’s schema. The schema differs from the schema of the w_source window in that the schema for the w_score window also contains a field called `output`, with a field type of `blob`. The data for this field contains the scored events. 
 4. Click ![Properties](img/show-properties-icon.png "Properties").
 5. Expand **Input Map**. The input map specifies the properties of the data to be scored. That is, input data is mapped to the variables that the ONNX model is expecting.
-6. Expand **Output Map**. The output map specifies the properties of the data that has been scored. The `tensor1_out` field that is specified in the schema appears here.
+6. Expand **Output Map**. The output map specifies the properties of the data that has been scored. The `output` field that is specified in the schema appears here.
 
-### w_post_process
-
-Explore the settings for this window:
-1. Click the w_post_process window.
-2. In the right pane, expand **Settings**.<br/>This window uses a user-specified calculation. That is, an online algorithm is not used.
-3. In the **Handlers** section, double-click the `w_score` handler.<br/>The Input Handler window appears. Input handlers process incoming event streams in your project. The handler type is `SAS Micro Analytic Service`. The `tensorProcess` module is selected. The `tensorProcess` module (which is defined at the project level) contains two functions: `preprocess` and `postprocess`. The `postprocess` function is selected; this means that the `postprocess` function is used the handle data that comes in from the w_source window.
-4. Click **Cancel**.
-
-### w_parse_labels
+### w_postprocess
 
 Explore the settings for this window:
-1. Click the w_parse_labels window.
-2. In the right pane, expand **Event Generation**.
-3. In the Event loops table, double-click the `Loop` event loop.<br/>The Event Loop window appears. The **Regular expression** field has the following content: `([^,]+)` This regular expression splits a comma-separated string that contains labels into separate events, so that each event contains one label. The labels relate to objects that are detected in images. For example, an incoming event that contains the string `person,person,car,person` is split into four events: the first and the second event contain the label `person`, the third event contains the label `car`, and the fourth event contains the label `person`. The purpose of splitting the events is to enable the subsequent w_count_objects window to count the labels.
-4. Scroll down to view the Functions table. The table contains two rows:<br/>![Event loop functions](img/onnx_example_event_loop_functions.png "Event loop functions")<br/>When you run the project in test mode later, the output from the w_parse_labels window includes columns that relate to the `label` and `subid` functions:
-    - `label`: the values of the labels that were split from the comma-separated string.
-    - `subid`: an additional event number (a “sub-ID”) for each event that was split from the comma-separated string. That is, each event contains information about the original ID (which associates that label with the other labels that came from the same comma-separated string) and the sub-ID. For example, for the original string `person,person,car,person`, the first instance of `person` gets a sub-ID of 0, the second instance of `person` gets a sub-ID of 1, `car` gets a sub-ID of 2, and the last instance of `person` gets a sub-ID of 3.
-5. Click **Cancel**.
+1. Click the w_postprocess window.
+2. In the right pane, expand **Python Settings**.
+    - The **Fields to copy** field specifies that the `output` field does not need to be copied to the output of this window.
+    - Next, the fields to use in the Python code are specified. 
+    - The **Expand parameters** check box is selected, meaning that you can use fields directly as Python variables, instead of referring to them by `data['my_field']`.
+    - The **Events function** field is set to `postprocess_event`. This function is called every time the window receives a new event. 
+3. Scroll down to the code editor.
+    - Notice the `postprocess_event` function, which takes `output` as an argument.
+    - In the first line of the function, the `event` variable is initialized as an empty dictionary (dict).
+    - The line that follows transforms the output tensor of the ONNX model into a Numpy array by using the `esp_utils.onnx_tensor.tensor_to_np_array()` function that is provided with SAS Event Stream Processing. This function is part of a larger `esp_utils` package that is provided with SAS Event Stream Processing.
+    - The next piece of code parses the output tensor to new fields. 
+4. Click ![Output Schema](img/output-schema-icon.png "Output Schema") to show the output fields that will be populated by the Python code. 
 
-### w_count_objects   
+### w_object_tracker
 
-Explore the settings for this window:
-1. Click the w_count_objects window.
-2. In the right pane, click ![Output Schema](img/output-schema-icon.png "Output Schema"). w_count_objects is an Aggregate window, and the aggregation is based on the `label` field (the key field). The `counter` field specifies that the ESP_aCountNonNull aggregation function is used. That is, the w_count_objects window counts the number of times when the `label` field is not null.
+Click the object_tracker window to explore its settings.
+
+After an ONNX model is used to detect objects and post-processing is applied, tracking the detected objects over time can be a useful next step. For example, you could follow a person between multiple frames. In this example, the w_object_tracker window tracks a mobile phone and an apple on a table, rather than a person. 
+
+Essentially, in addition to the bounding box, score, and label, each detected object is assigned a track ID by the window, represented by `Object0_id`, `Object1_id`, and so on, as can be seen by clicking ![Output Schema](img/output-schema-icon.png "Output Schema"). In short, the Object Tracker window uses an algorithm to give an object that is detected in frame 1 and frame 2 the same track ID in both frames. A static camera position works best for tracking objects with the Object Tracker window.    
+
+For more information, see [Using Object Tracker Windows](https://go.documentation.sas.com/doc/en/espcdc/v_043/espcreatewindows/p0jsgd7e0fa40ln16wxod1qpj9d2.htm). 
+
+
+### w_annotate
+
+The w_annotate window is another Python window. Click the w_annotate window to explore its settings. In the right pane, expand **Python Settings** and scroll down to the code editor:
+- The Python code in this window annotates the image with the results from the model.
+- As in the previous Python window, w_postprocess, the `esp_utils` package is used for some common operations.
+- The output of the window is now a JPG image, which can be visualized in Grafana. 
+
+If you do not want to visualize the results in Grafana, it's best to remove this window for performance reasons. 
+
+### w_counter
+The last window of the project is a Counter window that checks the overall performance of the model. The value for **intervalRate** should be around 10 when running the model, as this is the value specified for the **inputrate** field in the Video Capture connector in the Source window. You can check this when you run the model in test mode in SAS Event Stream Processing Studio.
 
 ## Test the Project and View the Results
 
 As discussed in the [w_data](#w_data) section, the w_data window includes a publisher connector that is configured to read incoming events from a video file.
 
 When you enter test mode in SAS Event Stream Processing Studio, complete the following steps:
-1.	In the left pane, clear the check boxes for all windows except the w_parse_labels and w_count_objects windows. 
+1.	In the left pane, select the check boxes for the windows whose events you want to examine. For example, select the w_postprocess window to view the postprocessed output of the model or the w_object_tracker window to see the tracked objects. Select the w_counter window to check whether the value of **intervalRate** is 10. 
 2.	Select **Configure and Run Test**.
 
     <!-- ![Configure and Run Test ](img/configure_and_run_test.png "Configure and Run Test ") -->
@@ -155,34 +155,12 @@ The results for each window appear in separate tabs in test mode.
 
 If it takes a long time for events to appear in test mode, contact your system administrator to check whether the minimum GPU node count is set to at least 1 in the cluster.
 
-
-
-- The **w_parse_labels** tab shows the objects that were detected in the video frames. Each video frame can be seen as an image. The id column shows the ID of the image. The subid column shows the ID that was assigned to each object that was detected in the image. The label column shows the label assigned to object that was detected.
-- The **w_count_objects** tab shows the total number of objects that were detected in all frames combined. 
- 
-To view test results for other windows, select different windows in the left pane and run the test again.
-
-- The **w_data** tab shows that the Source window has received Insert events that contain video frames. This tab also shows the event IDs that have been assigned to the images. 
-- The **w_pre_process** tab shows, in addition to previously discussed fields, the tensors that have been created by the pre-processing Python code.
-- The **w_reader** tab does not show any data. This is expected behavior. The w_reader window passes the ONNX model to the w_score reader. When a Model Reader window is handling an ONNX model, a model event is not published.
-- The **w_score** tab shows, in addition to previously discussed fields, the tensors that contain the scored events.
-- The **w_post_process** tab shows the following fields, in addition to previously discussed fields:
-    - The model_name column shows the ONNX model’s name.
-    - The model_type column shows the ONNX model’s type.
-    - The n_objects column shows the number of objects that were detected in the frame.
-    - The coords column shows coordinates for the bounding box. If multiple objects are detected, the coordinates for the bounding box for each object are shown, one after another.
-    - The coords_type column shows the coordinate type. The coordinate type for the yolov7-tiny_640x640.onnx model is `yolo`. The show.py script also supports other common coordinate types for object detection, like `coco` and `rect`. 
-    - The scores column shows the confidence scores for each object that was detected. A number that is close to 1 indicates a high level of confidence about the object’s identification, whereas a number that is close to 0 indicates a low level of confidence.
-
 ## Next Steps
-
-### Tracking Objects
-After an ONNX model is used to detect objects, tracking the detected objects over time can be a useful next step. For example, you could follow a person between multiple frames. For more information, see [Using Object Tracker Windows](https://go.documentation.sas.com/doc/en/espcdc/v_037/espcreatewindows/p0jsgd7e0fa40ln16wxod1qpj9d2.htm).
 
 ### Using a Geofence
 Geofences are virtual perimeters and can be used, for example, to trigger alerts when persons are detected in prohibited areas or when cars are parked in the wrong spot. For more information, see [Using Geofence Windows](https://go.documentation.sas.com/doc/en/espcdc/v_037/espcreatewindows/p0xru6q01dkxknn1t8gqo2q4zfu6.htm).
 
-### Visualizing Objects in Grafana
+### Visualizing Objects in Grafana (recommended)
 The detected objects can be visualized using the [SAS Event Stream Processing Data Source Plug-in for Grafana](https://github.com/sassoftware/grafana-esp-plugin). Import the [grafana.json](grafana.json) dashboard file to Grafana. 
 
 ---
@@ -198,21 +176,26 @@ The dashboard includes the following panel:
 
 ## Source of the Model and Video Files
 
-Some of the files in this example are reused from the SAS Software GitHub repository https://github.com/sassoftware/iot-sas-esp-onnx-runtime or have been adapted from files in that repository. 
-
 ### ONNX Model Source
 Model Family: YOLOv7<br>
 Model Name: 80 classes object detection<br>	
-File Name: `yolov7-tiny_640x640.onnx`<br>
-Provider: https://github.com/PINTO0309/<br>	
-License: GNU version 3<br>
-Source URL: https://github.com/PINTO0309/PINTO_model_zoo/tree/main/307_YOLOv7
+File Name: yolov7-tiny_640x640.onnx<br>
+Provider: https://github.com/WongKinYiu/yolov7<br>	
+License: GNU General Public License v3.0<br>
+
+#### ONNX Export Instructions
+The ONNX file for the example is provided, but can be re-created as follows. Clone https://github.com/WongKinYiu/yolov7 and switch to the `main` branch. Download `yolov7-tiny.pt` from https://github.com/WongKinYiu/yolov7/releases/tag/v0.1. Then, create the ONNX file:  
+
+```bash
+python export.py --weights yolov7-tiny.pt --grid --end2end --simplify --topk-all 100 --iou-thres 0.65 --conf-thres 0.35 --img-size 640 640 --max-wh 640
+```
+
 
 ### Video Credits and Copyright
 
-| File Name     | Original Names                        | Copyright                 | Notes                                                        |
-| ------------- | ------------------------------------ | ------------------------- | ------------------------------------------------------------ |
-| `PeopleWalking.mp4` | `K13614_18989_1820284_2018Q3BrollSonya6500_day1_C0031.mp4` and `K13624_18989_1820284_2018Q3BrollCard4_day1_9013.mp4` | © 2021 SAS Institute Inc. All Rights Reserved. | To be used only in the context of this Demo. |
+| File Name  | Copyright    | Notes               |
+| ------------- | --------------- | ------------------- |
+| `video.mp4` | © 2021 SAS Institute Inc. All Rights Reserved. | To be used only in the context of this demo. |
 
 
 ### Video and Image Restrictions
