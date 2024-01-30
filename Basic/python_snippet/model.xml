@@ -1,0 +1,77 @@
+<project name="python_snippet" threads="1" pubsub="auto" heartbeat-interval="1" luaroot="@ESP_PROJECT_OUTPUT@/luaroot">
+  <description><![CDATA[This example provides a simple demonstration of how to define a Python snippet and reference it.]]></description>
+  <metadata>
+    <meta id="layout">{"cq1":{"Input":{"x":-100,"y":-210},"Result":{"x":-100,"y":-80}}}</meta>
+    <meta id="studioUploadedBy">sastest1</meta>
+    <meta id="studioUploaded">1706009054262</meta>
+    <meta id="studioModifiedBy">sastest1</meta>
+    <meta id="studioModified">1706010311181</meta>
+    <meta id="studioTags">Example</meta>
+  </metadata>
+  <python-snippets>
+    <python-snippet name="math">
+      <description><![CDATA[This snippet performs division calculations.]]></description>
+      <code><![CDATA[def divide(dividend,divisor):
+    value = dividend / divisor
+    return value]]></code>
+    </python-snippet>
+  </python-snippets>
+  <contqueries>
+    <contquery name="cq1">
+      <windows>
+        <window-python events="create" name="Result">
+          <description><![CDATA[This window performs calculations by referencing a Python snippet called “math”.]]></description>
+          <schema>
+            <fields>
+              <field name="id" type="string" key="true"/>
+              <field name="dividend" type="int32"/>
+              <field name="divisor" type="int32"/>
+              <field name="quotient" type="int32"/>
+              <field name="error" type="string"/>
+            </fields>
+          </schema>
+          <copy exclude="true"><![CDATA[dividend,divisor]]></copy>
+          <use><![CDATA[dividend,divisor]]></use>
+          <code><![CDATA[import esp
+
+def create(data,context):
+
+    event = {}
+    event['dividend'] = data.get('dividend')
+    event['divisor'] = data.get('divisor')
+
+    response = esp.call(event['dividend'],event['divisor'],_pyname_="math",_pyfunc_="divide")
+
+    if (response['code'] is True):
+        event['quotient'] = response['results'][0]
+    else:
+        event['error'] = response['error']
+
+    return event]]></code>
+        </window-python>
+        <window-source name="Input">
+          <description><![CDATA[This window streams information from the numbers.csv file to the Result window.]]></description>
+          <schema>
+            <fields>
+              <field name="id" type="string" key="true"/>
+              <field name="dividend" type="int32"/>
+              <field name="divisor" type="int32"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="fs" name="numbers_input">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="fsname"><![CDATA[@ESP_PROJECT_HOME@/test_files/numbers.csv]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+      </windows>
+      <edges>
+        <edge source="Input" target="Result"/>
+      </edges>
+    </contquery>
+  </contqueries>
+</project>
