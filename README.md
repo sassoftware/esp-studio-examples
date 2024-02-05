@@ -147,6 +147,8 @@ The following examples demonstrate how you can use Lua code in projects.
 The following examples demonstrate how you can use Python code in projects.
 - python_compute
 - python_connector
+- python_module
+- python_snippet
 - geofence
 
 <!--### What's New
