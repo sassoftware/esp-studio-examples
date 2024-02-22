@@ -25,7 +25,12 @@ When the **Install example** button is not available but the example's directory
 For more information about project packages in general, see [Project Package](https://go.documentation.sas.com/doc/en/espcdc/default/espstudio/p0y6v0lhrr57zjn1c6de7k129uet.htm).
 
 ### Importing Examples Manually
-When you are using SAS Event Stream Processing 2023.08 or earlier, or when an example's directory does not include a project package ZIP file, you can import an example manually:
+There are some circumstances when you might need to import examples manually:
+- You are using SAS Event Stream Processing 2023.08 or earlier.
+- You are using SAS Event Stream Processing 2023.09 or later, but the functionality for project packages is not enabled in your environment.
+- An example's directory does not include a project package ZIP file.
+
+To import an example manually:
 1. Save the contents of the example's directory to a convenient location on your computer.
 2. Import the project XML file to SAS Event Stream Processing Studio. For more information, see [Import a Project](https://go.documentation.sas.com/doc/en/espcdc/default/espstudio/n0qhr0p800gs68n18wbp96pu7txq.htm).
 3. Open the project in SAS Event Stream Processing Studio and examine its contents. You can select each window in turn in the workspace to read brief descriptions of those windows in the right pane.
