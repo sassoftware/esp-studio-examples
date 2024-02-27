@@ -1,6 +1,6 @@
-# Detecting Objects by Using an ONNX Model (Tiny YOLO Version 7)
+# Computer Vision Using an ONNX Model (Tiny YOLO Version 7)
 ## Overview
-This example demonstrates how to use a project to reference an open-source ONNX model, in order to detect objects in a video.
+This example demonstrates how you can use an ONNX model to detect objects in an incoming video stream. Post-processing by a Python program converts scoring output to a more usable format.
 
 ---
 **NOTE:**
