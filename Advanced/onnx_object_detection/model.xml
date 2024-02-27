@@ -41,7 +41,7 @@
         <window-model-reader model-type="onnx" name="w_reader">
           <description><![CDATA[w_reader is a Model Reader window. This window reads the ONNX model and passes it to the w_score window. Also, pre-processing steps for the incoming events are specified in this window.]]></description>
           <processing-steps>
-            <pre>
+            <pre name="pre_processing_default">
               <step name="resize">
                 <param name="resizeType"><![CDATA[letterbox]]></param>
                 <param name="width"><![CDATA[@MODEL_WIDTH@]]></param>
