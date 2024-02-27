@@ -30,7 +30,7 @@
                 <property name="code"><![CDATA[
 
                   local   feeds = {
-                     "http://feeds.bbci.co.uk/news/science_and_environment/rss.xml",
+                     "https://feeds.bbci.co.uk/news/science_and_environment/rss.xml",
                      "https://beta.nsf.gov/rss/rss_www_news.xml",
                      "https://www.newscientist.com/section/news/feed/"
                     }

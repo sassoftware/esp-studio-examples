@@ -4,7 +4,7 @@ This example contains a Source window with a Lua connector that reads RSS feeds 
 
 ---
 **NOTE:**
-Use this example with SAS Event Stream Processing 2022.10 and later.
+Use this example with SAS Event Stream Processing 2024.03 and later.
 
 ---
 
@@ -30,7 +30,7 @@ The following table explains the Lua code in the connector for the Source window
 
 ```
 local   feeds = {
-  "http://feeds.bbci.co.uk/news/science_and_environment/rss.xml",
+  "https://feeds.bbci.co.uk/news/science_and_environment/rss.xml",
   "https://beta.nsf.gov/rss/rss_www_news.xml",
   "https://www.newscientist.com/section/news/feed/"
   }
