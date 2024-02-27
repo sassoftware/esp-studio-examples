@@ -4,7 +4,7 @@ This example demonstrates how you can use an ONNX model to detect objects in an 
 
 ---
 **NOTE:**
-Use this example with SAS Event Stream Processing 2024.02 and later.
+Use this example with SAS Event Stream Processing 2024.03 and later.
 
 ---
 
