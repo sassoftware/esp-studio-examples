@@ -1,0 +1,94 @@
+<project name="python_pattern" index="pi_EMPTY" pubsub="auto" threads="4" heartbeat-interval="1">
+  <metadata>
+    <meta id="layout">{"cq":{"pattern":{"x":50,"y":175},"s":{"x":50,"y":50}}}</meta>
+    <meta id="studioUploadedBy">anonymousUser</meta>
+    <meta id="studioUploaded">1709108521781</meta>
+    <meta id="studioModified">1709109460361</meta>
+  </metadata>
+  <contqueries>
+    <contquery name="cq" trace="pattern">
+      <windows>
+        <window-source autogen-key="true" insert-only="true" name="s">
+          <schema>
+            <fields>
+              <field name="id" type="int64" key="true"/>
+              <field name="broker" type="string"/>
+              <field name="symbol" type="string"/>
+              <field name="price" type="double"/>
+              <field name="quantity" type="int32"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="fs" name="connector">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
+                <property name="fsname"><![CDATA[@ESP_PROJECT_HOME@/files/input.csv]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-pattern name="pattern">
+          <schema>
+            <fields>
+              <field name="id" type="int64" key="true"/>
+              <field name="symbol" type="string"/>
+              <field name="ids" type="array(i32)"/>
+              <field name="prices" type="array(dbl)"/>
+              <field name="quants" type="array(i32)"/>
+            </fields>
+          </schema>
+          <patterns>
+            <pattern name="pattern1" index="symbol">
+              <python-events>
+                <event name="start" func="start"/>
+                <event name="decrease" func="f1"/>
+              </python-events>
+              <logic><![CDATA[fby(start,is:3(decrease))]]></logic>
+              <code output="output"><![CDATA[import esp
+    
+def start(event,context):
+    return True, {"price":event["price"]}
+    
+def f1(event,context):
+    print(str(context))
+    if (event["price"] < context["data"]["price"]):
+        return True, {"price":event["price"]}
+    
+    return False
+    
+def output(context):
+    
+    ids = []
+    prices = []
+    quants = []
+    
+    ids.append(context["events"]["start"]["id"])
+    prices.append(context["events"]["start"]["price"])
+    quants.append(context["events"]["start"]["quantity"])
+    
+    i = 2
+    
+    for value in context["events"]["decrease"]:
+        ids.append(value["id"])
+        prices.append(value["price"])
+        quants.append(value["quantity"])
+    
+    event = {}
+    
+    event["symbol"] = context["events"]["start"]["symbol"]
+    event["ids"] = ids
+    event["prices"] = prices
+    event["quants"] = quants
+    
+    return(event)]]></code>
+            </pattern>
+          </patterns>
+        </window-pattern>
+      </windows>
+      <edges>
+        <edge source="s" target="pattern"/>
+      </edges>
+    </contquery>
+  </contqueries>
+</project>

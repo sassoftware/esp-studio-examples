@@ -67,10 +67,11 @@ The [Basic](/Basic) directory contains projects that demonstrate how to use a fe
 | [lua_module](/Basic/lua_module) | Use a Lua module.<br>This example demonstrates how you can define useful functions in a Lua module at project level and reference those functions from other Lua code in the project. <br>**Note:** Use this example with SAS Event Stream Processing 2023.12 and later.|
 | [lua_parse](/Basic/lua_parse) | Use Lua code to parse JSON data and generate multiple events.<br>This example contains two projects. The Lua window in these projects is used as an alternative to a Functional window. The Basic Example Project contains step-by-step instructions about how to run the project. The Advanced Example Project is for demonstration purposes. <br>**Note:** Use these examples with SAS Event Stream Processing 2022.10 and later.|
 | [lua_state](/Basic/lua_state) | Use Lua code to maintain and use event state to generate events.<br>The Lua window in this project generates events every time a new stock symbol price exceeds the current maximum price for that stock symbol. <br>**Note:** Use these examples with SAS Event Stream Processing 2022.10 and later.|
-| [pattern_empty_index](/Basic/pattern_empty_index) | Identify increases in a stock's price within a specific time interval.<br>The Pattern window uses Lua code to define events of interest (EOI) to be matched. <br>**Note:** Use this example with SAS Event Stream Processing 2022.1.2 and later.|
+| [lua_pattern](/Basic/lua_pattern) | Use Lua code to identify increases in a stock's price over time.<br>The Pattern window in this example uses Lua code to define events of interest (EOI) to be matched. <br>**Note:** Use this example with SAS Event Stream Processing 2024.03 and later.|
 | [python_compute](/Basic/python_compute) | Use Python code to modify user data.<br>The Python window in this example is used as an alternative to a Compute window. <br>**Note:** Use this example with SAS Event Stream Processing 2023.12 and later.|
 | [python_connector](/Basic/python_connector) | Use a Python connector.<br>This example contains a Source window with a Python connector that calls a JSON API to read Star Wars data and publish that data into the project every five seconds. <br>**Note:** Use this example with SAS Event Stream Processing 2023.12 and later.|
-| [python_module](/Basic/python_module) | Use a Python module.<br>This example demonstrates how you can define useful functions in a Python module at project level and reference those functions from other Python code in the project. <br>**Note:** Use this example with SAS Event Stream Processing 2024.02 and later.|
+| [python_module](/Basic/python_module) | Use Python code to identify decreases in a stock's price over time.<br>The Pattern window in this example uses Python code to define events of interest (EOI) to be matched. <br>**Note:** Use this example with SAS Event Stream Processing 2024.03 and later.|
+| [python_pattern](/Basic/python_pattern) | Use a Python module.<br>This example demonstrates how you can define useful functions in a Python module at project level and reference those functions from other Python code in the project. <br>**Note:** Use this example with SAS Event Stream Processing 2024.02 and later.|
 | [python_snippet](/Basic/python_snippter) | Use a Python snippet.<br>This example provides a simple demonstration of how to define a Python snippet and reference it. <br>**Note:** Use this example with SAS Event Stream Processing 2024.02 and later.|
 | [removestate](/Basic/removestate) | Transition a model from stateful to stateless.<br>This example demonstrates how to facilitate the transition of a stateful part of a model to a stateless part of a model.|
 | [union](/Basic/union) | Merge three event streams of stock market trades together.<br> A Union window unites two or more event streams using a strict policy or a loose policy.|
@@ -143,7 +144,7 @@ The following examples demonstrate how you can use Lua code in projects.
 - lua_parse
 - lua_snippet
 - lua_state
-- pattern_empty_index
+- lua_pattern
 - trades
 - sailing
 
@@ -153,6 +154,7 @@ The following examples demonstrate how you can use Python code in projects.
 - python_compute
 - python_connector
 - python_module
+- python_pattern
 - python_snippet
 - geofence
 
