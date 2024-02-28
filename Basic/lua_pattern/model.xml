@@ -1,65 +1,126 @@
-<project name="pattern_empty_index_lua" pubsub="auto" threads="1" heartbeat-interval="1" luaroot="@ESP_PROJECT_OUTPUT@/luaroot">
-  <description><![CDATA[This model identifies increases in a stock's price within a specific time interval. The Pattern window uses Lua code to define the events of interest to be matched.]]></description>
-  <metadata>
-    <meta id="studioUploadedBy">anonymousUser</meta>
-    <meta id="studioUploaded">1696245001198</meta>
-    <meta id="studioModifiedBy">anonymousUser</meta>
-    <meta id="studioModified">1696246324298</meta>
-    <meta id="layout">{"cq1":{"patternWindow_01":{"x":50,"y":175},"sourceWindow_01":{"x":50,"y":50}}}</meta>
-    <meta id="studioTags">Example</meta>
-  </metadata>
-  <contqueries>
-    <contquery name="cq1">
-      <windows>
-        <window-source index="pi_EMPTY" insert-only="true" name="sourceWindow_01">
-          <description><![CDATA[This Source window is where stock trades from the stocktrades.csv file enter the model. When data is passed into this window, the following date format must be used: %Y-%m-%d %H:%M:%S]]></description>
-          <schema>
-            <fields>
-              <field name="ID" type="int32" key="true"/>
-              <field name="symbol" type="string"/>
-              <field name="currency" type="int32"/>
-              <field name="udate" type="int64"/>
-              <field name="msecs" type="int32"/>
-              <field name="price" type="double"/>
-              <field name="quant" type="int32"/>
-              <field name="venue" type="int32"/>
-              <field name="broker" type="int32"/>
-              <field name="buyer" type="int32"/>
-              <field name="seller" type="int32"/>
-              <field name="buysellflg" type="int32"/>
-              <field name="trade_time" type="stamp"/>
-            </fields>
-          </schema>
-          <connectors>
-            <connector class="fs" name="input_pattern">
-              <properties>
-                <property name="type"><![CDATA[pub]]></property>
-                <property name="dateformat"><![CDATA[%Y-%m-%d %H:%M:%S]]></property>
-                <property name="fsname"><![CDATA[@ESP_PROJECT_HOME@/test_files/stocktrades.csv]]></property>
-                <property name="fstype"><![CDATA[csv]]></property>
-              </properties>
-            </connector>
-          </connectors>
-        </window-source>
-        <window-pattern name="patternWindow_01">
-          <description><![CDATA[Stock trade patterns are matched in this Pattern window.]]></description>
-          <schema>
-            <fields>
-              <field name="ID" type="int64" key="true"/>
-              <field name="ID1" type="int32"/>
-              <field name="ID2" type="int32"/>
-              <field name="ID3" type="int32"/>
-            </fields>
-          </schema>
-          <patterns>
-            <pattern name="pattern1" index="symbol">
-              <lua-events>
-                <event name="e1" func="f1"/>
-                <event name="e2" func="f2"/>
-                <event name="e3" func="f3"/>
-              </lua-events>
-              <logic><![CDATA[fby{200 milliseconds}(e1, e2, e3)]]></logic>
-              <code output="output"><![CDATA[
+<project heartbeat-interval="1" luaroot="@ESP_PROJECT_OUTPUT@/luaroot" name="lua_pattern" pubsub="auto" threads="1">
+      
+    <description><![CDATA[This model identifies increases in a stock's price within a specific time interval. The Pattern window uses Lua code to define the events of interest to be matched.]]></description>
+      
+    <metadata>
+            
+        <meta id="studioUploadedBy">anonymousUser</meta>
+            
+        <meta id="studioUploaded">1696245001198</meta>
+            
+        <meta id="studioModifiedBy">anonymousUser</meta>
+            
+        <meta id="studioModified">1696246324298</meta>
+            
+        <meta id="layout">{"cq1":{"patternWindow_01":{"x":50,"y":175},"sourceWindow_01":{"x":50,"y":50}}}</meta>
+            
+        <meta id="studioTags">Example</meta>
+          
+    </metadata>
+      
+    <contqueries>
+            
+        <contquery name="cq1">
+                  
+            <windows>
+                        
+                <window-source index="pi_EMPTY" insert-only="true" name="sourceWindow_01">
+                              
+                    <description><![CDATA[This Source window is where stock trades from the stocktrades.csv file enter the model. When data is passed into this window, the following date format must be used: %Y-%m-%d %H:%M:%S]]></description>
+                              
+                    <schema>
+                                    
+                        <fields>
+                                          
+                            <field key="true" name="ID" type="int32"/>
+                                          
+                            <field name="symbol" type="string"/>
+                                          
+                            <field name="currency" type="int32"/>
+                                          
+                            <field name="udate" type="int64"/>
+                                          
+                            <field name="msecs" type="int32"/>
+                                          
+                            <field name="price" type="double"/>
+                                          
+                            <field name="quant" type="int32"/>
+                                          
+                            <field name="venue" type="int32"/>
+                                          
+                            <field name="broker" type="int32"/>
+                                          
+                            <field name="buyer" type="int32"/>
+                                          
+                            <field name="seller" type="int32"/>
+                                          
+                            <field name="buysellflg" type="int32"/>
+                                          
+                            <field name="trade_time" type="stamp"/>
+                                        
+                        </fields>
+                                  
+                    </schema>
+                              
+                    <connectors>
+                                    
+                        <connector class="fs" name="input_pattern">
+                                          
+                            <properties>
+                                                
+                                <property name="type"><![CDATA[pub]]></property>
+                                                
+                                <property name="dateformat"><![CDATA[%Y-%m-%d %H:%M:%S]]></property>
+                                                
+                                <property name="fsname"><![CDATA[@ESP_PROJECT_HOME@/test_files/stocktrades.csv]]></property>
+                                                
+                                <property name="fstype"><![CDATA[csv]]></property>
+                                              
+                            </properties>
+                                        
+                        </connector>
+                                  
+                    </connectors>
+                            
+                </window-source>
+                        
+                <window-pattern name="patternWindow_01">
+                              
+                    <description><![CDATA[Stock trade patterns are matched in this Pattern window.]]></description>
+                              
+                    <schema>
+                                    
+                        <fields>
+                                          
+                            <field key="true" name="ID" type="int64"/>
+                                          
+                            <field name="ID1" type="int32"/>
+                                          
+                            <field name="ID2" type="int32"/>
+                                          
+                            <field name="ID3" type="int32"/>
+                                        
+                        </fields>
+                                  
+                    </schema>
+                              
+                    <patterns>
+                                    
+                        <pattern index="symbol" name="pattern1">
+                                          
+                            <lua-events>
+                                                
+                                <event func="f1" name="e1"/>
+                                                
+                                <event func="f2" name="e2"/>
+                                                
+                                <event func="f3" name="e3"/>
+                                              
+                            </lua-events>
+                                          
+                            <logic><![CDATA[fby{200 milliseconds}(e1, e2, e3)]]></logic>
+                                          
+                            <code output="output"><![CDATA[
                  function f1(event,context)
                     if (event.symbol=="GMTC") then
                         return true,{p0=event.price,q0=event.quant}
@@ -89,16 +150,29 @@
                     return event
                  end		
              ]]></code>
-              <timefields>
-                <timefield source="sourceWindow_01" field="trade_time"/>
-              </timefields>
-            </pattern>
-          </patterns>
-        </window-pattern>
-      </windows>
-      <edges>
-        <edge source="sourceWindow_01" target="patternWindow_01"/>
-      </edges>
-    </contquery>
-  </contqueries>
+                                          
+                            <timefields>
+                                                
+                                <timefield field="trade_time" source="sourceWindow_01"/>
+                                              
+                            </timefields>
+                                        
+                        </pattern>
+                                  
+                    </patterns>
+                            
+                </window-pattern>
+                      
+            </windows>
+                  
+            <edges>
+                        
+                <edge source="sourceWindow_01" target="patternWindow_01"/>
+                      
+            </edges>
+                
+        </contquery>
+          
+    </contqueries>
+    
 </project>

@@ -4,7 +4,7 @@
     <meta id="layout">{"cq":{"Pattern":{"x":50,"y":175},"Source":{"x":50,"y":50}}}</meta>
     <meta id="studioUploadedBy">anonymousUser</meta>
     <meta id="studioUploaded">1709108521781</meta>
-    <meta id="studioModified">1709118695222</meta>
+    <meta id="studioModified">1709135993757</meta>
   </metadata>
   <contqueries>
     <contquery name="cq" trace="Pattern">
@@ -45,7 +45,7 @@
             <pattern name="pattern1" index="symbol">
               <python-events>
                 <event name="start" func="start"/>
-                <event name="decrease" func="f1"/>
+                <event name="decrease" func="decreasing_trades"/>
               </python-events>
               <logic><![CDATA[fby(start,is:3(decrease))]]></logic>
               <code output="output"><![CDATA[import esp
@@ -53,7 +53,7 @@
 def start(event,context):
     return True, {"price":event["price"]}
     
-def f1(event,context):
+def decreasing_trades(event,context):
     print(str(context))
     if (event["price"] < context["data"]["price"]):
         return True, {"price":event["price"]}
