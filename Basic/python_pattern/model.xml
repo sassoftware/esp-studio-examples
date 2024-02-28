@@ -1,14 +1,16 @@
 <project name="python_pattern" index="pi_EMPTY" pubsub="auto" threads="4" heartbeat-interval="1">
+  <description><![CDATA[This model identifies decreases in a stock's price over time. The Pattern window uses Python code to define the events of interest to be matched.]]></description>
   <metadata>
-    <meta id="layout">{"cq":{"pattern":{"x":50,"y":175},"s":{"x":50,"y":50}}}</meta>
+    <meta id="layout">{"cq":{"Pattern":{"x":50,"y":175},"Source":{"x":50,"y":50}}}</meta>
     <meta id="studioUploadedBy">anonymousUser</meta>
     <meta id="studioUploaded">1709108521781</meta>
-    <meta id="studioModified">1709109460361</meta>
+    <meta id="studioModified">1709118695222</meta>
   </metadata>
   <contqueries>
-    <contquery name="cq" trace="pattern">
+    <contquery name="cq" trace="Pattern">
       <windows>
-        <window-source autogen-key="true" insert-only="true" name="s">
+        <window-source autogen-key="true" insert-only="true" name="Source">
+          <description><![CDATA[This Source window is where stock trades from the input.csv file enter the model. ]]></description>
           <schema>
             <fields>
               <field name="id" type="int64" key="true"/>
@@ -28,7 +30,8 @@
             </connector>
           </connectors>
         </window-source>
-        <window-pattern name="pattern">
+        <window-pattern name="Pattern">
+          <description><![CDATA[Stock trade patterns are matched in this Pattern window.]]></description>
           <schema>
             <fields>
               <field name="id" type="int64" key="true"/>
@@ -87,7 +90,7 @@ def output(context):
         </window-pattern>
       </windows>
       <edges>
-        <edge source="s" target="pattern"/>
+        <edge source="Source" target="Pattern"/>
       </edges>
     </contquery>
   </contqueries>
