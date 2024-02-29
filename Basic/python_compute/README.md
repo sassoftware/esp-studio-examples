@@ -4,7 +4,7 @@ This example demonstrates how you can use Python code to modify user data. The P
 
 ---
 **NOTE:**
-Use this example with SAS Event Stream Processing 2023.12 and later. 
+Use this example with SAS Event Stream Processing 2024.03 and later. 
 
 ---
 
@@ -118,7 +118,7 @@ Explore the settings for this window:
     ```
       if (event['telno'] != ''):
         if (len(event['telno']) > 10):
-          event['telno'] = event['telno'][:10]
+          event['telno'] = event['telno'][1:10]
         event['notify'] = 'sms'
     ```
 

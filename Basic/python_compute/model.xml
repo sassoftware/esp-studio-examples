@@ -1,21 +1,20 @@
-<project name="python_compute" threads="1" pubsub="auto" heartbeat-interval="1" luaroot="@ESP_PROJECT_OUTPUT@/luaroot">
+<project heartbeat-interval="1" luaroot="@ESP_PROJECT_OUTPUT@/luaroot" name="python_compute_1" pubsub="auto" threads="1">
   <description><![CDATA[This project uses Python code to modify customer data.]]></description>
   <metadata>
     <meta id="layout">{"cq1":{"Customers":{"x":50,"y":50},"TransformData":{"x":50,"y":175}}}</meta>
-    <meta id="studioUploadedBy">sastest1</meta>
-    <meta id="studioUploaded">1700219033775</meta>
-    <meta id="studioModifiedBy">sastest1</meta>
-    <meta id="studioModified">1700219185437</meta>
+    <meta id="studioUploadedBy">anonymousUser</meta>
+    <meta id="studioUploaded">1709212400106</meta>
+    <meta id="studioModified">1709212432488</meta>
     <meta id="studioTags">Example</meta>
   </metadata>
   <contqueries>
     <contquery name="cq1" trace="TransformData">
       <windows>
-        <window-source pubsub="true" name="Customers">
+        <window-source name="Customers" pubsub="true">
           <description><![CDATA[This window receives input events from the CSV file that lists customers.]]></description>
           <schema>
             <fields>
-              <field name="custref" type="string" key="true"/>
+              <field key="true" name="custref" type="string"/>
               <field name="forename" type="string"/>
               <field name="surname" type="string"/>
               <field name="telno" type="string"/>
@@ -36,7 +35,7 @@
           <description><![CDATA[This window capitalizes each customer's surname, determines the customer's preferred method of communication, and transforms telephone numbers into standard format.]]></description>
           <schema>
             <fields>
-              <field name="custref" type="string" key="true"/>
+              <field key="true" name="custref" type="string"/>
               <field name="forename" type="string"/>
               <field name="surname" type="string"/>
               <field name="telno" type="string"/>
@@ -53,7 +52,7 @@ def create(data,context):
     event['telno'] = cleanNumber(data.get('telno', ''))
     if (event['telno'] != ''):
         if (len(event['telno']) > 10):
-          event['telno'] = event['telno'][:10]
+          event['telno'] = event['telno'][1:10]
         event['notify'] = 'sms'
     else:
         event['notify'] = 'email'
