@@ -18,7 +18,7 @@ The model handles customer information for a telecommunications company. A Pytho
 - Determine each customer’s preferred method of communication and save it to a new field, `notify`.
   - If the customer has a telephone number, then set the preferred method of communication to `sms`.
   - If the customer does not have a telephone number but does have an email address, then set the preferred method of communication to `email`.
-- Convert each telephone number to a standard format by reading the final ten digits and removing all numerical characters.
+- Convert each telephone number to a standard format by reading the final ten digits and removing all non-alphanumeric characters.
 
 ## Source Data
 The file [python_compute.csv](python_compute.csv) contains customer information.
