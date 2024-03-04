@@ -1,58 +1,107 @@
-<project heartbeat-interval="1" luaroot="@ESP_PROJECT_OUTPUT@/luaroot" name="python_compute_1" pubsub="auto" threads="1">
-  <description><![CDATA[This project uses Python code to modify customer data.]]></description>
-  <metadata>
-    <meta id="layout">{"cq1":{"Customers":{"x":50,"y":50},"TransformData":{"x":50,"y":175}}}</meta>
-    <meta id="studioUploadedBy">anonymousUser</meta>
-    <meta id="studioUploaded">1709212400106</meta>
-    <meta id="studioModified">1709212432488</meta>
-    <meta id="studioTags">Example</meta>
-  </metadata>
-  <contqueries>
-    <contquery name="cq1" trace="TransformData">
-      <windows>
-        <window-source name="Customers" pubsub="true">
-          <description><![CDATA[This window receives input events from the CSV file that lists customers.]]></description>
-          <schema>
-            <fields>
-              <field key="true" name="custref" type="string"/>
-              <field name="forename" type="string"/>
-              <field name="surname" type="string"/>
-              <field name="telno" type="string"/>
-              <field name="email" type="string"/>
-            </fields>
-          </schema>
-          <connectors>
-            <connector class="fs" name="input_python_compute">
-              <properties>
-                <property name="type"><![CDATA[pub]]></property>
-                <property name="fsname"><![CDATA[@ESP_PROJECT_HOME@/test_files/python_compute.csv]]></property>
-                <property name="fstype"><![CDATA[csv]]></property>
-              </properties>
-            </connector>
-          </connectors>
-        </window-source>
-        <window-python events="create" name="TransformData">
-          <description><![CDATA[This window capitalizes each customer's surname, determines the customer's preferred method of communication, and transforms telephone numbers into standard format.]]></description>
-          <schema>
-            <fields>
-              <field key="true" name="custref" type="string"/>
-              <field name="forename" type="string"/>
-              <field name="surname" type="string"/>
-              <field name="telno" type="string"/>
-              <field name="email" type="string"/>
-              <field name="notify" type="string"/>
-            </fields>
-          </schema>
-          <copy exclude="true"><![CDATA[surname,telno]]></copy>
-          <use><![CDATA[surname,telno]]></use>
-          <code><![CDATA[import esp
+<project heartbeat-interval="1" luaroot="@ESP_PROJECT_OUTPUT@/luaroot" name="python_compute" pubsub="auto" threads="1">
+      
+    <description><![CDATA[This project uses Python code to modify customer data.]]></description>
+      
+    <metadata>
+            
+        <meta id="layout">{"cq1":{"Customers":{"x":50,"y":50},"TransformData":{"x":50,"y":175}}}</meta>
+            
+        <meta id="studioUploadedBy">mtlpst</meta>
+            
+        <meta id="studioUploaded">1709552656919</meta>
+            
+        <meta id="studioModified">1709552674304</meta>
+            
+        <meta id="studioTags">Example</meta>
+            
+        <meta id="studioModifiedBy">mtlpst</meta>
+          
+    </metadata>
+      
+    <contqueries>
+            
+        <contquery name="cq1" trace="TransformData">
+                  
+            <windows>
+                        
+                <window-source name="Customers" pubsub="true">
+                              
+                    <description><![CDATA[This window receives input events from the CSV file that lists customers.]]></description>
+                              
+                    <schema>
+                                    
+                        <fields>
+                                          
+                            <field key="true" name="custref" type="string"/>
+                                          
+                            <field name="forename" type="string"/>
+                                          
+                            <field name="surname" type="string"/>
+                                          
+                            <field name="telno" type="string"/>
+                                          
+                            <field name="email" type="string"/>
+                                        
+                        </fields>
+                                  
+                    </schema>
+                              
+                    <connectors>
+                                    
+                        <connector class="fs" name="input_python_compute">
+                                          
+                            <properties>
+                                                
+                                <property name="type"><![CDATA[pub]]></property>
+                                                
+                                <property name="fsname"><![CDATA[@ESP_PROJECT_HOME@/test_files/python_compute.csv]]></property>
+                                                
+                                <property name="fstype"><![CDATA[csv]]></property>
+                                              
+                            </properties>
+                                        
+                        </connector>
+                                  
+                    </connectors>
+                            
+                </window-source>
+                        
+                <window-python events="create" name="TransformData">
+                              
+                    <description><![CDATA[This window capitalizes each customer's surname, determines the customer's preferred method of communication, and transforms telephone numbers into standard format.]]></description>
+                              
+                    <schema>
+                                    
+                        <fields>
+                                          
+                            <field key="true" name="custref" type="string"/>
+                                          
+                            <field name="forename" type="string"/>
+                                          
+                            <field name="surname" type="string"/>
+                                          
+                            <field name="telno" type="string"/>
+                                          
+                            <field name="email" type="string"/>
+                                          
+                            <field name="notify" type="string"/>
+                                        
+                        </fields>
+                                  
+                    </schema>
+                              
+                    <copy exclude="true"><![CDATA[surname,telno]]></copy>
+                              
+                    <use><![CDATA[surname,telno]]></use>
+                              
+                    <code><![CDATA[import esp
 def create(data,context):
     event = {}
     event['surname'] = data.get('surname', '').upper()
     event['telno'] = cleanNumber(data.get('telno', ''))
     if (event['telno'] != ''):
         if (len(event['telno']) > 10):
-          event['telno'] = event['telno'][1:10]
+          event['telno'] = event['telno'][1:11]
         event['notify'] = 'sms'
     else:
         event['notify'] = 'email'
@@ -65,11 +114,19 @@ def cleanNumber(telno):
         str = ''.join(ch for ch in telno if ch.isdigit())
     
     return str]]></code>
-        </window-python>
-      </windows>
-      <edges>
-        <edge source="Customers" target="TransformData"/>
-      </edges>
-    </contquery>
-  </contqueries>
+                            
+                </window-python>
+                      
+            </windows>
+                  
+            <edges>
+                        
+                <edge source="Customers" target="TransformData"/>
+                      
+            </edges>
+                
+        </contquery>
+          
+    </contqueries>
+    
 </project>

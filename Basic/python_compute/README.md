@@ -118,7 +118,7 @@ Explore the settings for this window:
     ```
       if (event['telno'] != ''):
         if (len(event['telno']) > 10):
-          event['telno'] = event['telno'][1:10]
+          event['telno'] = event['telno'][1:11]
         event['notify'] = 'sms'
     ```
 
