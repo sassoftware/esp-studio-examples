@@ -1,11 +1,11 @@
 <project name="join" pubsub="auto" threads="1" heartbeat-interval="1" luaroot="@ESP_PROJECT_OUTPUT@/luaroot">
   <description><![CDATA[A Join window receives events from a left input window and a right input window. It produces a single output stream of joined events. Joined events are created according to a user-specified join type and user-defined join conditions. This model joins a set of trades with their corresponding traders.]]></description>
   <metadata>
-    <meta id="studioUploadedBy">anonymousUser</meta>
-    <meta id="studioUploaded">1696244946565</meta>
-    <meta id="studioModifiedBy">anonymousUser</meta>
-    <meta id="studioModified">1696246017473</meta>
-    <meta id="layout">{"contquery_01":{"joinWindow":{"x":50,"y":175},"sourceWindow_01":{"x":210,"y":20},"sourceWindow_02":{"x":-110,"y":25}}}</meta>
+    <meta id="studioUploadedBy">user1</meta>
+    <meta id="studioUploaded">1709646923753</meta>
+    <meta id="studioModifiedBy">user1</meta>
+    <meta id="studioModified">1709647031070</meta>
+    <meta id="layout">{"contquery_01":{"joinWindow":{"x":50,"y":175},"sourceWindow_01":{"x":290,"y":50},"sourceWindow_02":{"x":50,"y":50}}}</meta>
     <meta id="studioTags">Example</meta>
   </metadata>
   <contqueries>
@@ -74,4 +74,17 @@ This model uses a left-outer join type. A left-outer join produces joined output
       </edges>
     </contquery>
   </contqueries>
+  <project-connectors>
+    <connector-groups>
+      <connector-group name="Traders">
+        <connector-entry connector="contquery_01/sourceWindow_02/input_join2" state="finished"/>
+      </connector-group>
+      <connector-group name="Trades">
+        <connector-entry connector="contquery_01/sourceWindow_01/input_join1" state="running"/>
+      </connector-group>
+    </connector-groups>
+    <edges>
+      <edge source="Traders" target="Trades"/>
+    </edges>
+  </project-connectors>
 </project>
