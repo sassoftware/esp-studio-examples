@@ -41,7 +41,7 @@ To import an example manually:
 
 **Note:** 
 - You cannot use the **Publish** button to publish events to multiple Source windows simultaneously. For projects that contain multiple Source windows, you must publish events for each Source window separately. 
-- When connector orchestration is used (for example, in the `geofence`, `sailing`, and `union` examples), it is not appropriate to use the **Publish** button. Instead, configure connectors for the project.
+- When connector orchestration is used (for example, in the `geofence`, `join`, `sailing`, and `union` examples), it is not appropriate to use the **Publish** button. Instead, configure connectors for the project.
 
 ## Directory Contents
 
