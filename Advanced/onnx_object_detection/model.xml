@@ -1,4 +1,4 @@
-<project heartbeat-interval="1" index="pi_EMPTY" luaroot="@ESP_PROJECT_OUTPUT@/luaroot" name="onnx_object_detection" pubsub="auto" threads="8" use-tagged-token="true">
+<project heartbeat-interval="1" index="pi_EMPTY" luaroot="@ESP_PROJECT_OUTPUT@/luaroot" name="computer_vision_with_onnx" pubsub="auto" threads="8" use-tagged-token="true">
   <metadata>
     <meta id="studioUploadedBy">appadmin</meta>
     <meta id="studioUploaded">1704196459537</meta>
