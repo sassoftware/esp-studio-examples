@@ -125,7 +125,7 @@ Explore the settings for this window:
 
     ```
       else
-        e.notify = "email" -- 5
+        e.notify = "email"
       end
 
       return(e)
