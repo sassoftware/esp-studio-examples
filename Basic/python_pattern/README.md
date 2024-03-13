@@ -55,7 +55,7 @@ Explore the settings for this window:
 1. Select the Pattern window.
 2. In the right pane, expand **Patterns**.
 3. In the table in the **Patterns** section, select the `pattern1` row and click ![Edit](img/edit-input-handler-icon.png "Edit"). <br>The Edit Pattern window is displayed, which enables you to view the pattern’s properties. The Edit Pattern window is a wizard with four pages.
-4. On the **Name, Index Fields, and Time Fields** page, observe that in the **Index fields** field, the `symbol` field is selected. This field is part of the Source window and forms an index generation function. All incoming events are grouped by the specified index. Specifying the `symbol` field as the index field means that the code on the **Python Code** page does not need to specify this field in each Python function.
+4. On the **Initiliaze** page, observe that in the **Index fields** field, the `symbol` field is selected. This field is part of the Source window and forms an index generation function. All incoming events are grouped by the specified index. Specifying the `symbol` field as the index field means that the code on the **Python Code** page does not need to specify this field in each Python function.
 5. Click **Next**.
 6. On the **Python Code** page, view the code that specifies the EOI functions and an output function that are required for the pattern:
    
