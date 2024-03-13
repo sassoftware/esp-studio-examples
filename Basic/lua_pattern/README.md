@@ -61,7 +61,7 @@ In order for the pattern to be matched, all events of interest must occur within
 Explore the settings for this window:
 1. In the right pane, expand **Patterns**.
 2. In the table in the **Patterns** section, select the `pattern1` row and click ![Edit](img/edit-input-handler-icon.png "Edit"). <br>The Edit Pattern window is displayed, which enables you to view the pattern’s properties. The Edit Pattern window is a wizard with four pages.
-3. On the **Name, Index Fields, and Time Fields** page, observe the following settings:
+3. On the **Initialize** page, observe the following settings:
      - In the **Index fields** field, the `symbol` field is selected. This field is part of the sourceWindow_01 window and forms an index generation function. All incoming events are grouped by the specified index. Specifying the `symbol` field as the index field means that the code on the **Lua Code** page does not need to specify this field in each Lua function.
      - The `trade_time` field is specified as the time field. This field is used to derive the time interval that is specified on the **Logic Expression** page of the wizard. If a time field is not specified, system time is used.
 4. Click **Next**.
@@ -152,7 +152,7 @@ Explore the settings for this window:
        - When the Included Fields column is empty, all Lua fields are passed to the event. When you select Lua fields in the Included Fields column, only those fields are passed to the event.
        - Selecting a check box in the Send Events column sends all previously matched events into the Lua function. It can be more efficient to not send all events into the function. The code that is specified in the **Lua Code** section window can put data into the pattern context. In that case, access to previous events is not needed when you define events.
 9. Click **Next**.
-10. On the **Logic Expression** page, observe that the pattern contains the following logic expression: `fby{200 milliseconds}(e1, e2, e3)`<br>This logic expression specifies that `e1` must occur to start a timer. Then `e2`, followed by `e3`, must occur within 200 milliseconds of `e1`. The time is based on the `trade_time` field, rather than system time, because this field was specified as the pattern's time field on the **Name, Index Fields, and Time Fields** page.<br>The logic expression does not use the Lua language.
+10. On the **Logic Expression** page, observe that the pattern contains the following logic expression: `fby{200 milliseconds}(e1, e2, e3)`<br>This logic expression specifies that `e1` must occur to start a timer. Then `e2`, followed by `e3`, must occur within 200 milliseconds of `e1`. The time is based on the `trade_time` field, rather than system time, because this field was specified as the pattern's time field on the **Initialize** page.<br>The logic expression does not use the Lua language.
 
 ## Test the Project and View the Results
 
