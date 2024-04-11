@@ -4,7 +4,7 @@ This example demonstrates how you can use an ONNX model to detect objects in an 
 
 ---
 **NOTE:**
-Use this example with SAS Event Stream Processing 2024.03 and later.
+Use this example with SAS Event Stream Processing 2024.04 and later.
 
 ---
 
@@ -111,7 +111,7 @@ Click the object_tracker window to explore its settings.
 
 After an ONNX model is used to detect objects and post-processing is applied, tracking the detected objects over time can be a useful next step. For example, you could follow a person between multiple frames. In this example, the w_object_tracker window tracks a mobile phone and an apple on a table, rather than a person. 
 
-Essentially, in addition to the bounding box, score, and label, each detected object is assigned a track ID by the window, represented by `Object0_id`, `Object1_id`, and so on, as can be seen by clicking ![Output Schema](img/output-schema-icon.png "Output Schema"). In short, the Object Tracker window uses an algorithm to give an object that is detected in frame 1 and frame 2 the same track ID in both frames. A static camera position works best for tracking objects with the Object Tracker window.    
+Essentially, in addition to the bounding box, score, and label, each detected object is assigned a track ID by the window, represented by `Object0_id` array, as can be seen by clicking ![Output Schema](img/output-schema-icon.png "Output Schema"). In short, the Object Tracker window uses an algorithm to give an object that is detected in frame 1 and frame 2 the same track ID in both frames. A static camera position works best for tracking objects with the Object Tracker window.    
 
 For more information, see [Using Object Tracker Windows](https://go.documentation.sas.com/doc/en/espcdc/v_043/espcreatewindows/p0jsgd7e0fa40ln16wxod1qpj9d2.htm). 
 

@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 1,
+  "id": 2,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -42,7 +42,9 @@
         "controls": true,
         "height": 0,
         "heightMode": "auto",
+        "infinityPlay": false,
         "name": "image",
+        "noResultsMessage": "Nothing to display...",
         "scale": "auto",
         "toolbar": false,
         "width": 0,
@@ -59,9 +61,9 @@
           "fields": [
             "image"
           ],
-          "projectName": "onnx_object_detection",
+          "projectName": "computer_vision_with_onnx",
           "refId": "A",
-          "serverUrl": "ws://esps-onnx-5fobject-5fdetection:80",
+          "serverUrl": "ws://esps-computer-5fvision-5fwith-5fonnx:80",
           "windowName": "w_annotate"
         }
       ],
@@ -71,7 +73,6 @@
   ],
   "refresh": "",
   "schemaVersion": 38,
-  "style": "dark",
   "tags": [],
   "templating": {
     "list": []
@@ -108,8 +109,8 @@
     "type": "timepicker"
   },
   "timezone": "browser",
-  "title": "ONNX Object Detection",
+  "title": "Computer Vision with ONNX",
   "uid": "b054bce8-552f-4487-821e-f4c4d10d0637",
-  "version": 3,
+  "version": 5,
   "weekStart": ""
 }
