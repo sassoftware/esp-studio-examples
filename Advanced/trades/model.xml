@@ -1,10 +1,10 @@
-<project name="trades_lua" threads="4" pubsub="auto" heartbeat-interval="1" luaroot="@ESP_PROJECT_OUTPUT@/luaroot">
+<project heartbeat-interval="1" luaroot="@ESP_PROJECT_OUTPUT@/luaroot" name="trades_lua" pubsub="auto" threads="4">
   <description><![CDATA[This model can be used to identify large securities transactions and the traders who were involved in those trades.]]></description>
   <metadata>
-    <meta id="studioUploadedBy">anonymousUser</meta>
-    <meta id="studioUploaded">1696245034065</meta>
-    <meta id="studioModifiedBy">anonymousUser</meta>
-    <meta id="studioModified">1696246455835</meta>
+    <meta id="studioUploadedBy">user1</meta>
+    <meta id="studioUploaded">1713782146593</meta>
+    <meta id="studioModifiedBy">user1</meta>
+    <meta id="studioModified">1713782296943</meta>
     <meta id="layout">{"trades_cq":{"AddTraderName":{"x":330,"y":295},"BySecurity":{"x":610,"y":540},"LargeTrades":{"x":470,"y":175},"LargeTradesCopy":{"x":890,"y":295},"TotalCost":{"x":470,"y":420},"TotalCostCopy":{"x":330,"y":540},"Traders":{"x":50,"y":420},"Trades":{"x":470,"y":50}}}</meta>
     <meta id="studioTags">Example</meta>
   </metadata>
@@ -15,7 +15,7 @@
           <description><![CDATA[This Source window is where the stock trades from the trades.csv file enter the model. When data is passed into this window, the following date format must be used: %d/%b/%Y:%H:%M:%S]]></description>
           <schema>
             <fields>
-              <field name="tradeID" type="string" key="true"/>
+              <field key="true" name="tradeID" type="string"/>
               <field name="security" type="string"/>
               <field name="quantity" type="int32"/>
               <field name="price" type="double"/>
@@ -38,7 +38,7 @@
           <description><![CDATA[This Source window is where the trader names from the traders.csv file enter the model.]]></description>
           <schema>
             <fields>
-              <field name="ID" type="int64" key="true"/>
+              <field key="true" name="ID" type="int64"/>
               <field name="name" type="string"/>
             </fields>
           </schema>
@@ -63,7 +63,7 @@
         </window-filter>
         <window-join index="pi_EMPTY" name="AddTraderName">
           <description><![CDATA[This Join window combines the large trades with their corresponding trader names.]]></description>
-          <join type="leftouter" no-regenerates="true">
+          <join no-regenerates="true" type="leftouter">
             <conditions>
               <fields left="traderID" right="ID"/>
             </conditions>
@@ -78,14 +78,14 @@
           </output>
         </window-join>
         <window-copy output-insert-only="true" name="LargeTradesCopy">
-          <description><![CDATA[This Copy window retains a list of all large trades.]]></description>
-          <retention type="bytime_sliding"><![CDATA[30 minutes]]></retention>
+          <description><![CDATA[This Copy window retains a list of all large trades, in accordance with the retention policy, but only shows Insert events.]]></description>
+          <retention type="bytime_sliding"><![CDATA[5 minutes]]></retention>
         </window-copy>
         <window-compute index="pi_EMPTY" name="TotalCost">
           <description><![CDATA[This Compute window shows the total cost of each transaction. You can use this information to identify high-value transactions.]]></description>
           <schema>
             <fields>
-              <field name="tradeID" type="string" key="true"/>
+              <field key="true" name="tradeID" type="string"/>
               <field name="security" type="string"/>
               <field name="quantity" type="int32"/>
               <field name="price" type="double"/>
@@ -105,15 +105,16 @@
             <field-expr><![CDATA[name]]></field-expr>
           </output>
         </window-compute>
-        <window-copy output-insert-only="true" name="TotalCostCopy">
-          <description><![CDATA[This Copy window retains a list of the total costs of each transaction in accordance with the retention policy.]]></description>
-          <retention type="bytime_sliding"><![CDATA[30 minutes]]></retention>
+        <window-copy name="TotalCostCopy">
+          <description><![CDATA[This Copy window retains a list of the total costs of each transaction, in accordance with the retention policy, but shows Insert events and then Delete events.
+]]></description>
+          <retention type="bytime_sliding"><![CDATA[2 minutes]]></retention>
         </window-copy>
         <window-aggregate name="BySecurity">
           <description><![CDATA[This Aggregate window shows all the inserts, deletes, and update blocks for the large trades.]]></description>
           <schema>
             <fields>
-              <field name="security" type="string" key="true"/>
+              <field key="true" name="security" type="string"/>
               <field name="quantityTotal" type="double"/>
               <field name="costTotal" type="double"/>
             </fields>
@@ -126,8 +127,8 @@
       </windows>
       <edges>
         <edge source="Trades" target="LargeTrades"/>
-        <edge source="LargeTrades" target="AddTraderName" role="left"/>
-        <edge source="Traders" target="AddTraderName" role="right"/>
+        <edge role="left" source="LargeTrades" target="AddTraderName"/>
+        <edge role="right" source="Traders" target="AddTraderName"/>
         <edge source="LargeTrades" target="LargeTradesCopy"/>
         <edge source="AddTraderName" target="TotalCost"/>
         <edge source="TotalCost" target="TotalCostCopy"/>
