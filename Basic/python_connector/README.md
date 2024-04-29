@@ -15,9 +15,9 @@ Data is obtained by calling a JSON API. No input files are required for this exa
 
 ## Workflow
 
-The Python code in the connector makes a call to https://swapi.dev/api/starships/?page=1 to get the first 10 starships, yielding 10 events. The `next` field in the received data provides information about the URL that the connector needs to call to get more events. After five seconds the connector makes a call to https://swapi.dev/api/starships/?page=2. This continues until the connector reaches https://swapi.dev/api/starships/?page=4, which contains the last results. The connector stops at page 4 because the `next` field does not contain another link. 
+The Python code in the connector reads information about Star Wars species. The connector makes a call to https://starwars-databank-server.vercel.app/api/v1/species/?page=1 to get the first 10 species, yielding 10 events. The `next` field in the received data provides information about the URL that the connector needs to call to get more events. After three seconds the connector makes a call to https://starwars-databank-server.vercel.app/api/v1/species/?page=2. This continues until the connector reaches https://starwars-databank-server.vercel.app/api/v1/species/?page=9, which contains the last results. The connector stops at page 9 because the `next` field does not contain another link. 
 
-The `interval` property of the connector is set to `5` so that the connector waits for five seconds between API calls. This means that the server will not be overloaded and data is streamed in rather than the entire data set being published at once. Reading data in this way is common when an API is used to fetch a large data set. In a real-life scenario, you might use a business API that also requires authentication.
+The `interval` property of the connector is set to `3` so that the connector waits for three seconds between API calls. This means that the server will not be overloaded and data is streamed in rather than the entire data set being published at once. Reading data in this way is common when an API is used to fetch a large data set. In a real-life scenario, you might use a business API that also requires authentication.
 
 The following table explains the Python code in the connector. To view the Python code in context, see the [model.xml](model.xml) file.
 
@@ -44,8 +44,8 @@ import urllib.request
 
 
 ```
-STARSHIPS_URL = 'https://swapi.dev/api/starships/'  # Star Wars Starships
-next_page = f"{STARSHIPS_URL}?page=1"
+STARWARS_SPECIES_URL = 'https://starwars-databank-server.vercel.app/api/v1/species'  # Star Wars Species
+next_page = f"{STARWARS_SPECIES_URL}?page=1"
 ```
 
 
@@ -71,20 +71,15 @@ def publish():
 </td>
 </tr>
 <tr>
-<td> Creates a list of starship events by using data from specified fields, such as name and model.</td>
+<td> Creates a list of species events by using data from specified fields (name and description).</td>
 <td>
 
 
 ```
     events = []
-    # loop through starship results
-    for result in response['results']:
-        keep_keys = [
-            'name', 'model', 'manufacturer', 'cost_in_credits',
-            'length', 'max_atmosphering_speed', 'crew', 'passengers',
-            'cargo_capacity', 'consumables','hyperdrive_rating', 'MGLT',
-            'starship_class'
-            ]
+    # loop through species results
+    for result in response['data']:
+        keep_keys = ['name', 'description']
         event = dict((k, result[k]) for k in keep_keys if k in result)
         events.append(event)
 ```
@@ -99,13 +94,14 @@ def publish():
 
 ```
     done = False
-        next_page = response['next']
-        
-        if next_page is None:
-            done = True
-            esp.logMessage(logcontext="my_connector",
-                            message='Connector finished',
-                            level="info")
+    
+    if response['info']['next'] is None:
+        done = True
+        esp.logMessage(logcontext="my_connector",
+                        message='Connector finished',
+                        level="info")
+    elif type(response['info']['next']) == str:
+        next_page = 'https://starwars-databank-server.vercel.app' + response['info']['next']
 ```
 
 
