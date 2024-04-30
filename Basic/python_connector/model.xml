@@ -2,10 +2,10 @@
   <description><![CDATA[This project contains a Source window with a Python connector that calls a REST API to obtain Star Wars data and publishes that data into the project.]]></description>
   <metadata>
     <meta id="layout">{"cq1":{"Source":{"x":-435,"y":-400}}}</meta>
-    <meta id="studioUploadedBy">sastest1</meta>
-    <meta id="studioUploaded">1700218913899</meta>
-    <meta id="studioModifiedBy">sastest1</meta>
-    <meta id="studioModified">1700219183116</meta>
+    <meta id="studioUploadedBy">fsduser</meta>
+    <meta id="studioUploaded">1714381722107</meta>
+    <meta id="studioModifiedBy">fsduser</meta>
+    <meta id="studioModified">1714384945542</meta>
     <meta id="studioTags">Example</meta>
   </metadata>
   <contqueries>
@@ -15,32 +15,20 @@
           <description><![CDATA[This project contains a Source window with a Python connector that calls a REST API to obtain Star Wars data and publishes that data into the project.]]></description>
           <schema>
             <fields>
-              <field name="name" key="true" type="string"/>
-              <field name="model" type="string"/>
-              <field name="manufacturer" type="string"/>
-              <field name="cost_in_credits" type="int64"/>
-              <field name="length" type="double"/>
-              <field name="max_atmosphering_speed" type="int32"/>
-              <field name="crew" type="int32"/>
-              <field name="passengers" type="int32"/>
-              <field name="cargo_capacity" type="int64"/>
-              <field name="consumables" type="string"/>
-              <field name="hyperdrive_rating" type="double"/>
-              <field name="MGLT" type="int32"/>
-              <field name="starship_class" type="string"/>
+              <field name="name" type="string" key="true"/>
+              <field name="description" type="string"/>
             </fields>
           </schema>
           <connectors>
             <connector class="python" name="pub">
               <properties>
                 <property name="type"><![CDATA[pub]]></property>
-                <property name="interval"><![CDATA[5 seconds]]></property>
-                <property name="code"><![CDATA[
-import esp
+                <property name="interval"><![CDATA[3 seconds]]></property>
+                <property name="code"><![CDATA[import esp
 import json
 import urllib.request
-STARSHIPS_URL = 'https://swapi.dev/api/starships/'  # Star Wars Starships
-next_page = f"{STARSHIPS_URL}?page=1"
+STARWARS_SPECIES_URL = 'https://starwars-databank-server.vercel.app/api/v1/species'  # Star Wars Species
+next_page = f"{STARWARS_SPECIES_URL}?page=1"
 
 def publish():
     global next_page
@@ -52,23 +40,21 @@ def publish():
     response = json.loads(response)
     
     events = []
-    # loop through starship results
-    for result in response['results']:
-        keep_keys = [
-            'name', 'model', 'manufacturer', 'cost_in_credits', 'length', 'max_atmosphering_speed', 'crew', 
-            'passengers', 'cargo_capacity', 'consumables','hyperdrive_rating', 'MGLT', 'starship_class'
-            ]
+    # loop through species results
+    for result in response['data']:
+        keep_keys = ['name', 'description']
         event = dict((k, result[k]) for k in keep_keys if k in result)
         events.append(event)
     
     done = False
-    next_page = response['next']
-    
-    if next_page is None:
+
+    if response['info']['next'] is None:
         done = True
         esp.logMessage(logcontext="my_connector",
                         message='Connector finished',
                         level="info")
+    elif type(response['info']['next']) == str:
+        next_page = 'https://starwars-databank-server.vercel.app' + response['info']['next']
 
     return {
         "events": events,
