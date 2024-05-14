@@ -1,10 +1,11 @@
 <project heartbeat-interval="1" index="pi_EMPTY" luaroot="@ESP_PROJECT_OUTPUT@/luaroot" name="computer_vision_with_onnx" pubsub="auto" threads="8" use-tagged-token="true">
   <metadata>
-    <meta id="studioUploadedBy">appadmin</meta>
-    <meta id="studioUploaded">1704196459537</meta>
-    <meta id="studioModifiedBy">appadmin</meta>
-    <meta id="studioModified">1704203678753</meta>
+    <meta id="studioUploadedBy">user1</meta>
+    <meta id="studioUploaded">1712839685838</meta>
+    <meta id="studioModifiedBy">user1</meta>
+    <meta id="studioModified">1712839774544</meta>
     <meta id="layout">{"contquery":{"w_annotate":{"x":330,"y":525},"w_counter":{"x":330,"y":640},"w_data":{"x":330,"y":50},"w_object_tracker":{"x":330,"y":415},"w_postprocess":{"x":330,"y":295},"w_reader":{"x":90,"y":50},"w_score":{"x":330,"y":175}}}</meta>
+    <meta id="studioTags">Example</meta>
   </metadata>
   <properties>
     <property name="PUBLISH_WIDTH"><![CDATA[1280]]></property>
@@ -96,128 +97,13 @@
             <fields>
               <field key="true" name="id" type="int64"/>
               <field name="image" type="blob"/>
-              <field name="output" type="blob"/>
-              <field name="_nObjects_" type="double"/>
-              <field name="_Object0_" type="string"/>
-              <field name="_P_Object0_" type="double"/>
-              <field name="_Object0_x" type="double"/>
-              <field name="_Object0_y" type="double"/>
-              <field name="_Object0_width" type="double"/>
-              <field name="_Object0_height" type="double"/>
-              <field name="_Object1_" type="string"/>
-              <field name="_P_Object1_" type="double"/>
-              <field name="_Object1_x" type="double"/>
-              <field name="_Object1_y" type="double"/>
-              <field name="_Object1_width" type="double"/>
-              <field name="_Object1_height" type="double"/>
-              <field name="_Object2_" type="string"/>
-              <field name="_P_Object2_" type="double"/>
-              <field name="_Object2_x" type="double"/>
-              <field name="_Object2_y" type="double"/>
-              <field name="_Object2_width" type="double"/>
-              <field name="_Object2_height" type="double"/>
-              <field name="_Object3_" type="string"/>
-              <field name="_P_Object3_" type="double"/>
-              <field name="_Object3_x" type="double"/>
-              <field name="_Object3_y" type="double"/>
-              <field name="_Object3_width" type="double"/>
-              <field name="_Object3_height" type="double"/>
-              <field name="_Object4_" type="string"/>
-              <field name="_P_Object4_" type="double"/>
-              <field name="_Object4_x" type="double"/>
-              <field name="_Object4_y" type="double"/>
-              <field name="_Object4_width" type="double"/>
-              <field name="_Object4_height" type="double"/>
-              <field name="_Object5_" type="string"/>
-              <field name="_P_Object5_" type="double"/>
-              <field name="_Object5_x" type="double"/>
-              <field name="_Object5_y" type="double"/>
-              <field name="_Object5_width" type="double"/>
-              <field name="_Object5_height" type="double"/>
-              <field name="_Object6_" type="string"/>
-              <field name="_P_Object6_" type="double"/>
-              <field name="_Object6_x" type="double"/>
-              <field name="_Object6_y" type="double"/>
-              <field name="_Object6_width" type="double"/>
-              <field name="_Object6_height" type="double"/>
-              <field name="_Object7_" type="string"/>
-              <field name="_P_Object7_" type="double"/>
-              <field name="_Object7_x" type="double"/>
-              <field name="_Object7_y" type="double"/>
-              <field name="_Object7_width" type="double"/>
-              <field name="_Object7_height" type="double"/>
-              <field name="_Object8_" type="string"/>
-              <field name="_P_Object8_" type="double"/>
-              <field name="_Object8_x" type="double"/>
-              <field name="_Object8_y" type="double"/>
-              <field name="_Object8_width" type="double"/>
-              <field name="_Object8_height" type="double"/>
-              <field name="_Object9_" type="string"/>
-              <field name="_P_Object9_" type="double"/>
-              <field name="_Object9_x" type="double"/>
-              <field name="_Object9_y" type="double"/>
-              <field name="_Object9_width" type="double"/>
-              <field name="_Object9_height" type="double"/>
-              <field name="_Object10_" type="string"/>
-              <field name="_P_Object10_" type="double"/>
-              <field name="_Object10_x" type="double"/>
-              <field name="_Object10_y" type="double"/>
-              <field name="_Object10_width" type="double"/>
-              <field name="_Object10_height" type="double"/>
-              <field name="_Object11_" type="string"/>
-              <field name="_P_Object11_" type="double"/>
-              <field name="_Object11_x" type="double"/>
-              <field name="_Object11_y" type="double"/>
-              <field name="_Object11_width" type="double"/>
-              <field name="_Object11_height" type="double"/>
-              <field name="_Object12_" type="string"/>
-              <field name="_P_Object12_" type="double"/>
-              <field name="_Object12_x" type="double"/>
-              <field name="_Object12_y" type="double"/>
-              <field name="_Object12_width" type="double"/>
-              <field name="_Object12_height" type="double"/>
-              <field name="_Object13_" type="string"/>
-              <field name="_P_Object13_" type="double"/>
-              <field name="_Object13_x" type="double"/>
-              <field name="_Object13_y" type="double"/>
-              <field name="_Object13_width" type="double"/>
-              <field name="_Object13_height" type="double"/>
-              <field name="_Object14_" type="string"/>
-              <field name="_P_Object14_" type="double"/>
-              <field name="_Object14_x" type="double"/>
-              <field name="_Object14_y" type="double"/>
-              <field name="_Object14_width" type="double"/>
-              <field name="_Object14_height" type="double"/>
-              <field name="_Object15_" type="string"/>
-              <field name="_P_Object15_" type="double"/>
-              <field name="_Object15_x" type="double"/>
-              <field name="_Object15_y" type="double"/>
-              <field name="_Object15_width" type="double"/>
-              <field name="_Object15_height" type="double"/>
-              <field name="_Object16_" type="string"/>
-              <field name="_P_Object16_" type="double"/>
-              <field name="_Object16_x" type="double"/>
-              <field name="_Object16_y" type="double"/>
-              <field name="_Object16_width" type="double"/>
-              <field name="_Object16_height" type="double"/>
-              <field name="_Object17_" type="string"/>
-              <field name="_P_Object17_" type="double"/>
-              <field name="_Object17_x" type="double"/>
-              <field name="_Object17_y" type="double"/>
-              <field name="_Object17_width" type="double"/>
-              <field name="_Object17_height" type="double"/>
-              <field name="_Object18_" type="string"/>
-              <field name="_P_Object18_" type="double"/>
-              <field name="_Object18_x" type="double"/>
-              <field name="_Object18_y" type="double"/>
-              <field name="_Object18_width" type="double"/>
-              <field name="_Object18_height" type="double"/>
-              <field name="_Object19_" type="string"/>
-              <field name="_P_Object19_" type="double"/>
-              <field name="_Object19_x" type="double"/>
-              <field name="_Object19_y" type="double"/>
-              <field name="_Object19_width" type="double"/>
-              <field name="_Object19_height" type="double"/>
+              <field name="_nObjects_" type="int32"/>
+              <field name="Object_x" type="array(dbl)"/>
+              <field name="Object_y" type="array(dbl)"/>
+              <field name="Object_width" type="array(dbl)"/>
+              <field name="Object_height" type="array(dbl)"/>
+              <field name="Object_score" type="array(dbl)"/>
+              <field name="Object_labels" type="string"/>
             </fields>
           </schema>
           <copy exclude="true"><![CDATA[output]]></copy>
@@ -233,6 +119,12 @@ original_image_shape = (@PUBLISH_HEIGHT@, @PUBLISH_WIDTH@)
 def postprocess_event(output):
     event = {}
     output = esp_utils.onnx_tensor.tensor_to_np_array(output)
+    event["Object_x"] = []
+    event["Object_y"] = []
+    event["Object_width"] = []
+    event["Object_height"] = []
+    event["Object_score"] = []
+    event["Object_labels"] = ""
 
     for object_id, object_attributes in enumerate(output):
         x1, y1, x2, y2 = object_attributes[1:5].astype(int)
@@ -242,22 +134,24 @@ def postprocess_event(output):
         label_id = object_attributes[5].astype(int)
         score = object_attributes[6]
         label = labels[label_id]
-        event[f"_Object{object_id}_"] = label
-        event[f"_P_Object{object_id}_"] = float(score)
-        event[f"_Object{object_id}_x"] = float(x)
-        event[f"_Object{object_id}_y"] = float(y)
-        event[f"_Object{object_id}_width"] = float(w)
-        event[f"_Object{object_id}_height"] = float(h)
-
+        
+        event["Object_x"].append(float(x))
+        event["Object_y"].append(float(y))
+        event["Object_width"].append(float(w))
+        event["Object_height"].append(float(h))
+        event["Object_score"].append(float(score))
+        event["Object_labels"] = f"{event['Object_labels']}{label},"
+        
+    event["Object_labels"] = event["Object_labels"][:-1] # remove last comma
     event["_nObjects_"] = len(output)
     return event
-]]>          </code>
+          ]]>          </code>
         </window-python>
         <window-object-tracker name="w_object_tracker">
           <description><![CDATA[w_object_tracker is an Object Tracker window. This window enables you to track objects over time.]]></description>
           <tracker method="iou" score-sigma-low="0.3" score-sigma-high="0.3" iou-sigma="0.5" iou-sigma2="0.3" iou-sigma-dup="0.0" velocity-vector-frames="15" max-track-lives="10" min-track-length="0" track-retention="0"/>
-          <output mode="wide" tracks="20"/>
-          <input count="_nObjects_" score="_P_Object%_" label="_Object%_" coord-type="rect" x="_Object%_x" y="_Object%_y" width="_Object%_width" height="_Object%_height"/>
+          <output mode="array" tracks="20"/>
+          <input count="_nObjects_" score="Object_score" label="Object_labels" attributes="_Object%_attributes" label-separator="," coord-type="rect" x="Object_x" y="Object_y" width="Object_width" height="Object_height"/>
         </window-object-tracker>
         <window-counter name="w_counter">
           <description><![CDATA[w_counter is a Counter window. This window provides an indication of the overall performance.]]></description>
@@ -284,7 +178,7 @@ margin = 2
 def annotate_event(data, context):
     event = {}
     image = esp_utils.image_conversion.sas_wide_image_to_opencv_image(data['image']) 
-    image = annotate_object_tracker(image.copy(), data)
+    image = annotate_object_tracker_array(image.copy(), data)
     
     # Create a jpeg output image such that we can display it in Grafana
     image = esp_utils.image_conversion.opencv_image_to_blob_image(image)
@@ -331,24 +225,23 @@ def draw_bbox(image, start_point, end_point, text):
     )
     return image
 
-
-def annotate_object_tracker(image, data):
+    
+def annotate_object_tracker_array(image, data):
     """Annotate results from an object tracker window"""
     for i in range(int(data["Object_density"])):
-        start_point = (int(data[f"Object{i}_x"]), int(data[f"Object{i}_y"]))
+        start_point = (int(data["Object_x"][i]), int(data["Object_y"][i]))
         end_point = (
-            int(data[f"Object{i}_x"] + data[f"Object{i}_w"]),
-            int(data[f"Object{i}_y"] + data[f"Object{i}_h"]),
+            int(data["Object_x"][i] + data["Object_w"][i]),
+            int(data["Object_y"][i] + data["Object_h"][i]),
         )
         image = draw_bbox(
             image,
             start_point,
             end_point,
-            f"{data[f'Object{i}_id']} - {data[f'Object{i}_label']} ({data[f'Object{i}_score']*100:.0f}%)",
+            f"{data['Object_id'][i]} - {data['Object_label'].split(',')[i]} ({data['Object_score'][i]*100:.0f}%)"
         )
     return image
-    
-          ]]>          </code>
+                    ]]>          </code>
         </window-python>
       </windows>
       <edges>
