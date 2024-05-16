@@ -18,7 +18,7 @@ Beginning with SAS Event Stream Processing 2023.09, you can install some example
 4. Click **Install example**. A project package ZIP file is imported from the relevant example's directory in this GitHub. The project XML file in the project package has connectors that point to input files in the product package. As a result, you do not need to configure connectors. 
 5. Run the imported example in test mode. For more information, see [Running a Test](https://go.documentation.sas.com/doc/en/espcdc/default/espstudio/p1xzbzbnvpspodn1h2jkzo9m9t7d.htm). 
 
-For more information about how the example works, return to the SAS Event Stream Processing Examples window, select the example and click **Go to GitHub** to read the example README. When you are viewing an example project in SAS Event Stream Processing Studio, you can also select each window in turn in the workspace to read brief descriptions of those windows in the right pane.
+For more information about how the example works, return to the SAS Event Stream Processing Examples window, select the example and click **View README in GitHub**. When you are viewing an example project in SAS Event Stream Processing Studio, you can also select each window in turn in the workspace to read brief descriptions of those windows in the right pane.
 
 When the **Install example** button is not available but the example's directory contains a project package ZIP file, you can manually import the project package to SAS Event Stream Processing Studio, but only when you are using SAS Event Stream Processing 2023.09 or later. For more information, see [Import a Project](https://go.documentation.sas.com/doc/en/**espcdc/default/espstudio/n0qhr0p800gs68n18wbp96pu7txq.htm).
 
