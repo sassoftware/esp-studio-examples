@@ -15,13 +15,13 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "10.2.2"
+      "version": "10.4.2"
     },
     {
       "type": "datasource",
       "id": "sasesp-plugin",
       "name": "SAS Event Stream Processing",
-      "version": "7.43.2"
+      "version": "7.48.1"
     },
     {
       "type": "panel",
@@ -93,6 +93,7 @@
             "image"
           ],
           "hide": false,
+          "internalServerUrl": "ws://esps-computer-5fvision-5fwith-5fonnx:80",
           "projectName": "computer_vision_with_onnx",
           "refId": "A",
           "serverUrl": "ws://esps-computer-5fvision-5fwith-5fonnx:80",
@@ -104,7 +105,7 @@
     }
   ],
   "refresh": "",
-  "schemaVersion": 38,
+  "schemaVersion": 39,
   "tags": [],
   "templating": {
     "list": []
@@ -143,6 +144,6 @@
   "timezone": "browser",
   "title": "Computer Vision with ONNX",
   "uid": "b054bce8-552f-4487-821e-f4c4d10d0637",
-  "version": 3,
+  "version": 2,
   "weekStart": ""
 }
