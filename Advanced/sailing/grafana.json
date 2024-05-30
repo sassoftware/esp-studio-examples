@@ -27,13 +27,13 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "10.2.2"
+      "version": "10.4.2"
     },
     {
       "type": "datasource",
       "id": "sasesp-plugin",
       "name": "SAS Event Stream Processing",
-      "version": "7.43.2"
+      "version": "7.48.1"
     },
     {
       "type": "panel",
@@ -177,6 +177,7 @@
             "uid": "${DS_SAS_EVENT STREAM PROCESSING DATASOURCE}"
           },
           "fields": [],
+          "internalServerUrl": "ws://esps-sailing:80",
           "projectName": "sailing",
           "refId": "A",
           "serverUrl": "ws://esps-sailing:80",
@@ -262,9 +263,10 @@
           "values": false
         },
         "showThresholdLabels": true,
-        "showThresholdMarkers": true
+        "showThresholdMarkers": true,
+        "sizing": "auto"
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.4.2",
       "targets": [
         {
           "datasource": {
@@ -456,7 +458,7 @@
           "zoom": 12
         }
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.4.2",
       "targets": [
         {
           "cqName": "cq1",
@@ -465,10 +467,11 @@
             "uid": "${DS_SAS_EVENT STREAM PROCESSING DATASOURCE}"
           },
           "fields": [],
+          "internalServerUrl": "ws://esps-sailing:80",
           "projectName": "sailing",
           "refId": "A",
           "serverUrl": "ws://esps-sailing:80",
-          "windowName": "Areas_Of_Interest"
+          "windowName": "Geofence_Area_Check"
         }
       ],
       "title": "Locations",
@@ -593,6 +596,7 @@
           },
           "fieldName": "speed",
           "fields": [],
+          "internalServerUrl": "ws://esps-sailing:80",
           "projectName": "sailing",
           "refId": "A",
           "serverUrl": "ws://esps-sailing:80",
@@ -677,9 +681,10 @@
           "values": false
         },
         "showThresholdLabels": true,
-        "showThresholdMarkers": true
+        "showThresholdMarkers": true,
+        "sizing": "auto"
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.4.2",
       "targets": [
         {
           "datasource": {
@@ -800,6 +805,7 @@
           },
           "fieldName": "speed",
           "fields": [],
+          "internalServerUrl": "ws://esps-sailing:80",
           "projectName": "sailing",
           "refId": "A",
           "serverUrl": "ws://esps-sailing:80",
@@ -882,9 +888,10 @@
           "values": false
         },
         "showThresholdLabels": true,
-        "showThresholdMarkers": true
+        "showThresholdMarkers": true,
+        "sizing": "auto"
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.4.2",
       "targets": [
         {
           "datasource": {
@@ -1004,6 +1011,7 @@
           },
           "fieldName": "speed",
           "fields": [],
+          "internalServerUrl": "ws://esps-sailing:80",
           "projectName": "sailing",
           "refId": "A",
           "serverUrl": "ws://esps-sailing:80",
@@ -1086,9 +1094,10 @@
           "values": false
         },
         "showThresholdLabels": true,
-        "showThresholdMarkers": true
+        "showThresholdMarkers": true,
+        "sizing": "auto"
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.4.2",
       "targets": [
         {
           "datasource": {
@@ -1193,7 +1202,7 @@
           }
         ]
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.4.2",
       "targets": [
         {
           "cqName": "cq1",
@@ -1203,10 +1212,11 @@
           },
           "fieldName": "BoatNumber",
           "fields": [],
+          "internalServerUrl": "ws://esps-sailing:80",
           "projectName": "sailing",
           "refId": "A",
           "serverUrl": "ws://esps-sailing:80",
-          "windowName": "Filter_Speeding_In_Marina"
+          "windowName": "Last_Speeding_Event"
         }
       ],
       "title": "Speeding Events",
@@ -1375,7 +1385,7 @@
           }
         ]
       },
-      "pluginVersion": "10.2.2",
+      "pluginVersion": "10.4.2",
       "targets": [
         {
           "cqName": "cq1",
@@ -1385,6 +1395,7 @@
           },
           "fieldName": "BoatNumber",
           "fields": [],
+          "internalServerUrl": "ws://esps-sailing:80",
           "projectName": "sailing",
           "refId": "A",
           "serverUrl": "ws://esps-sailing:80",
@@ -1498,7 +1509,7 @@
   ],
   "refresh": "",
   "revision": 1,
-  "schemaVersion": 38,
+  "schemaVersion": 39,
   "tags": [],
   "templating": {
     "list": []
@@ -1511,6 +1522,6 @@
   "timezone": "",
   "title": "Sailing Dashboard",
   "uid": "LJl3Sro4z",
-  "version": 1,
+  "version": 3,
   "weekStart": ""
 }
