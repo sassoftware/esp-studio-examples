@@ -1,8 +1,8 @@
 {
   "__inputs": [
     {
-      "name": "DS_SAS_EVENT STREAM PROCESSING STUDIO",
-      "label": "SAS Event Stream Processing Studio",
+      "name": "DS_SAS_EVENT STREAM PROCESSING DATASOURCE",
+      "label": "SAS Event Stream Processing Datasource",
       "description": "",
       "type": "datasource",
       "pluginId": "sasesp-plugin",
@@ -27,13 +27,13 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "9.4.7"
+      "version": "10.2.2"
     },
     {
       "type": "datasource",
       "id": "sasesp-plugin",
       "name": "SAS Event Stream Processing",
-      "version": "7.41.1"
+      "version": "7.43.2"
     },
     {
       "type": "panel",
@@ -93,7 +93,7 @@
     {
       "datasource": {
         "type": "sasesp-plugin",
-        "uid": "${DS_SAS_EVENT STREAM PROCESSING STUDIO}"
+        "uid": "${DS_SAS_EVENT STREAM PROCESSING DATASOURCE}"
       },
       "fieldConfig": {
         "defaults": {
@@ -101,6 +101,7 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
@@ -114,6 +115,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -172,11 +174,10 @@
           "cqName": "cq1",
           "datasource": {
             "type": "sasesp-plugin",
-            "uid": "${DS_SAS_EVENT STREAM PROCESSING STUDIO}"
+            "uid": "${DS_SAS_EVENT STREAM PROCESSING DATASOURCE}"
           },
-          "fields": [
-            "speed"
-          ],
+          "fields": [],
+          "internalServerUrl": "ws://esps-sailing:80",
           "projectName": "sailing",
           "refId": "A",
           "serverUrl": "ws://esps-sailing:80",
@@ -251,6 +252,8 @@
       "id": 4,
       "maxDataPoints": 1,
       "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
@@ -262,7 +265,7 @@
         "showThresholdLabels": true,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "9.4.7",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "datasource": {
@@ -304,7 +307,7 @@
     {
       "datasource": {
         "type": "sasesp-plugin",
-        "uid": "${DS_SAS_EVENT STREAM PROCESSING STUDIO}"
+        "uid": "${DS_SAS_EVENT STREAM PROCESSING DATASOURCE}"
       },
       "fieldConfig": {
         "defaults": {
@@ -454,19 +457,20 @@
           "zoom": 12
         }
       },
-      "pluginVersion": "9.4.7",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "cqName": "cq1",
           "datasource": {
             "type": "sasesp-plugin",
-            "uid": "${DS_SAS_EVENT STREAM PROCESSING STUDIO}"
+            "uid": "${DS_SAS_EVENT STREAM PROCESSING DATASOURCE}"
           },
           "fields": [],
+          "internalServerUrl": "ws://esps-sailing:80",
           "projectName": "sailing",
           "refId": "A",
           "serverUrl": "ws://esps-sailing:80",
-          "windowName": "Filter_Inside_Exclusion_Zone"
+          "windowName": "Areas_Of_Interest"
         }
       ],
       "title": "Locations",
@@ -506,7 +510,7 @@
     {
       "datasource": {
         "type": "sasesp-plugin",
-        "uid": "${DS_SAS_EVENT STREAM PROCESSING STUDIO}"
+        "uid": "${DS_SAS_EVENT STREAM PROCESSING DATASOURCE}"
       },
       "fieldConfig": {
         "defaults": {
@@ -514,6 +518,7 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
@@ -527,6 +532,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -585,10 +591,11 @@
           "cqName": "cq1",
           "datasource": {
             "type": "sasesp-plugin",
-            "uid": "${DS_SAS_EVENT STREAM PROCESSING STUDIO}"
+            "uid": "${DS_SAS_EVENT STREAM PROCESSING DATASOURCE}"
           },
           "fieldName": "speed",
           "fields": [],
+          "internalServerUrl": "ws://esps-sailing:80",
           "projectName": "sailing",
           "refId": "A",
           "serverUrl": "ws://esps-sailing:80",
@@ -662,6 +669,8 @@
       "id": 10,
       "maxDataPoints": 1,
       "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
@@ -673,7 +682,7 @@
         "showThresholdLabels": true,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "9.4.7",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "datasource": {
@@ -709,7 +718,7 @@
     {
       "datasource": {
         "type": "sasesp-plugin",
-        "uid": "${DS_SAS_EVENT STREAM PROCESSING STUDIO}"
+        "uid": "${DS_SAS_EVENT STREAM PROCESSING DATASOURCE}"
       },
       "fieldConfig": {
         "defaults": {
@@ -717,6 +726,7 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
@@ -730,6 +740,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -788,10 +799,11 @@
           "cqName": "cq1",
           "datasource": {
             "type": "sasesp-plugin",
-            "uid": "${DS_SAS_EVENT STREAM PROCESSING STUDIO}"
+            "uid": "${DS_SAS_EVENT STREAM PROCESSING DATASOURCE}"
           },
           "fieldName": "speed",
           "fields": [],
+          "inernalServerUrl": "ws://esps-sailing:80",
           "projectName": "sailing",
           "refId": "A",
           "serverUrl": "ws://esps-sailing:80",
@@ -863,6 +875,8 @@
       "id": 6,
       "maxDataPoints": 1,
       "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
@@ -874,7 +888,7 @@
         "showThresholdLabels": true,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "9.4.7",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "datasource": {
@@ -909,7 +923,7 @@
     {
       "datasource": {
         "type": "sasesp-plugin",
-        "uid": "${DS_SAS_EVENT STREAM PROCESSING STUDIO}"
+        "uid": "${DS_SAS_EVENT STREAM PROCESSING DATASOURCE}"
       },
       "fieldConfig": {
         "defaults": {
@@ -917,6 +931,7 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
@@ -930,6 +945,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -988,10 +1004,11 @@
           "cqName": "cq1",
           "datasource": {
             "type": "sasesp-plugin",
-            "uid": "${DS_SAS_EVENT STREAM PROCESSING STUDIO}"
+            "uid": "${DS_SAS_EVENT STREAM PROCESSING DATASOURCE}"
           },
           "fieldName": "speed",
           "fields": [],
+          "internalServerUrl": "ws://esps-sailing:80",
           "projectName": "sailing",
           "refId": "A",
           "serverUrl": "ws://esps-sailing:80",
@@ -1063,6 +1080,8 @@
       "id": 9,
       "maxDataPoints": 1,
       "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
@@ -1074,7 +1093,7 @@
         "showThresholdLabels": true,
         "showThresholdMarkers": true
       },
-      "pluginVersion": "9.4.7",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "datasource": {
@@ -1122,7 +1141,7 @@
     {
       "datasource": {
         "type": "sasesp-plugin",
-        "uid": "${DS_SAS_EVENT STREAM PROCESSING STUDIO}"
+        "uid": "${DS_SAS_EVENT STREAM PROCESSING DATASOURCE}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1179,20 +1198,21 @@
           }
         ]
       },
-      "pluginVersion": "9.4.7",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "cqName": "cq1",
           "datasource": {
             "type": "sasesp-plugin",
-            "uid": "${DS_SAS_EVENT STREAM PROCESSING STUDIO}"
+            "uid": "${DS_SAS_EVENT STREAM PROCESSING DATASOURCE}"
           },
           "fieldName": "BoatNumber",
           "fields": [],
+          "internalServerUrl": "ws://esps-sailing:80",
           "projectName": "sailing",
           "refId": "A",
           "serverUrl": "ws://esps-sailing:80",
-          "windowName": "Last_Speeding_Event"
+          "windowName": "Filter_Speeding_In_Marina"
         }
       ],
       "title": "Speeding Events",
@@ -1279,7 +1299,7 @@
     {
       "datasource": {
         "type": "sasesp-plugin",
-        "uid": "${DS_SAS_EVENT STREAM PROCESSING STUDIO}"
+        "uid": "${DS_SAS_EVENT STREAM PROCESSING DATASOURCE}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1361,16 +1381,17 @@
           }
         ]
       },
-      "pluginVersion": "9.4.7",
+      "pluginVersion": "10.2.2",
       "targets": [
         {
           "cqName": "cq1",
           "datasource": {
             "type": "sasesp-plugin",
-            "uid": "${DS_SAS_EVENT STREAM PROCESSING STUDIO}"
+            "uid": "${DS_SAS_EVENT STREAM PROCESSING DATASOURCE}"
           },
           "fieldName": "BoatNumber",
           "fields": [],
+          "internalServerUrl": "ws://esps-sailing:80",
           "projectName": "sailing",
           "refId": "A",
           "serverUrl": "ws://esps-sailing:80",
@@ -1485,7 +1506,6 @@
   "refresh": "",
   "revision": 1,
   "schemaVersion": 38,
-  "style": "dark",
   "tags": [],
   "templating": {
     "list": []
@@ -1498,6 +1518,6 @@
   "timezone": "",
   "title": "Sailing Dashboard",
   "uid": "LJl3Sro4z",
-  "version": 2,
+  "version": 8,
   "weekStart": ""
 }
