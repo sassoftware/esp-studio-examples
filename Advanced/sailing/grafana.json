@@ -177,7 +177,6 @@
             "uid": "${DS_SAS_EVENT STREAM PROCESSING DATASOURCE}"
           },
           "fields": [],
-          "internalServerUrl": "ws://esps-sailing:80",
           "projectName": "sailing",
           "refId": "A",
           "serverUrl": "ws://esps-sailing:80",
@@ -466,7 +465,6 @@
             "uid": "${DS_SAS_EVENT STREAM PROCESSING DATASOURCE}"
           },
           "fields": [],
-          "internalServerUrl": "ws://esps-sailing:80",
           "projectName": "sailing",
           "refId": "A",
           "serverUrl": "ws://esps-sailing:80",
@@ -595,7 +593,6 @@
           },
           "fieldName": "speed",
           "fields": [],
-          "internalServerUrl": "ws://esps-sailing:80",
           "projectName": "sailing",
           "refId": "A",
           "serverUrl": "ws://esps-sailing:80",
@@ -803,7 +800,6 @@
           },
           "fieldName": "speed",
           "fields": [],
-          "inernalServerUrl": "ws://esps-sailing:80",
           "projectName": "sailing",
           "refId": "A",
           "serverUrl": "ws://esps-sailing:80",
@@ -1008,7 +1004,6 @@
           },
           "fieldName": "speed",
           "fields": [],
-          "internalServerUrl": "ws://esps-sailing:80",
           "projectName": "sailing",
           "refId": "A",
           "serverUrl": "ws://esps-sailing:80",
@@ -1208,7 +1203,6 @@
           },
           "fieldName": "BoatNumber",
           "fields": [],
-          "internalServerUrl": "ws://esps-sailing:80",
           "projectName": "sailing",
           "refId": "A",
           "serverUrl": "ws://esps-sailing:80",
@@ -1391,7 +1385,6 @@
           },
           "fieldName": "BoatNumber",
           "fields": [],
-          "internalServerUrl": "ws://esps-sailing:80",
           "projectName": "sailing",
           "refId": "A",
           "serverUrl": "ws://esps-sailing:80",
@@ -1518,6 +1511,6 @@
   "timezone": "",
   "title": "Sailing Dashboard",
   "uid": "LJl3Sro4z",
-  "version": 8,
+  "version": 1,
   "weekStart": ""
 }
