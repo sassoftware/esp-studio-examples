@@ -1,0 +1,2 @@
+*.onnx filter=lfs diff=lfs merge=lfs -text
+*pose_estimation_with_onnx.2024.06.1.zip filter=lfs diff=lfs merge=lfs -text

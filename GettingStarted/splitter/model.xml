@@ -5,13 +5,13 @@
     <meta id="studioUploaded">1696245027300</meta>
     <meta id="studioModifiedBy">anonymousUser</meta>
     <meta id="studioModified">1696246435709</meta>
-    <meta id="layout">{"contquery_01":{"CopyWindowEven":{"x":50,"y":175},"CopyWindowOdd":{"x":330,"y":175},"sourceWindow":{"x":190,"y":50}}}</meta>
+    <meta id="layout">{"contquery_01":{"copyMatch":{"x":330,"y":175},"copyNoMatch":{"x":50,"y":175},"source":{"x":190,"y":50}}}</meta>
     <meta id="studioTags">Example</meta>
   </metadata>
   <contqueries>
-    <contquery name="contquery_01" trace="CopyWindowEven CopyWindowOdd">
+    <contquery name="contquery_01" trace="copyNoMatch copyMatch">
       <windows>
-        <window-source index="pi_RBTREE" pubsub="true" name="sourceWindow">
+        <window-source index="pi_RBTREE" pubsub="true" name="source">
           <description><![CDATA[The Source window in this model receives input data from a CSV file containing a group of stock market share valuations. The input data specifies the ID number attributed to the company, its stock market symbol, and its share price valuation. A splitter expression is defined which tries to match the stock market symbol "IBM" and its corresponding ID, where its share price valuation is over 100.0. The splitter expression is used in conjunction with three user defined functions. These functions are declared in the splitter expression. The functions return the ID attributed to the company , the company's stock market symbol, and its share price valuation.]]></description>
           <splitter-expr>
             <expr-initialize>
@@ -28,6 +28,7 @@
               <field name="ID" type="int32" key="true"/>
               <field name="symbol" type="string"/>
               <field name="price" type="double"/>
+              <field name="modulo" type="int32"/>
             </fields>
           </schema>
           <connectors>
@@ -40,18 +41,18 @@
             </connector>
           </connectors>
         </window-source>
-        <window-copy index="pi_RBTREE" pubsub="true" name="CopyWindowEven">
+        <window-copy index="pi_RBTREE" pubsub="true" name="copyNoMatch">
           <description><![CDATA[This Copy window retains the companies allocated to slot 0.]]></description>
           <retention type="bycount_sliding"><![CDATA[1000]]></retention>
         </window-copy>
-        <window-copy index="pi_HASH" pubsub="true" name="CopyWindowOdd">
+        <window-copy index="pi_HASH" pubsub="true" name="copyMatch">
           <description><![CDATA[This Copy window retains the companies allocated to slot 1.]]></description>
           <retention type="bycount_sliding"><![CDATA[1000]]></retention>
         </window-copy>
       </windows>
       <edges>
-        <edge source="sourceWindow" target="CopyWindowEven" slot="0"/>
-        <edge source="sourceWindow" target="CopyWindowOdd" slot="1"/>
+        <edge source="source" target="copyNoMatch" slot="0"/>
+        <edge source="source" target="copyMatch" slot="1"/>
       </edges>
     </contquery>
   </contqueries>
