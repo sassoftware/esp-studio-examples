@@ -12,11 +12,12 @@ To obtain XML code examples that run with earlier releases of SAS Event Stream P
 
 Beginning with SAS Event Stream Processing 2023.09, you can install some examples directly from SAS Event Stream Processing Studio: 
 
-1. In SAS Event Stream Processing Studio, click ![Help](img/icon-helpmenu.png "Output Schema") on any page.
-2. Select **Examples**.
-3. In the SAS Event Stream Processing Examples window, select an example with the **Install example** button in the right pane.
-4. Click **Install example**. A project package ZIP file is imported from the relevant example's directory in this GitHub. The project XML file in the project package has connectors that point to input files in the product package. As a result, you do not need to configure connectors. 
-5. Run the imported example in test mode. For more information, see [Running a Test](https://go.documentation.sas.com/doc/en/espcdc/default/espstudio/p1xzbzbnvpspodn1h2jkzo9m9t7d.htm). 
+1. In SAS Event Stream Processing Studio, do one the following:
+   - On the **Projects** page, click **View example projects**.
+   - On any page, click ![Help](img/icon-helpmenu.png "Output Schema") and select **Examples**.
+2. In the SAS Event Stream Processing Examples window, select an example with the **Install example** button in the right pane.
+3. Click **Install example**. A project package ZIP file is imported from the relevant example's directory in this GitHub. The project XML file in the project package has connectors that point to input files in the product package. As a result, you do not need to configure connectors. 
+4. Run the imported example in test mode. For more information, see [Running a Test](https://go.documentation.sas.com/doc/en/espcdc/default/espstudio/p1xzbzbnvpspodn1h2jkzo9m9t7d.htm). 
 
 For more information about how the example works, return to the SAS Event Stream Processing Examples window, select the example and click **View README in GitHub**. When you are viewing an example project in SAS Event Stream Processing Studio, you can also select each window in turn in the workspace to read brief descriptions of those windows in the right pane.
 
