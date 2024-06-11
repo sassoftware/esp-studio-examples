@@ -12,11 +12,12 @@ To obtain XML code examples that run with earlier releases of SAS Event Stream P
 
 Beginning with SAS Event Stream Processing 2023.09, you can install some examples directly from SAS Event Stream Processing Studio: 
 
-1. In SAS Event Stream Processing Studio, click ![Help](img/icon-helpmenu.png "Output Schema") on any page.
-2. Select **Examples**.
-3. In the SAS Event Stream Processing Examples window, select an example with the **Install example** button in the right pane.
-4. Click **Install example**. A project package ZIP file is imported from the relevant example's directory in this GitHub. The project XML file in the project package has connectors that point to input files in the product package. As a result, you do not need to configure connectors. 
-5. Run the imported example in test mode. For more information, see [Running a Test](https://go.documentation.sas.com/doc/en/espcdc/default/espstudio/p1xzbzbnvpspodn1h2jkzo9m9t7d.htm). 
+1. In SAS Event Stream Processing Studio, do one the following:
+   - On the **Projects** page, click **View example projects**.
+   - On any page, click ![Help](img/icon-helpmenu.png "Output Schema") and select **Examples**.
+2. In the SAS Event Stream Processing Examples window, select an example with the **Install example** button in the right pane.
+3. Click **Install example**. A project package ZIP file is imported from the relevant example's directory in this GitHub. The project XML file in the project package has connectors that point to input files in the product package. As a result, you do not need to configure connectors. 
+4. Run the imported example in test mode. For more information, see [Running a Test](https://go.documentation.sas.com/doc/en/espcdc/default/espstudio/p1xzbzbnvpspodn1h2jkzo9m9t7d.htm). 
 
 For more information about how the example works, return to the SAS Event Stream Processing Examples window, select the example and click **View README in GitHub**. When you are viewing an example project in SAS Event Stream Processing Studio, you can also select each window in turn in the workspace to read brief descriptions of those windows in the right pane.
 
@@ -86,6 +87,7 @@ The [Advanced](/Advanced) directory contains projects that demonstrate the use o
 | [geofence](/Advanced/geofence) |Display a list of wanted vehicles found near critical infrastructure sites.<br>This example uses Join, Geofence, and Filter windows to match wanted vehicles that are in close proximity to critical infrastructure sites. <br>**Note:** Use this example with SAS Event Stream Processing 2024.01 and later.|
 | [lua_snippet](/Advanced/lua_snippet) |Use a Lua snippet.<br>This example simulates health-care data streaming into a model and detects measurements that fall outside a specified range. A Lua snippet in the project subscribes to windows, stores values, and reads a JSON file. Lua connectors are also used to generate and inject data. <br>**Note:** Use this example with SAS Event Stream Processing 2023.04 and later.|
 | [onnx_object_detection](/Advanced/onnx_object_detection) | Use an ONNX model to detect objects in an incoming video stream.<br>This example demonstrates how you can use an ONNX model to detect objects in an incoming video stream. Post-processing by a Python program converts scoring output to a more usable format. <br>**Note:** Use this example with SAS Event Stream Processing 2024.04 and later.|
+| [onnx_pose_estimation](/Advanced/onnx_pose_estimation) | Use an ONNX model to detect keypoints of a person in an incoming video stream.<br>This example uses pose estimation, which is a computer vision technique for recognizing and categorizing the positions of a human body. This example builds on the onnx_object_detection example.<br>**Note:** Use this example with SAS Event Stream Processing 2024.04 and later.|
 | [sailing](/Advanced/sailing) | Visualize data obtained from a set of boats.<br>This example identifies two geographical areas of interest. One area is an exclusion zone that the boats identified are not permitted to enter. The other is an area where a speed restriction has been applied.|
 | [trades](/Advanced/trades) | Identify large trades in stock market transactions.<br>This project identifies large securities transactions and the traders who were involved in those trades.|
 | [transpose_long](/Advanced/transpose_long) | Transpose data from an aircraft, in long mode.<br>This project conceptualizes an event as a row that consists of multiple columns. You can use a Transpose window to interchange an event's rows as columns, and columns as rows. You will process information about the pitch, yaw, roll, and velocity of an aircraft in flight.|
@@ -156,6 +158,12 @@ The following examples demonstrate how you can use Python code in projects.
 - python_pattern
 - python_snippet
 - geofence
+
+### Examples That Use Computer Vision
+
+The following examples use computer vision techniques:
+- onnx_object_detection
+- onnx_pose_estimation
 
 <!--### What's New
 

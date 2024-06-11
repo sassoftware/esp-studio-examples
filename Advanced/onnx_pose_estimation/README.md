@@ -8,6 +8,8 @@ Use this example with SAS Event Stream Processing 2024.04 and later.
 
 ---
 
+For more information about how to install and use example projects, see [Using the Examples](https://github.com/sassoftware/esp-studio-examples#using-the-examples).
+
 ## Source Data and Other Files
 - `video.mp4` is the video that is used as input for this example. 
 - `model.xml` is the project associated with this example.
