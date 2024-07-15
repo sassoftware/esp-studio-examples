@@ -162,7 +162,7 @@ def postprocess(output):
         label = 'person'
         event["Object_labels"] = f"{event['Object_labels']}{label},"
 
-        kpts = output[object_id, 6:]
+        kpts = output[object_id, 6:].copy()
         count = 0
         for k in range(17):
             (
