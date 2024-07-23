@@ -11,7 +11,7 @@ Use this example with SAS Event Stream Processing 2024.04 and later.
 For more information about how to install and use example projects, see [Using the Examples](https://github.com/sassoftware/esp-studio-examples#using-the-examples).
 
 ## Source Data and Other Files
-- `video.mp4` is the video that is used as input for this example. 
+- `video.mp4` is the video that is used as input for this example. When you have installed the example, you can access this video in the **Project Package** pane in SAS Event Stream Processing Studio and play it. The video is located in the `test_files` folder.
 - `model.xml` is the project associated with this example.
 - `yolov7-tiny_640x640.onnx` (within the project package ZIP file) is an open source ONNX model for object detection. 
 - `labels.txt` contains the list of classes that the model can detect. 
