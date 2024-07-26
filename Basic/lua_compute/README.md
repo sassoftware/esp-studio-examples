@@ -26,7 +26,7 @@ The file [lua_compute.csv](lua_compute.csv) contains customer information.
 ## Workflow
 The following figure shows the diagram of the project:
 
-![Diagram of the project](https://github.com/sassoftware/esp-studio-examples/blob/main/Basic/lua_compute/img/lua-compute-window-example2.png "Diagram of the project")
+![Diagram of the project](img/lua-compute-window-example2.png "Diagram of the project")
 
 ### Customers
 
@@ -34,13 +34,13 @@ The Customers window streams customer information from the `lua_compute.csv` fil
 
 Explore the settings for the Customers window:
 1. Open the project in SAS Event Stream Processing Studio and select the Customers window. 
-2. To examine the window's output schema, on the right toolbar, click ![Output Schema](https://github.com/sassoftware/esp-studio-examples/blob/main/Basic/lua_compute/img/output-schema-icon.png "Output Schema"). Observe the following fields: 
+2. To examine the window's output schema, on the right toolbar, click ![Output Schema](img/output-schema-icon.png "Output Schema"). Observe the following fields: 
    - `custref`: This is the customer reference ID. It is also selected as the Key.
    - `forename`: This is the customer’s first name.
    - `surname`: This is the customer’s last name.
    - `telno`: This is the customer’s telephone number.
    - `email`: This is the customer’s email address.
-3. Click ![Properties](https://github.com/sassoftware/esp-studio-examples/blob/main/Basic/lua_compute/img/show-properties-icon.png "Properties"). 
+3. Click ![Properties](img/show-properties-icon.png "Properties"). 
 
 ### TransformData
 
@@ -168,14 +168,14 @@ When you test the project, the results for each window appear on separate tabs. 
 - The telephone numbers were not entered using the same format.
 - The customers Hermione Grandeur and Draco Molefay have no entry for `telno`.
 
-![Results for the Customers tab](https://github.com/sassoftware/esp-studio-examples/blob/main/Basic/lua_compute/img/Customers.png "Results for the Customers tab")
+![Results for the Customers tab](img/Customers.png "Results for the Customers tab")
 
 The following figure shows the transformed data in the **TransformData** tab. Note the following changes:
 - All surnames are now in all capital letters.
 - Each telephone number shows ten digits with no spaces or non-numerical characters.
 - A new variable, `notify`, has been created. Each customer with a telephone number has been assigned the value `sms`, whereas the customers without a telephone number (Hermione Grandeur and Draco Molefay) have been assigned the value `email`.
 
-![Results for the TransformData tab](https://github.com/sassoftware/esp-studio-examples/blob/main/Basic/lua_compute/img/TransformData.png "Results for the TransformData tab")
+![Results for the TransformData tab](img/TransformData.png "Results for the TransformData tab")
 
 ## Additional Resources
 For more information, see [SAS Help Center: Using Lua Windows](https://documentation.sas.com/?cdcId=espcdc&cdcVersion=default&docsetId=espcreatewindows&docsetTarget=p0yj92wgv3ssyyn1syatsh9l1t74.htm).
