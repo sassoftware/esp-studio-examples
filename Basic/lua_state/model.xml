@@ -1,5 +1,13 @@
-<project name="luaState" index="pi_EMPTY" pubsub="none" threads="4" heartbeat-interval="1">
+<project name="lua_state" index="pi_EMPTY" pubsub="none" threads="4" heartbeat-interval="1" luaroot="@ESP_PROJECT_OUTPUT@/luaroot">
   <description><![CDATA[This project demonstrates how to maintain event state in Lua and use it to generate events. It streams stock trade data into the model and uses a Lua window to generate events when a new symbol price exceeds the current maximum price for that symbol.]]></description>
+  <metadata>
+    <meta id="studioUploadedBy">anonymousUser</meta>
+    <meta id="studioUploaded">1722341778168</meta>
+    <meta id="studioModifiedBy">anonymousUser</meta>
+    <meta id="studioModified">1722341865237</meta>
+    <meta id="layout">{"cq":{"generateEvents":{"x":50,"y":175},"trades":{"x":50,"y":50}}}</meta>
+    <meta id="studioTags">Example</meta>
+  </metadata>
   <contqueries>
     <contquery name="cq" trace="generateEvents">
       <windows>
@@ -21,10 +29,10 @@
             </fields>
           </schema>
           <connectors>
-            <connector class="fs" name="stateInput">
+            <connector class="fs" name="input_lua_state">
               <properties>
                 <property name="type"><![CDATA[pub]]></property>
-                <property name="fsname"><![CDATA[/mnt/data/input/luaStateInput.csv]]></property>
+                <property name="fsname"><![CDATA[@ESP_PROJECT_HOME@/test_files/luaStateInput.csv]]></property>
                 <property name="fstype"><![CDATA[csv]]></property>
               </properties>
             </connector>
@@ -39,22 +47,21 @@
           </schema>
           <copy/>
           <use><![CDATA[symbol,price]]></use>
-          <code><![CDATA[
- local symbolData = {} 
- function create(data,context) 
-     local event = nil 
-     local maxPrice = symbolData[data.symbol] 
+          <code><![CDATA[local symbolData = {} 
+function create()
+    local event = nil 
+    local maxPrice = symbolData[data.symbol] 
      
-     if (maxPrice == nil or data.price > maxPrice) then 
-         symbolData[data.symbol] = data.price 
-         event = {} 
-         event.symbol = data.symbol 
-         event.max_price = data.price 
-         event._opcode = "upsert" 
-     end 
-     
- return(event) 
- end 
+    if (maxPrice == nil or data.price > maxPrice) then 
+        symbolData[data.symbol] = data.price 
+        event = {} 
+        event.symbol = data.symbol 
+        event.max_price = data.price 
+        event._opcode = "upsert" 
+    end 
+
+    return(event) 
+end 
 ]]></code>
         </window-lua>
       </windows>

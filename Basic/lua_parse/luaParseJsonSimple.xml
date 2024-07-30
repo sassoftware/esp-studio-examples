@@ -2,9 +2,9 @@
   <description><![CDATA[This project uses a Lua window to parse JSON data from a CSV file to generate events.]]></description>
   <metadata>
     <meta id="studioUploadedBy">anonymousUser</meta>
-    <meta id="studioUploaded">1696244965965</meta>
+    <meta id="studioUploaded">1722341372339</meta>
     <meta id="studioModifiedBy">anonymousUser</meta>
-    <meta id="studioModified">1696246123884</meta>
+    <meta id="studioModified">1722341389484</meta>
     <meta id="layout">{"cq":{"CreateMulti":{"x":50,"y":175},"Source":{"x":50,"y":50}}}</meta>
     <meta id="studioTags">Example</meta>
   </metadata>
@@ -40,32 +40,28 @@
             </fields>
           </schema>
           <copy/>
-          <code><![CDATA[
+          <code><![CDATA[local   eventId = 1
 
-            local   eventId = 1
+function create(data,context)
 
-            function create(data,context)
+    local   events = {}
+    local   sensorinfo = esp_parseJsonFrom("sensorinfo")
 
-                local   events = {}
-                local   sensorinfo = esp_parseJsonFrom("sensorinfo")
+    for index,value in ipairs(sensorinfo)
+    do
+        local   e = {}
 
-                for index,value in ipairs(sensorinfo)
-                do
-                    local   e = {}
+        e.id = tostring(eventId)
+        e.device_id = value.device_id
+        e.sensor_id = value.sensor_id
+        e.value = value.value
+        events[index] = e
 
-                    e.id = tostring(eventId)
-                    e.device_id = value.device_id
-                    e.sensor_id = value.sensor_id
-                    e.value = value.value
-                    events[index] = e
+        eventId = eventId + 1
+    end
 
-                    eventId = eventId + 1
-                end
-
-                return(events)
-            end
-
-                    ]]></code>
+    return(events)
+end]]></code>
         </window-lua>
       </windows>
       <edges>

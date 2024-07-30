@@ -2,10 +2,10 @@
   <description><![CDATA[This example simulates healthcare data streaming into a model and detects measurements that fall outside an acceptable range. A Lua snippet in the project subscribes to windows, stores values, and reads a JSON file. Lua connectors are also used.]]></description>
   <metadata>
     <meta id="layout">{"cq":{"addMetricInfo":{"x":610,"y":175},"alert":{"x":260,"y":50},"analysis":{"x":260,"y":175},"isAlert":{"x":750,"y":295},"metrics":{"x":610,"y":50},"patients":{"x":50,"y":50},"statistic":{"x":830,"y":50}}}</meta>
-    <meta id="studioUploadedBy">mtlstr</meta>
-    <meta id="studioUploaded">1710256796519</meta>
-    <meta id="studioModifiedBy">mtlstr</meta>
-    <meta id="studioModified">1710257053016</meta>
+    <meta id="studioUploadedBy">anonymousUser</meta>
+    <meta id="studioUploaded">1722341616197</meta>
+    <meta id="studioModifiedBy">anonymousUser</meta>
+    <meta id="studioModified">1722342111950</meta>
     <meta id="studioTags">Example</meta>
   </metadata>
   <lua-snippets>
@@ -13,94 +13,94 @@
       <description><![CDATA[This snippet subscribes to windows, stores values, and reads a JSON file.]]></description>
       <lua-thread func="loadPatients" interval="5 seconds"/>
       <code><![CDATA[local   subscribers = {}
-                local   metrics = {}
-                local   stats = {}
+local   metrics = {}
+local   stats = {}
 
-                function init()
-                    subscribers[1] = esp_subscribe({window="statistic",handler="handleStats"})
-                    subscribers[2] = esp_subscribe({window="metrics",handler="handleMetrics",snapshot=true})
-                    subscribers[3] = esp_subscribe({window="isAlert",handler="handleAlert"})
-                end
+function init()
+    subscribers[1] = esp_subscribe({window="statistic",handler="handleStats"})
+    subscribers[2] = esp_subscribe({window="metrics",handler="handleMetrics",snapshot=true})
+    subscribers[3] = esp_subscribe({window="isAlert",handler="handleAlert"})
+end
 
-                function handleStats(events)
-                    for _,stat in ipairs(events)
-                    do
-                        if (stats[stat.patient] == nil)
-                        then
-                            stats[stat.patient] = {}
-                        end
+function handleStats(events)
+    for _,stat in ipairs(events)
+    do
+        if (stats[stat.patient] == nil)
+        then
+            stats[stat.patient] = {}
+        end
 
-                        stats[stat.patient][stat.statistic] = stat.value
-                    end
-                end
+        stats[stat.patient][stat.statistic] = stat.value
+    end
+end
 
-                function handleMetrics(events)
-                    for _,metric in ipairs(events)
-                    do
-                        metrics[metric.name] = metric
-                    end
+function handleMetrics(events)
+    for _,metric in ipairs(events)
+    do
+        metrics[metric.name] = metric
+    end
 
-                    esp_setProperty({name="metrics",value=metrics})
-                end
+    esp_setProperty({name="metrics",value=metrics})
+end
 
-                function handleAlert(events)
-                    for _,event in ipairs(events)
-                    do
-                        local   data = stats[event.patient]
+function handleAlert(events)
+    for _,event in ipairs(events)
+    do
+        local   data = stats[event.patient]
 
-                        if (data ~= nil)
-                        then
-                            local   patientAlertCount = esp_getProperty({name="patient_alert_count"..event.patient})
+        if (data ~= nil)
+        then
+            local   patientAlertCount = esp_getProperty({name="patient_alert_count"..event.patient})
 
-                            if (patientAlertCount == nil)
-                            then
-                                patientAlertCount = {patient=event.patient,count=1}
-                            else
-                                patientAlertCount.count = patientAlertCount.count + 1
-                            end
+            if (patientAlertCount == nil)
+            then
+                patientAlertCount = {patient=event.patient,count=1}
+            else
+                patientAlertCount.count = patientAlertCount.count + 1
+            end
 
-                            esp_setProperty({name="patient_alert_count"..event.patient,value=patientAlertCount})
+            esp_setProperty({name="patient_alert_count"..event.patient,value=patientAlertCount})
 
-                            local   e = {}
-                            e.patient = event.patient
+            local   e = {}
+            e.patient = event.patient
 
-                            for k,v in pairs(data)
-                            do
-                                e[k] = v
-                            end
-                            e[event.statistic] = event.value
-                            e["patient_alert_count"] = patientAlertCount.count
-                            e.patientAlert = event.value
-                            esp_publishAsync({window="alert",events=e})
-                        end
-                    end
-                end
+            for k,v in pairs(data)
+            do
+                e[k] = v
+            end
+            e[event.statistic] = event.value
+            e["patient_alert_count"] = patientAlertCount.count
+            e.patientAlert = event.value
+            esp_publishAsync({window="alert",events=e})
+        end
+    end
+end
 
-                function
-                loadPatients()
+function
+loadPatients()
 
-                    local   f = io.open("@ESP_PROJECT_HOME@/test_files/patients.json","r")
-                    local   contents = f:read("*all")
-                    f:close()
+    local   f = io.open("@ESP_PROJECT_HOME@/test_files/patients.json","r")
+    local   contents = f:read("*all")
+    f:close()
 
-                    local   data = esp_parseJson(contents)
-                    local   patient_data = {}
-                    for _,v in ipairs(data)
-                    do
-                        patient_data[v.name] = v
-                    end
+    local   data = esp_parseJson(contents)
+    local   patient_data = {}
+    for _,v in ipairs(data)
+    do
+        patient_data[v.name] = v
+    end
 
-                    esp_setProperty({name="patient_data",value=patient_data})
+    esp_setProperty({name="patient_data",value=patient_data})
 
-                    return true
-                end
+    return true
+end
 
-                function done()
-                    for _,s in ipairs(subscribers)
-                    do
-                        esp_unsubscribe(s)
-                    end
-                end]]></code>
+function done()
+    for _,s in ipairs(subscribers)
+    do
+        esp_unsubscribe(s)
+    end
+end]]></code>
     </lua-snippet>
   </lua-snippets>
   <contqueries>

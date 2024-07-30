@@ -2,10 +2,10 @@
   <description><![CDATA[This example demonstrates how you can define useful functions in a Lua module at project level and reference those functions from other Lua code in the project.]]></description>
   <metadata>
     <meta id="layout">{"cq1":{"Lua":{"x":50,"y":175},"Source":{"x":50,"y":50}}}</meta>
-    <meta id="studioUploadedBy">user1</meta>
-    <meta id="studioUploaded">1700833397341</meta>
-    <meta id="studioModifiedBy">user1</meta>
-    <meta id="studioModified">1700833502311</meta>
+    <meta id="studioUploadedBy">anonymousUser</meta>
+    <meta id="studioUploaded">1722341337292</meta>
+    <meta id="studioModifiedBy">anonymousUser</meta>
+    <meta id="studioModified">1722341353358</meta>
     <meta id="studioTags">Example</meta>
   </metadata>
   <lua-modules>
@@ -83,26 +83,23 @@
           </schema>
           <copy><![CDATA[id,dividend,divisor]]></copy>
           <use><![CDATA[dividend,divisor]]></use>
-          <code><![CDATA[
+          <code><![CDATA[function create(data)
 
-    function create(data)
+    local   e = {}
+    local   dividend = data["dividend"]
+    local   divisor = data["divisor"]
 
-        local   e = {}
-        local   dividend = data["dividend"]
-        local   divisor = data["divisor"]
-
-        if (divisor == 0)
-        then
-            local   logger = Logger:new("modules.example")
-            logger:error("division by 0, "..tostring(dividend).."/"..tostring(divisor))
-            return nil
-        end
-
-        e["quotient"] = dividend / divisor
-
-        return(e)
+    if (divisor == 0)
+    then
+        local   logger = Logger:new("modules.example")
+        logger:error("division by 0, "..tostring(dividend).."/"..tostring(divisor))
+        return nil
     end
-  ]]></code>
+
+    e["quotient"] = dividend / divisor
+
+    return(e)
+end]]></code>
         </window-lua>
       </windows>
       <edges>

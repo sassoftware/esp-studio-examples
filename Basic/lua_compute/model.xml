@@ -2,9 +2,9 @@
   <description><![CDATA[This project uses Lua code to modify customer data.]]></description>
   <metadata>
     <meta id="studioUploadedBy">anonymousUser</meta>
-    <meta id="studioUploaded">1696244953302</meta>
+    <meta id="studioUploaded">1722341738530</meta>
     <meta id="studioModifiedBy">anonymousUser</meta>
-    <meta id="studioModified">1696246038246</meta>
+    <meta id="studioModified">1722341763663</meta>
     <meta id="layout">{"cq1":{"Customers":{"x":50,"y":50},"TransformData":{"x":50,"y":175}}}</meta>
     <meta id="studioTags">Example</meta>
   </metadata>
@@ -46,43 +46,42 @@
           </schema>
           <copy exclude="true"><![CDATA[surname,telno]]></copy>
           <use><![CDATA[surname,telno]]></use>
-          <code><![CDATA[
-			  function create(data,context)
+          <code><![CDATA[function create(data,context)
 
-					local e = {}
+	local e = {}
 
-					e.surname = string.upper(data.surname)
-					e.telno = cleanNumber(data.telno)
-					if (e.telno ~= "")
-					then
-						local len = string.len(e.telno)
-						if (len > 10)
-						then
-							e.telno = string.sub(e.telno,len - 10 + 1)
-						end
-						e.notify = "sms"
-					else
-						e.notify = "email"
-					end
+	e.surname = string.upper(data.surname)
+	e.telno = cleanNumber(data.telno)
+	if (e.telno ~= "")
+	then
+		local len = string.len(e.telno)
+		if (len > 10)
+		then
+			e.telno = string.sub(e.telno,len - 10 + 1)
+		end
+		e.notify = "sms"
+	else
+		e.notify = "email"
+	end
 
-					return(e)
-				end
+	return(e)
+end
 
-				function cleanNumber(telno)
-					local   str = ""
+function cleanNumber(telno)
+	local   str = ""
 
-					if (telno ~= "" and telno ~= nil)
-					then
-						str = ""
-						for c in telno:gmatch("[0-9]")
-						do
-							str = str..c
-						end
-					end
+	if (telno ~= "" and telno ~= nil)
+	then
+		str = ""
+		for c in telno:gmatch("[0-9]")
+		do
+			str = str..c
+		end
+	end
 
-					return(str)
-				end
-			  ]]></code>
+	return(str)
+end
+]]></code>
         </window-lua>
       </windows>
       <edges>
