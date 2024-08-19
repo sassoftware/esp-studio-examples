@@ -1,0 +1,369 @@
+<project heartbeat-interval="1" index="pi_EMPTY" luaroot="@ESP_PROJECT_OUTPUT@/luaroot" name="pose_estimation_with_onnx" pubsub="auto" threads="8" use-tagged-token="true">
+    <description><![CDATA[This example demonstrates how you can use an ONNX model to detect keypoints of a person in an incoming video stream. It uses pose estimation, which is a computer vision technique for recognizing and categorizing the positions of a human.]]></description>
+  <metadata>
+    <meta id="studioUploadedBy">appadmin</meta>
+    <meta id="studioUploaded">1715160552099</meta>
+    <meta id="studioModifiedBy">appadmin</meta>
+    <meta id="studioModified">1715163387860</meta>
+    <meta id="layout">{"contquery":{"w_annotate":{"x":50,"y":540},"w_counter":{"x":50,"y":665},"w_data":{"x":290,"y":50},"w_object_tracker_array":{"x":50,"y":420},"w_postprocess":{"x":50,"y":295},"w_reader":{"x":50,"y":50},"w_score":{"x":50,"y":175}}}</meta>
+    <meta id="studioTags">Example</meta>
+  </metadata>
+  <properties>
+    <property name="PUBLISH_WIDTH"><![CDATA[1280]]></property>
+    <property name="PUBLISH_HEIGHT"><![CDATA[720]]></property>
+    <property name="MODEL_WIDTH"><![CDATA[640]]></property>
+    <property name="MODEL_HEIGHT"><![CDATA[640]]></property>
+  </properties>
+  <contqueries>
+    <contquery name="contquery">
+      <windows>
+        <window-source index="pi_EMPTY" insert-only="true" name="w_data">
+          <description><![CDATA[w_data is a Source window. This is where video frames enter the project.]]></description>
+          <schema>
+            <fields>
+              <field key="true" name="id" type="int64"/>
+              <field name="image" type="blob"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="videocap" name="video_publisher">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="blocksize"><![CDATA[1]]></property>
+                <property name="filename"><![CDATA[@ESP_PROJECT_HOME@/test_files/video.mp4]]></property>
+                <property name="publishformat"><![CDATA[wide]]></property>
+                <property name="inputrate"><![CDATA[10]]></property>
+                <property name="repeatcount"><![CDATA[999]]></property>
+                <property name="resize_x"><![CDATA[@PUBLISH_WIDTH@]]></property>
+                <property name="resize_y"><![CDATA[@PUBLISH_HEIGHT@]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-model-reader model-type="onnx" name="w_reader">
+          <description><![CDATA[w_reader is a Model Reader window. This window reads the ONNX model and passes it to the w_score window. Also, pre-processing steps for the incoming events are specified in this window.]]></description>
+          <processing-steps>
+            <pre name="pre_processing_default">
+              <step name="resize">
+                <param name="resizeType"><![CDATA[letterbox]]></param>
+                <param name="width"><![CDATA[@MODEL_WIDTH@]]></param>
+                <param name="height"><![CDATA[@MODEL_HEIGHT@]]></param>
+              </step>
+              <step name="color">
+                <param name="function"><![CDATA[BGR2RGB]]></param>
+              </step>
+              <step name="normalize">
+                <param name="type"><![CDATA[zero_one]]></param>
+              </step>
+              <step name="encode">
+                <param name="shape"><![CDATA[NCHW]]></param>
+              </step>
+            </pre>
+          </processing-steps>
+          <parameters>
+            <properties>
+              <property name="reference"><![CDATA[@ESP_PROJECT_HOME@/analytics/yolov7_pose/yolov7-w6-pose_fp16_io_fp32.onnx]]></property>
+              <property name="execProvider"><![CDATA[cuda]]></property>
+              <property name="cudaDeviceId"><![CDATA[0]]></property>
+            </properties>
+          </parameters>
+        </window-model-reader>
+        <window-score name="w_score">
+          <description><![CDATA[w_score is a Score window. This window executes the ONNX model’s code when data passes through the window.]]></description>
+          <schema>
+            <fields>
+              <field key="true" name="id" type="int64"/>
+              <field name="image" type="blob"/>
+              <field name="output" type="blob"/>
+            </fields>
+          </schema>
+          <models>
+            <offline model-type="onnx">
+              <input-map>
+                <properties>
+                  <property name="images"><![CDATA[image]]></property>
+                </properties>
+              </input-map>
+              <output-map>
+                <properties>
+                  <property name="detections"><![CDATA[output]]></property>
+                </properties>
+              </output-map>
+            </offline>
+          </models>
+        </window-score>
+        <window-python events="postprocess" output-insert-only="true" name="w_postprocess">
+          <description><![CDATA[w_postprocess is a Python window. The Python code in this window converts the model output (tensor format) to more usable formats.]]></description>
+          <schema>
+            <fields>
+              <field name="id" type="int64" key="true"/>
+              <field name="_nObjects_" type="int32"/>
+              <field name="Object_x" type="array(dbl)"/>
+              <field name="Object_y" type="array(dbl)"/>
+              <field name="Object_width" type="array(dbl)"/>
+              <field name="Object_height" type="array(dbl)"/>
+              <field name="Object_score" type="array(dbl)"/>
+              <field name="Object_labels" type="string"/>
+              <field name="Object_kpts_x" type="array(dbl)"/>
+              <field name="Object_kpts_y" type="array(dbl)"/>
+              <field name="Object_kpts_score" type="array(dbl)"/>
+              <field name="Object_kpts_label_id" type="array(i32)"/>
+              <field name="Object_kpts_count" type="array(i32)"/>
+              <field name="image" type="blob"/>
+            </fields>
+          </schema>
+          <copy exclude="true"><![CDATA[output]]></copy>
+          <use expand="true"><![CDATA[output]]></use>
+          <code><![CDATA[
+import numpy as np
+import sys
+sys.path.append("@ESP_PROJECT_HOME@/analytics")
+from esp_utils import onnx_tensor, postprocessing
+
+letterbox_image_shape = (@MODEL_HEIGHT@, @MODEL_WIDTH@)
+original_image_shape = (@PUBLISH_HEIGHT@, @PUBLISH_WIDTH@)
+
+def postprocess(output):
+    event = {}
+    output = onnx_tensor.tensor_to_np_array(output)
+    event["Object_x"] = []
+    event["Object_y"] = []
+    event["Object_width"] = []
+    event["Object_height"] = []
+    
+    event["Object_score"] = []
+    event["Object_labels"] = ""
+    event["Object_kpts_x"] = []
+    event["Object_kpts_y"] = []
+    event["Object_kpts_score"] = []
+    event["Object_kpts_label_id"] = []
+    event["Object_kpts_count"] = []
+
+    if len(output.shape) == 1:
+        output = output[np.newaxis, :]
+    for object_id in range(output.shape[0]):
+        x1 = int(output[object_id, 0])
+        y1 = int(output[object_id, 1])
+        x2 = int(output[object_id, 2])
+        y2 = int(output[object_id, 3])
+        x, y, w, h = postprocessing.bbox_letterbox_to_original(
+            (x1, y1, x2 - x1, y2 - y1), letterbox_image_shape, original_image_shape
+        )
+        score = output[object_id, 4]
+
+
+        event["Object_x"].append(float(x))
+        event["Object_y"].append(float(y))
+        event["Object_width"].append(float(w))
+        event["Object_height"].append(float(h))
+        event["Object_score"].append(float(score))
+        
+    
+        label = 'person'
+        event["Object_labels"] = f"{event['Object_labels']}{label},"
+
+        kpts = output[object_id, 6:].copy()
+        count = 0
+        for k in range(17):
+            (
+                kpts[k * 3],
+                kpts[k * 3 + 1],
+            ) = postprocessing.xy_letterbox_to_original(
+                (kpts[k * 3], kpts[k * 3 + 1]),
+                letterbox_image_shape,
+                original_image_shape,
+            )
+            conf = float(kpts[k*3+2])
+            if conf < 0.3:
+                continue
+            
+            event['Object_kpts_x'].append(float(kpts[k*3]))
+            event['Object_kpts_y'].append(float(kpts[k*3+1]))
+            event['Object_kpts_score'].append(conf)
+            event["Object_kpts_label_id"].append(k)
+            count+=1
+        event["Object_kpts_count"].append(count)
+            
+    event["_nObjects_"] = output.shape[0]
+    event["Object_labels"] = event["Object_labels"][:-1]
+    return event
+]]>          </code>
+        </window-python>
+        <window-object-tracker name="w_object_tracker_array">
+          <description><![CDATA[w_object_tracker_array is an Object Tracker window. This window enables you to track objects over time.]]></description>
+          <tracker method="iou" score-sigma-low="0.3" score-sigma-high="0.3" iou-sigma="0.5" iou-sigma2="0.3" iou-sigma-dup="0.0" velocity-vector-frames="10" max-track-lives="10" min-track-length="0" track-retention="10"/>
+          <output mode="array" tracks="10" keypoints="true" velocity-vector="true"/>
+          <input count="_nObjects_" score="Object_score" label="Object_labels" attributes="_Object%_attributes" label-separator="," coord-type="rect" x="Object_x" y="Object_y" width="Object_width" height="Object_height" kpts-count="Object_kpts_count" kpts-x="Object_kpts_x" kpts-y="Object_kpts_y" kpts-score="Object_kpts_score" kpts-label-id="Object_kpts_label_id"/>
+        </window-object-tracker>
+        <window-counter name="w_counter">
+          <description><![CDATA[w_counter is a Counter window. This window provides an indication of the overall performance.]]></description>
+        </window-counter>
+        <window-python events="create" name="w_annotate">
+          <description><![CDATA[w_annotate is a Python window. The Python code in this window draws the predicted bounding boxes of the model on the image, as well as the detected keypoints for each person.]]></description>
+          <schema>
+            <fields>
+              <field name="id" type="int64" key="true"/>
+              <field name="image" type="blob"/>
+            </fields>
+          </schema>
+          <copy><![CDATA[id]]></copy>
+          <code><![CDATA[import cv2
+import esp_utils
+
+font_face = cv2.FONT_HERSHEY_SIMPLEX
+font_scale = 0.3
+thickness = 1
+sas_blue = (5, 74, 153)[::-1]  # SAS Blue (b,g,r)
+margin = 2
+
+# from https://brand.sas.com/en/home/brand-assets/design-elements/color.html
+# colors are in rgb
+colors = [
+    [7, 102, 209], # SAS Blue
+    [217, 163, 11], # Deep Yellow
+    [204, 45, 45], # Deep Red
+    [6, 193, 204], # Deep Teal
+    [41, 184, 105], # Deep Green
+    [219, 18, 125], # Viya Pink
+    [0, 0, 0], # Black
+    [126, 136, 154], # Slate
+    [255, 255,255], # White
+    [3, 41, 84], # Midnight Blue
+]
+
+with open("@ESP_PROJECT_HOME@/analytics/yolov7_pose/skeleton.txt") as file:
+    labels = [line.rstrip() for line in file]
+
+def create(data, context):
+    event = {}
+    frame = esp_utils.image_conversion.sas_wide_image_to_opencv_image(data["image"])
+    frame = annotate_object_tracker_array(frame.copy(), data)
+
+    kpts_count_pointer = 0
+    # Get keypoints as list of lists for object
+    offset = 0
+    for o in range(data["Object_density"]):
+        object_id = int(data["Object_id"][o])
+        kpts_x = []
+        kpts_y = []
+        score = []
+        label_id = []
+        number_of_tracks_object = data["Object_track_count"][o]
+        for t in range(number_of_tracks_object):
+            kpts_count = data["Object_track_kpts_count"][kpts_count_pointer]
+            kpts_count_pointer += 1
+            kpts_x.append(data["Object_track_kpts_x"][offset : offset + kpts_count])
+            kpts_y.append(data["Object_track_kpts_y"][offset : offset + kpts_count])
+            score.append(data["Object_track_kpts_score"][offset : offset + kpts_count])
+            label_id.append(
+                data["Object_track_kpts_label_id"][offset : offset + kpts_count]
+            )
+            offset += kpts_count
+
+        # Plot keypoints per object
+        # Use below to plot all keypoints in track
+        # for t in range(number_of_tracks_object):
+        # Use below to plot last keypoints in track
+        for t in [number_of_tracks_object - 1]:
+            object_track_kpts_x = kpts_x[t]
+            object_track_kpts_y = kpts_y[t]
+            object_track_label_id = label_id[t]
+
+            for k in range(len(object_track_kpts_x)):
+                cv2.circle(
+                    frame,
+                    (int(object_track_kpts_x[k]), int(object_track_kpts_y[k])),
+                    3,
+                    get_color(object_id - 1),
+                    -1,
+                )
+                cv2.putText(
+                    frame,
+                    labels[object_track_label_id[k]],
+                    (int(object_track_kpts_x[k]), int(object_track_kpts_y[k])),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    0.5,
+                    (255, 255, 255),
+                    1,
+                    cv2.LINE_AA,
+                )
+                
+    # Create a jpeg output image such that we can display it in Grafana
+    image = esp_utils.image_conversion.opencv_image_to_blob_image(frame)
+    event['image'] = image
+    return event
+
+def annotate_object_tracker_array(image, data):
+    """Annotate results from an object tracker window"""
+    for i in range(int(data["Object_density"])):
+        start_point = (int(data["Object_x"][i]), int(data["Object_y"][i]))
+        end_point = (
+            int(data["Object_x"][i] + data["Object_w"][i]),
+            int(data["Object_y"][i] + data["Object_h"][i]),
+        )
+        image = draw_bbox(
+            image,
+            start_point,
+            end_point,
+            f"{data['Object_id'][i]} - {data['Object_label'].split(',')[i]} ({data['Object_score'][i]*100:.0f}%)",
+            box_color=get_color(int(data["Object_id"][i]) - 1),
+        )
+    return image
+
+
+def draw_bbox(image, start_point, end_point, text, box_color=sas_blue):
+    """Draw a bounding box"""
+    cv2.rectangle(image, start_point, end_point, box_color, 1)
+
+    if sum(box_color) / 3 < 150:
+        text_color = (255, 255, 255)  # (b,g,r)
+    else:
+        text_color = (0, 0, 0)  # (b,g,r)
+    text_size = cv2.getTextSize(text, font_face, font_scale, thickness)
+
+    text_width = int(text_size[0][0])
+    text_height = int(text_size[0][1])
+    line_height = text_size[1]
+
+    x_min, y_min = start_point
+    text_x = x_min + margin
+    text_y = y_min - line_height - margin
+
+    # draw a filled rectangle around text
+    cv2.rectangle(
+        image,
+        (text_x - margin, text_y + line_height + margin),
+        (text_x + text_width + margin, text_y - text_height - margin),
+        box_color,
+        -1,
+    )
+
+    cv2.putText(
+        image,
+        text,
+        (text_x, text_y),
+        font_face,
+        font_scale,
+        text_color,
+        thickness,
+        cv2.LINE_AA,
+    )
+    return image
+
+
+def get_color(id):
+    return colors[id % len(colors)][::-1] # reverse the list to use bgr instead of rgb
+          ]]>          </code>
+        </window-python>
+      </windows>
+      <edges>
+        <edge role="data" source="w_data" target="w_score"/>
+        <edge role="model" source="w_reader" target="w_score"/>
+        <edge source="w_score" target="w_postprocess"/>
+        <edge source="w_postprocess" target="w_object_tracker_array"/>
+        <edge source="w_object_tracker_array" target="w_annotate"/>
+        <edge source="w_annotate" target="w_counter"/>
+      </edges>
+    </contquery>
+  </contqueries>
+</project>
