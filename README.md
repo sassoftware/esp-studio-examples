@@ -133,6 +133,7 @@ The following examples in the [Advanced](/Advanced) directory contain practical 
 - activitytracker
 - geofence
 - onnx_object_detection
+- onnx_pose_estimation
 - sailing
 - trades
 
