@@ -87,6 +87,7 @@ The [Advanced](/Advanced) directory contains projects that demonstrate the use o
 | [geofence](/Advanced/geofence) |Display a list of wanted vehicles found near critical infrastructure sites.<br>This example uses Join, Geofence, and Filter windows to match wanted vehicles that are in close proximity to critical infrastructure sites. <br>**Note:** Use this example with SAS Event Stream Processing 2024.01 and later.|
 | [lua_snippet](/Advanced/lua_snippet) |Use a Lua snippet.<br>This example simulates health-care data streaming into a model and detects measurements that fall outside a specified range. A Lua snippet in the project subscribes to windows, stores values, and reads a JSON file. Lua connectors are also used to generate and inject data. <br>**Note:** Use this example with SAS Event Stream Processing 2023.04 and later.|
 | [onnx_object_detection](/Advanced/onnx_object_detection) | Use an ONNX model to detect objects in an incoming video stream.<br>This example demonstrates how you can use an ONNX model to detect objects in an incoming video stream. Post-processing by a Python program converts scoring output to a more usable format. <br>**Note:** Use this example with SAS Event Stream Processing 2024.04 and later.|
+| [onnx_pose_estimation](/Advanced/onnx_pose_estimation) | Use an ONNX model to detect keypoints of a person in an incoming video stream.<br>This example uses pose estimation, which is a computer vision technique for recognizing and categorizing the positions of a human body. This example builds on the onnx_object_detection example.<br>**Note:** Use this example with SAS Event Stream Processing 2024.09 and later.|
 | [sailing](/Advanced/sailing) | Visualize data obtained from a set of boats.<br>This example identifies two geographical areas of interest. One area is an exclusion zone that the boats identified are not permitted to enter. The other is an area where a speed restriction has been applied.|
 | [trades](/Advanced/trades) | Identify large trades in stock market transactions.<br>This project identifies large securities transactions and the traders who were involved in those trades.|
 | [transpose_long](/Advanced/transpose_long) | Transpose data from an aircraft, in long mode.<br>This project conceptualizes an event as a row that consists of multiple columns. You can use a Transpose window to interchange an event's rows as columns, and columns as rows. You will process information about the pitch, yaw, roll, and velocity of an aircraft in flight.|
@@ -162,6 +163,7 @@ The following examples demonstrate how you can use Python code in projects.
 
 The following examples use computer vision techniques:
 - onnx_object_detection
+- onnx_pose_estimation
 
 <!--### What's New
 
