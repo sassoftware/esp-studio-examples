@@ -4,7 +4,7 @@ This example demonstrates how you can use an ONNX model to detect keypoints of a
 
 ---
 **NOTE:**
- - Use this example with SAS Event Stream Processing 2024.04 and later.
+ - Use this example with SAS Event Stream Processing 2024.09 and later.
  - This example contains more than one ZIP file. You cannot manually import this example to SAS Event Stream Processing Studio. Use the **Install example** button instead. For more information, see [Installing Examples Directly from SAS Event Stream Processing Studio](https://github.com/sassoftware/esp-studio-examples/tree/main?tab=readme-ov-file#installing-examples-directly-from-sas-event-stream-processing-studio).
 
 ---
