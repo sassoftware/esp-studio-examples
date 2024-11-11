@@ -1,5 +1,5 @@
 <project name="union" pubsub="auto" threads="3" heartbeat-interval="1" luaroot="@ESP_PROJECT_OUTPUT@/luaroot">
-  <description><![CDATA[A Union window unites two or more event streams using a strict policy or a loose policy. This model contains a Union window that uses a strict policy to merge three event streams of stock market trades together. Input windows that stream events to a Union window must have the same schema.]]></description>
+  <description><![CDATA[A Union window unites two or more event streams using a strict policy or a loose policy. This model contains a Union window that uses a strict policy to merge three event streams of stock market trades together. Input windows that stream events to a Union window must have the same schema.]]></description>
   <metadata>
     <meta id="studioUploadedBy">anonymousUser</meta>
     <meta id="studioUploaded">1696245052579</meta>
