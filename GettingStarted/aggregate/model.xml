@@ -1,5 +1,5 @@
 <project name="aggregate" pubsub="auto" threads="1" heartbeat-interval="1" luaroot="@ESP_PROJECT_OUTPUT@/luaroot">
-  <description><![CDATA[This model applies aggregation functions to a group of stock market trades. When new events arrive in the Aggregate window, they are placed into aggregate groups. After a new event enters the event stream, the aggregation functions are called. The functions then modify the aggregation groups accordingly. Aggregate field calculation functions or expressions that are registered to the Aggregate window must appear in non-key fields, which in this model are totalQuant and maxPrice.]]></description>
+  <description><![CDATA[This model applies aggregation functions to a group of stock market trades. When new events arrive in the Aggregate window, they are placed into aggregate groups. After a new event enters the event stream, the aggregation functions are called. The functions then modify the aggregation groups accordingly. Aggregate field calculation functions or expressions that are registered to the Aggregate window must appear in non-key fields, which in this model are totalQuant and maxPrice.]]></description>
   <metadata>
     <meta id="studioUploadedBy">anonymousUser</meta>
     <meta id="studioUploaded">1696245860999</meta>

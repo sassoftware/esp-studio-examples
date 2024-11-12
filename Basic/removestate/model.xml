@@ -66,7 +66,7 @@
                         
                 <window-remove-state add-log-fields="true" name="removestateWindow" pubsub="true" remove="updates deletes retentionUpdates retentionDeletes">
                               
-                    <description><![CDATA[A Remove State window facilitates the transition of a stateful part of a model to a stateless part of a model. A Remove State window converts all events that it receives into Inserts and adds a field named eventNumber. This field is the only key field of a Remove State window.]]></description>
+                    <description><![CDATA[A Remove State window facilitates the transition of a stateful part of a model to a stateless part of a model. A Remove State window converts all events that it receives into Inserts and adds a field named eventNumber. This field is the only key field of a Remove State window.]]></description>
                             
                 </window-remove-state>
                         
