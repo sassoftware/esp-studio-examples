@@ -1,11 +1,11 @@
 <project heartbeat-interval="1" luaroot="@ESP_PROJECT_OUTPUT@/luaroot" name="trades_lua" pubsub="auto" threads="4">
   <description><![CDATA[This model can be used to identify large securities transactions and the traders who were involved in those trades.]]></description>
   <metadata>
-    <meta id="studioUploadedBy">user1</meta>
-    <meta id="studioUploaded">1713782146593</meta>
-    <meta id="studioModifiedBy">user1</meta>
-    <meta id="studioModified">1713782296943</meta>
-    <meta id="layout">{"trades_cq":{"AddTraderName":{"x":330,"y":295},"BySecurity":{"x":610,"y":540},"LargeTrades":{"x":470,"y":175},"LargeTradesCopy":{"x":890,"y":295},"TotalCost":{"x":470,"y":420},"TotalCostCopy":{"x":330,"y":540},"Traders":{"x":50,"y":420},"Trades":{"x":470,"y":50}}}</meta>
+    <meta id="studioUploadedBy">sasboot</meta>
+    <meta id="studioUploaded">1731925255590</meta>
+    <meta id="studioModifiedBy">sasboot</meta>
+    <meta id="studioModified">1731928123972</meta>
+    <meta id="layout">{"trades_cq":{"AddTraderName":{"x":170,"y":295},"BySecurity":{"x":50,"y":540},"LargeTrades":{"x":410,"y":175},"LargeTradesCopy":{"x":410,"y":295},"TotalCost":{"x":170,"y":420},"TotalCostCopy":{"x":290,"y":540},"Traders":{"x":170,"y":175},"Trades":{"x":410,"y":50}}}</meta>
     <meta id="studioTags">Example</meta>
   </metadata>
   <contqueries>
@@ -136,4 +136,17 @@
       </edges>
     </contquery>
   </contqueries>
+  <project-connectors>
+    <connector-groups>
+      <connector-group name="Trades">
+        <connector-entry connector="trades_cq/Trades/input_trades" state="finished"/>
+      </connector-group>
+      <connector-group name="Traders">
+        <connector-entry connector="trades_cq/Traders/input_traders" state="finished"/>
+      </connector-group>
+    </connector-groups>
+    <edges>
+      <edge source="Traders" target="Trades"/>
+    </edges>
+  </project-connectors>
 </project>
