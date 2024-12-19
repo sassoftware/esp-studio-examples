@@ -21,13 +21,13 @@
       "type": "datasource",
       "id": "sasesp-plugin",
       "name": "SAS Event Stream Processing",
-      "version": "7.48.1"
+      "version": "7.52.0 (2024-07-15T10:16:35.168Z)"
     },
     {
       "type": "panel",
       "id": "volkovlabs-image-panel",
-      "name": "Base64 Image/Video/Audio/PDF",
-      "version": "5.0.0"
+      "name": "Business Media",
+      "version": "6.2.0"
     }
   ],
   "annotations": {
@@ -69,19 +69,30 @@
       "maxDataPoints": 1,
       "options": {
         "autoPlay": true,
+        "autoPlayInfinity": false,
         "buttons": [],
         "controls": true,
         "height": 0,
         "heightMode": "auto",
         "infinityPlay": false,
+        "mediaSources": [
+          {
+            "field": "image",
+            "id": "324a34b3-c4ae-440b-a359-ddd25da15fc5",
+            "refId": "",
+            "type": "image"
+          }
+        ],
         "name": "image",
         "noResultsMessage": "Nothing to display...",
+        "pdfToolbar": true,
         "scale": "auto",
         "toolbar": false,
         "width": 0,
         "widthMode": "original",
         "zoomType": "default"
       },
+      "pluginVersion": "6.2.0",
       "targets": [
         {
           "cqName": "contquery",
@@ -89,9 +100,7 @@
             "type": "sasesp-plugin",
             "uid": "${DS_SAS_EVENT STREAM PROCESSING DATASOURCE}"
           },
-          "fields": [
-            "image"
-          ],
+          "fields": [],
           "hide": false,
           "internalServerUrl": "ws://esps-computer-5fvision-5fwith-5fonnx:80",
           "projectName": "computer_vision_with_onnx",
@@ -143,7 +152,7 @@
   },
   "timezone": "browser",
   "title": "Computer Vision with ONNX",
-  "uid": "b054bce8-552f-4487-821e-f4c4d10d0637",
+  "uid": "b054bce8-552f-4487-821e-f4c4d10d0637x",
   "version": 2,
   "weekStart": ""
 }
