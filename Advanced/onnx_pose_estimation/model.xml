@@ -1,10 +1,10 @@
 <project heartbeat-interval="1" index="pi_EMPTY" luaroot="@ESP_PROJECT_OUTPUT@/luaroot" name="pose_estimation_with_onnx" pubsub="auto" threads="8" use-tagged-token="true">
-    <description><![CDATA[This example demonstrates how you can use an ONNX model to detect keypoints of a person in an incoming video stream. It uses pose estimation, which is a computer vision technique for recognizing and categorizing the positions of a human.]]></description>
+  <description><![CDATA[This example demonstrates how you can use an ONNX model to detect keypoints of a person in an incoming video stream. It uses pose estimation, which is a computer vision technique for recognizing and categorizing the positions of a human.]]></description>
   <metadata>
-    <meta id="studioUploadedBy">appadmin</meta>
-    <meta id="studioUploaded">1715160552099</meta>
-    <meta id="studioModifiedBy">appadmin</meta>
-    <meta id="studioModified">1715163387860</meta>
+    <meta id="studioUploadedBy">anonymousUser</meta>
+    <meta id="studioUploaded">1737480275506</meta>
+    <meta id="studioModifiedBy">anonymousUser</meta>
+    <meta id="studioModified">1737480391380</meta>
     <meta id="layout">{"contquery":{"w_annotate":{"x":50,"y":540},"w_counter":{"x":50,"y":665},"w_data":{"x":290,"y":50},"w_object_tracker_array":{"x":50,"y":420},"w_postprocess":{"x":50,"y":295},"w_reader":{"x":50,"y":50},"w_score":{"x":50,"y":175}}}</meta>
     <meta id="studioTags">Example</meta>
   </metadata>
@@ -187,11 +187,11 @@ def postprocess(output):
     event["_nObjects_"] = output.shape[0]
     event["Object_labels"] = event["Object_labels"][:-1]
     return event
-]]>          </code>
+          ]]></code>
         </window-python>
         <window-object-tracker name="w_object_tracker_array">
           <description><![CDATA[w_object_tracker_array is an Object Tracker window. This window enables you to track objects over time.]]></description>
-          <tracker method="iou" score-sigma-low="0.3" score-sigma-high="0.3" iou-sigma="0.5" iou-sigma2="0.3" iou-sigma-dup="0.0" velocity-vector-frames="10" max-track-lives="10" min-track-length="0" track-retention="10"/>
+          <tracker method="bytetrack" track-thresh="0.5" high-thresh="0.6" match-thresh="0.8" velocity-vector-frames="10" max-track-lives="10" track-retention="10"/>
           <output mode="array" tracks="10" keypoints="true" velocity-vector="true"/>
           <input count="_nObjects_" score="Object_score" label="Object_labels" attributes="_Object%_attributes" label-separator="," coord-type="rect" x="Object_x" y="Object_y" width="Object_width" height="Object_height" kpts-count="Object_kpts_count" kpts-x="Object_kpts_x" kpts-y="Object_kpts_y" kpts-score="Object_kpts_score" kpts-label-id="Object_kpts_label_id"/>
         </window-object-tracker>

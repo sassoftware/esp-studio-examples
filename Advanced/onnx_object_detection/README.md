@@ -4,7 +4,7 @@ This example demonstrates how you can use an ONNX model to detect objects in an 
 
 ---
 **NOTE:**
-Use this example with SAS Event Stream Processing 2024.04 and later.
+Use this example with SAS Event Stream Processing 2025.02 and later.
 
 ---
 
@@ -110,6 +110,9 @@ Explore the settings for this window:
 ### w_object_tracker
 
 Click the object_tracker window to explore its settings.
+1. Click the w_object_tracker window.
+2. In the right pane, expand **Tracking Properties**.
+	- The **Tracking method** field specifies that the ByteTrack algorithm is being used. For more information about the ByteTrack algorithm, see [ByteTrack Method](https://documentation.sas.com/?cdcId=espcdc&cdcVersion=default&docsetId=espcreatewindows&docsetTarget=p0jsgd7e0fa40ln16wxod1qpj9d2.htm#n1xe73kilw1gt3n1jntjbqrk8zo1).
 
 After an ONNX model is used to detect objects and post-processing is applied, tracking the detected objects over time can be a useful next step. For example, you could follow a person between multiple frames. In this example, the w_object_tracker window tracks a mobile phone and an apple on a table, rather than a person. 
 

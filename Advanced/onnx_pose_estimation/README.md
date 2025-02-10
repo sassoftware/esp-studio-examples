@@ -4,7 +4,7 @@ This example demonstrates how you can use an ONNX model to detect keypoints of a
 
 ---
 **NOTE:**
- - Use this example with SAS Event Stream Processing 2024.09 and later.
+ - Use this example with SAS Event Stream Processing 2025.02 and later.
  - This example contains more than one ZIP file. You cannot manually import this example to SAS Event Stream Processing Studio. Use the **Install example** button instead. For more information, see [Installing Examples Directly from SAS Event Stream Processing Studio](https://github.com/sassoftware/esp-studio-examples/tree/main?tab=readme-ov-file#installing-examples-directly-from-sas-event-stream-processing-studio).
 
 ---
@@ -60,6 +60,11 @@ For each keypoint that has a confidence score of more than 0.3, the x coordinate
 
 ### w_object_tracker_array
 The w_object_tracker_array window in this example differs from the Object Tracker window in [Computer Vision Using an ONNX Model (Tiny YOLO Version 7)](https://github.com/sassoftware/esp-studio-examples/tree/main/Advanced/onnx_object_detection). 
+
+Click the object_tracker window to explore its settings.
+1. Click the w_object_tracker_array window.
+2. In the right pane, expand **Tracking Properties**.
+	- The **Tracking method** field specifies that the ByteTrack algorithm is being used. For more information about the ByteTrack algorithm, see [ByteTrack Method](https://documentation.sas.com/?cdcId=espcdc&cdcVersion=default&docsetId=espcreatewindows&docsetTarget=p0jsgd7e0fa40ln16wxod1qpj9d2.htm#n1xe73kilw1gt3n1jntjbqrk8zo1).
 
 In this pose estimation example, both the bounding boxes and the detected keypoints are passed to the Object Tracker window. Each person is tracked over time using the bounding box as in the previous example, but now the detected keypoints for each track can also be retrieved. 
 
