@@ -1,0 +1,120 @@
+<project name="alerts_suppression" threads="1" pubsub="auto" heartbeat-interval="1" luaroot="@ESP_PROJECT_OUTPUT@/luaroot">
+  <metadata>
+    <meta id="layout">{"cq1":{"Alert_Suppression":{"x":50,"y":300},"alertsData":{"x":50,"y":175},"inputRate":{"x":50,"y":50}}}</meta>
+    <meta id="studioUploadedBy">sasboot</meta>
+    <meta id="studioUploaded">1745492934029</meta>
+    <meta id="studioModifiedBy">sasboot</meta>
+    <meta id="studioModified">1745493189984</meta>
+    <meta id="studioTags">custom_window, lua</meta>
+  </metadata>
+  <contqueries>
+    <contquery name="cq1">
+      <windows>
+        <window-source index="pi_EMPTY" insert-only="true" autogen-key="true" output-insert-only="true" name="inputRate">
+          <schema>
+            <fields>
+              <field name="id" type="int64" key="true"/>
+              <field name="time" type="stamp"/>
+              <field name="label" type="string"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="timer" name="dummyStream">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="label"><![CDATA[dummy data]]></property>
+                <property name="timeformat"><![CDATA[%Y-%m-%d %H:%M:%S]]></property>
+                <property name="maxevents"><![CDATA[1000000]]></property>
+                <property name="interval"><![CDATA[1]]></property>
+                <property name="unit"><![CDATA[second]]></property>
+                <property name="basetime"><![CDATA[2023-01-01 00:00:01]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-lua events="create" index="pi_EMPTY" output-insert-only="true" name="alertsData">
+          <schema>
+            <fields>
+              <field name="alert_id" type="int64" key="true"/>
+              <field name="alert_group" type="string"/>
+              <field name="alert_stmp" type="stamp"/>
+            </fields>
+          </schema>
+          <code><![CDATA[--[[ 
+    Created by Andrey Matveenko on 12/25/2025, 4:34:34 PM
+--]]
+
+local group_gen = 'default'
+
+
+function create(data, context)
+    local event = {} 
+    local i = math.random(0, 2) 
+
+
+    if i == 0 then
+        group_gen = 'mezzanine'
+    elseif i == 1 then
+        group_gen = 'reception'
+    else
+        group_gen = 'workshop'
+    end
+
+
+    event.alert_id = data.id
+    event.alert_group = group_gen
+    event.alert_stmp = data.time
+
+
+    return event 
+end
+]]></code>
+        </window-lua>
+        <window-custom type="Alert Suppression" version="1" index="pi_EMPTY" name="Alert_Suppression">
+          <description><![CDATA[....]]></description>
+          <schema>
+            <fields>
+              <field name="alert_id" type="int64" key="true"/>
+              <field name="alert_group" type="string"/>
+              <field name="alert_stmp" type="stamp"/>
+              <field name="alert_supressed" type="int64"/>
+            </fields>
+          </schema>
+          <plugin code="@ESP_PROJECT_HOME@/custom_windows/Alert Suppression/Alert Suppression.lua">
+            <input-map description="...">
+              <properties>
+                <property name="alert_id" description="unique alert key, will be a key in the output schema" required="true">alert_id</property>
+                <property name="alert_group" description="if missing default group will be assigned and warning message will be sent to the log">alert_group</property>
+                <property name="alert_stmp" description="can be set in SETTINGS[ALERT_TIME_FIELD], if field is missing system time will be used instead and info message will be sent to the log">alert_stmp</property>
+                <property name="alert_group_stmp" description="only required when SETTINGS[USE_EXTERNAL_CACHE] = 1 "/>
+              </properties>
+            </input-map>
+            <output-map description="...">
+              <properties>
+                <property name="alert_id" description="propagated from input">alert_id</property>
+                <property name="alert_group" description="propagated from input">alert_group</property>
+                <property name="alert_stmp" description="propagated from input">alert_stmp</property>
+                <property name="alert_suppressed" description="suppression flag">alert_supressed</property>
+              </properties>
+            </output-map>
+            <initialization description="...">
+              <properties>
+                <property name="ALERT_TIME_FIELD" description="The name of a time field (string) from the input event schema to use for calculating the suppression period. If not set or the field name does not exist in the event metadata, the system time will be used instead."><![CDATA[alert_stmp]]></property>
+                <property name="SUPPRESSION_PERIOD" description="An integer number of seconds after which all alerts should be suppressed after the first. The period works for unique alert_group. When the period ends, the first new event passes, and the suppressed period is renewed."><![CDATA[10]]></property>
+                <property name="USE_EXTERNAL_CACHE" description="Where to store the suppression period state. If set to 0, the state will be stored only in the Lua window. In this case, we do not support HA and autoscaling in K8ts for the project. If set to '1', the current state will come as the alert_group_stmp field from the input window, and the project will be stateless and autoscalable. The cache can be stored in any persistent storage, we recommend implementing the cache using Redis (see the project template)"><![CDATA[0]]></property>
+                <property name="OUTPUT_SUPPRESSED_EVENTS" description="Output suppressed events from the window (with alert_suppressed = 1  ) "><![CDATA[1]]></property>
+                <property name="LOG_SUPPRESSED_EVENTS" description="Output every suppressed event to the pod log"><![CDATA[1]]></property>
+                <property name="MIN_COUNT" description="Allowed minimum number of alerts in a given alert_group in the last COUNT_INTERVAL seconds.A value of '0' or no setting means that this mode is disabled."><![CDATA[2]]></property>
+                <property name="COUNT_INTERVAL" description="The number of seconds during which the number of alerts in the alert_group will be counted and compared to the MIN_COUNT. If it is less, the alert will be suppressed. A value of '0' or no setting means that this mode is disabled."><![CDATA[10]]></property>
+              </properties>
+            </initialization>
+          </plugin>
+        </window-custom>
+      </windows>
+      <edges>
+        <edge source="inputRate" target="alertsData"/>
+        <edge source="alertsData" target="Alert_Suppression"/>
+      </edges>
+    </contquery>
+  </contqueries>
+</project>

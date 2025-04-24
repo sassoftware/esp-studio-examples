@@ -124,6 +124,16 @@ The [Analytics](/Analytics) directory contains projects that show how to use var
 |[analytics_TFIDF](/Analytics/analytics_TFIDF) | Use the Term Frequency - Inverse Document Frequency (TFIDF) algorithm.<br>TFIDF can be used as a weighing factor in text mining or general information searches. <!--This project contains a single continuous query that consists of the following: 1. A Source window that receives scored data from a Score window to be analyzed. 2. A Calculate window that runs the TFIDF algorithm.--> |
 |[analytics_tSNE](/Analytics/analytics_tSNE) | Use the t-Distributed Stochastic Neighbor Embedding (t-SNE) algorithm.<br>The t-SNE algorithm is a machine learning algorithm for dimensionality reduction that is used to visualize high-dimensional data sets. <!--This project contains a single continuous query that consists of the following: 1. a Source window that receives data to be trained and scored. 2. a Train window that generates and periodically updates the t-SNE model 3. a Score window that performs the scoring.--> |
 
+### Custom Windows
+
+The [Custom Windows](/CustomWindows) directory contains projects that make use of user defined Custom Windows that can be found on the [Custom Windows GitHub](https://github.com/sassoftware/esp-studio-custom-windows/tree/main).
+
+| Example | Description |
+| ------ | ------ |
+|[alert_suppression](/CustomWindows/alert_suppression) |Use the Alert Suppression Custom Window.<br>This project shows the basic usage of the Alert Suppression Custom Window to supress alerts based on an adjustable allowed frequency.<br>**Note:** Use this example with SAS Event Stream Processing 2025.05 and later. |
+|[event_sorter](/CustomWindows/event_sorter) |Use the Event Sorter Custom Window.<br>This project shows the basic usage of the Event Sorter Custom Window to sort incoming events based on the time they were created opposed to when they were available to the event stream.<br>**Note:** Use this example with SAS Event Stream Processing 2025.05 and later. |
+|[mathematical_operations](/CustomWindows/mathematical_operations) |Use the Mathematical Operations Custom Window.<br>This project shows the basic usage of the Mathematical Operations Custom Window to apply a selected mathematical operation to two numbers.<br>**Note:** Use this example with SAS Event Stream Processing 2025.05 and later. |
+
 ## Identifying Suitable Examples
 
 ### Examples with Practical Use Cases
@@ -162,9 +172,16 @@ The following examples demonstrate how you can use Python code in projects.
 
 ### Examples That Use Computer Vision
 
-The following examples use computer vision techniques:
+The following examples use computer vision techniques.
 - onnx_object_detection
 - onnx_pose_estimation
+
+### Examples that use Custom Windows
+
+The following examples use custom windows.
+- alert_suppression
+- event_sorter
+- mathematical_operations
 
 <!--### What's New
 
