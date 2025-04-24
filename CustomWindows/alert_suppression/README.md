@@ -1,6 +1,6 @@
 # Alert Suppression
 
-Use a Alert Suppression custom window to suppress output event alerts based on the allowed frequency.
+Use an Alert Suppression custom window to suppress output event alerts based on the allowed frequency.
 
 When an alert arrives, the Alert Suppression custom window checks whether it is the first alert in the suppression period. If it is the first alert, then the alert is passed on. If it is not the first alert, then the alert is removed or marked as suppressed, and the alert is saved to the log. The Alert Suppression custom window uses Lua code.
 

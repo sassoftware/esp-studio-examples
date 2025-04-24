@@ -178,7 +178,7 @@ The following examples use computer vision techniques.
 
 ### Examples that use Custom Windows
 
-The following examples use Custom Windows.
+The following examples use custom windows.
 - alert_suppression
 - event_sorter
 - mathematical_operations
