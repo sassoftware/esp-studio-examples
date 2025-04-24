@@ -1,0 +1,181 @@
+<project heartbeat-interval="1" luaroot="@ESP_PROJECT_OUTPUT@/luaroot" name="event_sorter" pubsub="auto" threads="1">
+      
+    <metadata>
+            
+        <meta id="layout">{"cq1":{"EventSort":{"x":50,"y":295},"ParseTime":{"x":50,"y":175},"ReadISSdata":{"x":50,"y":50}}}</meta>
+            
+        <meta id="studioUploadedBy">x</meta>
+            
+        <meta id="studioUploaded">1740498805759</meta>
+            
+        <meta id="studioModifiedBy">x</meta>
+            
+        <meta id="studioModified">1740500213778</meta>
+          
+    </metadata>
+      
+    <contqueries>
+            
+        <contquery name="cq1">
+                  
+            <windows>
+                        
+                <window-source autogen-key="true" index="pi_EMPTY" insert-only="true" name="ReadISSdata">
+                              
+                    <description><![CDATA[Example project which highlights the eventsort custom window.  ISS data is read into the source window in reverse order by time and sorted into correct chronological order using the EventSort custom window.]]></description>
+                              
+                    <schema>
+                                    
+                        <fields>
+                                          
+                            <field key="true" name="key" type="int64"/>
+                                          
+                            <field name="dt" type="string"/>
+                                          
+                            <field name="long" type="double"/>
+                                          
+                            <field name="lat" type="double"/>
+                                        
+                        </fields>
+                                  
+                    </schema>
+                              
+                    <connectors>
+                                    
+                        <connector class="fs" name="iss_input_unsorted_Connector">
+                                          
+                            <properties>
+                                                
+                                <property name="type"><![CDATA[pub]]></property>
+                                                
+                                <property name="dateformat"><![CDATA[	 %m/%d/%Y:%H:%M:%S]]></property>
+                                                
+                                <property name="fsname"><![CDATA[@ESP_PROJECT_HOME@/files/iss_input_unsorted.csv]]></property>
+                                                
+                                <property name="fstype"><![CDATA[csv]]></property>
+                                              
+                            </properties>
+                                        
+                        </connector>
+                                  
+                    </connectors>
+                            
+                </window-source>
+                        
+                <window-lua events="create" index="pi_EMPTY" name="ParseTime">
+                              
+                    <description><![CDATA[Lua window to convert the human readable time into Linux epoch time.]]></description>
+                              
+                    <schema>
+                                    
+                        <fields>
+                                          
+                            <field key="true" name="key" type="int64"/>
+                                          
+                            <field name="epochtime" type="int64"/>
+                                          
+                            <field name="dt" type="string"/>
+                                          
+                            <field name="long" type="double"/>
+                                          
+                            <field name="lat" type="double"/>
+                                        
+                        </fields>
+                                  
+                    </schema>
+                              
+                    <copy><![CDATA[key,dt,long,lat]]></copy>
+                              
+                    <code><![CDATA[--[[--Created by happyuser at 2/10/2025, 3:12:41 PM--]]--
+function create(data,context)
+    local event = {}
+    --[[-- Enter your code here --]]--
+    event.epochtime = esp_parseDate(data.dt,"%m/%d/%Y:%H:%M:%S") * 1000000
+    return(event)
+end]]></code>
+                            
+                </window-lua>
+                        
+                <window-custom index="pi_EMPTY" name="EventSort" type="EventSort" version="67">
+                              
+                    <description><![CDATA[Sort incoming events so that they are injected into stream in time order.]]></description>
+                              
+                    <schema>
+                                    
+                        <fields>
+                                          
+                            <field key="true" name="key" type="int64"/>
+                                          
+                            <field name="epochtime" type="int64"/>
+                                          
+                            <field name="dt" type="string"/>
+                                          
+                            <field name="long" type="double"/>
+                                          
+                            <field name="lat" type="double"/>
+                                        
+                        </fields>
+                                  
+                    </schema>
+                              
+                    <plugin code="@ESP_PROJECT_HOME@/custom_windows/EventSort/EventSort.lua">
+                                    
+                        <input-map>
+                                          
+                            <properties>
+                                                
+                                <property description="linux epoch time in microseconds." name="epochtime" required="true"><![CDATA[epochtime]]></property>
+                                                
+                                <property description="readable data and time " name="dt" required="true"><![CDATA[dt]]></property>
+                                                
+                                <property description="latitude " name="lat" required="true"><![CDATA[lat]]></property>
+                                                
+                                <property description="longitude " name="long" required="true"><![CDATA[long]]></property>
+                                                
+                                <property description="event key field " name="key" required="true"><![CDATA[key]]></property>
+                                              
+                            </properties>
+                                        
+                        </input-map>
+                                    
+                        <output-map>
+                                          
+                            <properties>
+                                                
+                                <property description="manitory but unused  " name="Out1"><![CDATA[key]]></property>
+                                              
+                            </properties>
+                                        
+                        </output-map>
+                                    
+                        <initialization>
+                                          
+                            <properties>
+                                                
+                                <property description="Name of schema entry which contains sort variable" name="config_sort_field"><![CDATA[epochtime]]></property>
+                                                
+                                <property description="Number of microseconds to queue events for sorting " name="config_sort_delay"><![CDATA[1000000]]></property>
+                                              
+                            </properties>
+                                        
+                        </initialization>
+                                  
+                    </plugin>
+                            
+                </window-custom>
+                      
+            </windows>
+                  
+            <edges>
+                        
+                <edge source="ReadISSdata" target="ParseTime"/>
+                        
+                <edge source="ParseTime" target="EventSort"/>
+                      
+            </edges>
+                
+        </contquery>
+          
+    </contqueries>
+    
+</project>
