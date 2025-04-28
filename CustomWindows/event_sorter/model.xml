@@ -96,7 +96,7 @@ end]]></code>
                             
                 </window-lua>
                         
-                <window-custom index="pi_EMPTY" name="EventSort" type="EventSort" version="67">
+                <window-custom index="pi_EMPTY" name="EventSort" type="EventSort" version="1">
                               
                     <description><![CDATA[Sort incoming events so that they are injected into stream in time order.]]></description>
                               
