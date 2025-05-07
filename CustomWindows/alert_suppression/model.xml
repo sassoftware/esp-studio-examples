@@ -1,11 +1,11 @@
-<project name="alerts_suppression" threads="1" pubsub="auto" heartbeat-interval="1" luaroot="@ESP_PROJECT_OUTPUT@/luaroot">
+<project name="alert_suppression" threads="1" pubsub="auto" heartbeat-interval="1" luaroot="@ESP_PROJECT_OUTPUT@/luaroot">
   <metadata>
     <meta id="layout">{"cq1":{"Alert_Suppression":{"x":50,"y":300},"alertsData":{"x":50,"y":175},"inputRate":{"x":50,"y":50}}}</meta>
-    <meta id="studioUploadedBy">sasboot</meta>
-    <meta id="studioUploaded">1745492934029</meta>
-    <meta id="studioModifiedBy">sasboot</meta>
-    <meta id="studioModified">1745493189984</meta>
-    <meta id="studioTags">custom_window, lua</meta>
+    <meta id="studioUploadedBy">anonymousUser</meta>
+    <meta id="studioUploaded">1746609911375</meta>
+    <meta id="studioModifiedBy">anonymousUser</meta>
+    <meta id="studioModified">1746610022737</meta>
+    <meta id="studioTags">Example</meta>
   </metadata>
   <contqueries>
     <contquery name="cq1">
@@ -40,11 +40,7 @@
               <field name="alert_stmp" type="stamp"/>
             </fields>
           </schema>
-          <code><![CDATA[--[[ 
-    Created by Andrey Matveenko on 12/25/2025, 4:34:34 PM
---]]
-
-local group_gen = 'default'
+          <code><![CDATA[local group_gen = 'default'
 
 
 function create(data, context)
@@ -71,7 +67,6 @@ end
 ]]></code>
         </window-lua>
         <window-custom type="Alert Suppression" version="1" index="pi_EMPTY" name="Alert_Suppression">
-          <description><![CDATA[....]]></description>
           <schema>
             <fields>
               <field name="alert_id" type="int64" key="true"/>
@@ -81,23 +76,23 @@ end
             </fields>
           </schema>
           <plugin code="@ESP_PROJECT_HOME@/custom_windows/Alert Suppression/Alert Suppression.lua">
-            <input-map description="...">
+            <input-map>
               <properties>
-                <property name="alert_id" description="unique alert key, will be a key in the output schema" required="true">alert_id</property>
-                <property name="alert_group" description="if missing default group will be assigned and warning message will be sent to the log">alert_group</property>
-                <property name="alert_stmp" description="can be set in SETTINGS[ALERT_TIME_FIELD], if field is missing system time will be used instead and info message will be sent to the log">alert_stmp</property>
+                <property name="alert_id" description="unique alert key, will be a key in the output schema" required="true"><![CDATA[alert_id]]></property>
+                <property name="alert_group" description="if missing default group will be assigned and warning message will be sent to the log"><![CDATA[alert_group]]></property>
+                <property name="alert_stmp" description="can be set in SETTINGS[ALERT_TIME_FIELD], if field is missing system time will be used instead and info message will be sent to the log"><![CDATA[alert_stmp]]></property>
                 <property name="alert_group_stmp" description="only required when SETTINGS[USE_EXTERNAL_CACHE] = 1 "/>
               </properties>
             </input-map>
-            <output-map description="...">
+            <output-map>
               <properties>
-                <property name="alert_id" description="propagated from input">alert_id</property>
-                <property name="alert_group" description="propagated from input">alert_group</property>
-                <property name="alert_stmp" description="propagated from input">alert_stmp</property>
-                <property name="alert_suppressed" description="suppression flag">alert_supressed</property>
+                <property name="alert_id" description="propagated from input"><![CDATA[alert_id]]></property>
+                <property name="alert_group" description="propagated from input"><![CDATA[alert_group]]></property>
+                <property name="alert_stmp" description="propagated from input"><![CDATA[alert_stmp]]></property>
+                <property name="alert_suppressed" description="suppression flag"><![CDATA[alert_supressed]]></property>
               </properties>
             </output-map>
-            <initialization description="...">
+            <initialization>
               <properties>
                 <property name="ALERT_TIME_FIELD" description="The name of a time field (string) from the input event schema to use for calculating the suppression period. If not set or the field name does not exist in the event metadata, the system time will be used instead."><![CDATA[alert_stmp]]></property>
                 <property name="SUPPRESSION_PERIOD" description="An integer number of seconds after which all alerts should be suppressed after the first. The period works for unique alert_group. When the period ends, the first new event passes, and the suppressed period is renewed."><![CDATA[10]]></property>

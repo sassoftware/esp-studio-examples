@@ -1,52 +1,29 @@
 <project heartbeat-interval="1" luaroot="@ESP_PROJECT_OUTPUT@/luaroot" name="mathematical_operations" pubsub="auto" threads="1">
-      
-    <metadata>
-            
-        <meta id="layout">{"cq1":{"Mathematical_Operations":{"x":50,"y":175},"Source":{"x":50,"y":50}}}</meta>
-            
-        <meta id="studioUploadedBy">anonymousUser</meta>
-            
-        <meta id="studioUploaded">1745491074047</meta>
-            
-        <meta id="studioModifiedBy">anonymousUser</meta>
-            
-        <meta id="studioModified">1745491203968</meta>
-          
-    </metadata>
-      
-    <contqueries>
-            
-        <contquery name="cq1">
-                  
-            <windows>
-                        
-                <window-source autogen-key="true" index="pi_EMPTY" insert-only="true" name="Source">
-                              
-                    <schema>
-                                    
-                        <fields>
-                                          
-                            <field key="true" name="key" type="int64"/>
-                                          
-                            <field name="number_1" type="int32"/>
-                                          
-                            <field name="number_2" type="int32"/>
-                                        
-                        </fields>
-                                  
-                    </schema>
-                              
-                    <connectors>
-                                    
-                        <connector class="python" name="python_publisher">
-                                          
-                            <properties>
-                                                
-                                <property name="type"><![CDATA[pub]]></property>
-                                                
-                                <property name="interval"><![CDATA[1 seconds]]></property>
-                                                
-                                <property name="code"><![CDATA[import random
+  <metadata>
+    <meta id="layout">{"cq1":{"Mathematical_Operations":{"x":50,"y":175},"Source":{"x":50,"y":50}}}</meta>
+    <meta id="studioUploadedBy">anonymousUser</meta>
+    <meta id="studioUploaded">1746610335521</meta>
+    <meta id="studioModifiedBy">anonymousUser</meta>
+    <meta id="studioModified">1746610392270</meta>
+    <meta id="studioTags">Example</meta>
+  </metadata>
+  <contqueries>
+    <contquery name="cq1">
+      <windows>
+        <window-source autogen-key="true" index="pi_EMPTY" insert-only="true" name="Source">
+          <schema>
+            <fields>
+              <field key="true" name="key" type="int64"/>
+              <field name="number_1" type="int32"/>
+              <field name="number_2" type="int32"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="python" name="python_publisher">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="interval"><![CDATA[1 seconds]]></property>
+                <property name="code"><![CDATA[import random
 
 def publish():
 
@@ -60,87 +37,45 @@ def publish():
         "done": False
     }
 ]]></property>
-                                              
-                            </properties>
-                                        
-                        </connector>
-                                  
-                    </connectors>
-                            
-                </window-source>
-                        
-                <window-custom name="Mathematical_Operations" type="Mathematical Operations" version="1">
-                              
-                    <description><![CDATA[Applies the selected mathematical operation to two input numbers.]]></description>
-                              
-                    <schema>
-                                    
-                        <fields>
-                                          
-                            <field key="true" name="key" type="int64"/>
-                                          
-                            <field name="number_1" type="int32"/>
-                                          
-                            <field name="number_2" type="int32"/>
-                                          
-                            <field name="operator" type="string"/>
-                                          
-                            <field name="result" type="double"/>
-                                        
-                        </fields>
-                                  
-                    </schema>
-                              
-                    <plugin code="@ESP_PROJECT_HOME@/custom_windows/Mathematical Operations/Mathematical Operations.py">
-                                    
-                        <input-map>
-                                          
-                            <properties>
-                                                
-                                <property description="First number" esp_type="int32" name="number_1" required="true"><![CDATA[number_1]]></property>
-                                                
-                                <property description="Second number" esp_type="int32" name="number_2" required="true"><![CDATA[number_2]]></property>
-                                              
-                            </properties>
-                                        
-                        </input-map>
-                                    
-                        <output-map>
-                                          
-                            <properties>
-                                                
-                                <property description="Operator" esp_type="string" name="operator"><![CDATA[operator]]></property>
-                                                
-                                <property description="Result" esp_type="double" name="output_number"><![CDATA[result]]></property>
-                                              
-                            </properties>
-                                        
-                        </output-map>
-                                    
-                        <initialization>
-                                          
-                            <properties>
-                                                
-                                <property description="Mathematical operator" name="operator" values="+,-,*,/"><![CDATA[*]]></property>
-                                              
-                            </properties>
-                                        
-                        </initialization>
-                                  
-                    </plugin>
-                            
-                </window-custom>
-                      
-            </windows>
-                  
-            <edges>
-                        
-                <edge source="Source" target="Mathematical_Operations"/>
-                      
-            </edges>
-                
-        </contquery>
-          
-    </contqueries>
-    
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-custom type="Mathematical Operations" version="1" name="Mathematical_Operations">
+          <description><![CDATA[Applies the selected mathematical operation to two input numbers.]]></description>
+          <schema>
+            <fields>
+              <field key="true" name="key" type="int64"/>
+              <field name="number_1" type="int32"/>
+              <field name="number_2" type="int32"/>
+              <field name="operator" type="string"/>
+              <field name="result" type="double"/>
+            </fields>
+          </schema>
+          <plugin code="@ESP_PROJECT_HOME@/custom_windows/Mathematical Operations/Mathematical Operations.py">
+            <input-map>
+              <properties>
+                <property name="number_1" description="First number" required="true" esp_type="int32"><![CDATA[number_1]]></property>
+                <property name="number_2" description="Second number" required="true" esp_type="int32"><![CDATA[number_2]]></property>
+              </properties>
+            </input-map>
+            <output-map>
+              <properties>
+                <property name="operator" description="Operator" esp_type="string"><![CDATA[operator]]></property>
+                <property name="output_number" description="Result" esp_type="double"><![CDATA[result]]></property>
+              </properties>
+            </output-map>
+            <initialization>
+              <properties>
+                <property name="operator" description="Mathematical operator" values="+,-,*,/"><![CDATA[*]]></property>
+              </properties>
+            </initialization>
+          </plugin>
+        </window-custom>
+      </windows>
+      <edges>
+        <edge source="Source" target="Mathematical_Operations"/>
+      </edges>
+    </contquery>
+  </contqueries>
 </project>
