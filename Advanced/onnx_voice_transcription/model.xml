@@ -1,0 +1,135 @@
+<project name="Whisper" pubsub="auto" threads="4" heartbeat-interval="1" index="pi_EMPTY">
+  <metadata>
+    <meta id="layout">{"cq":{"w_audio":{"x":170,"y":50},"w_postproc":{"x":170,"y":450},"w_preproc":{"x":170,"y":175},"w_reader":{"x":410,"y":175},"w_score":{"x":170,"y":295}}}</meta>
+    <meta id="studioUploadedBy">sasadm</meta>
+    <meta id="studioUploaded">1746732556293</meta>
+    <meta id="studioModifiedBy">sasadm</meta>
+    <meta id="studioModified">1747330551994</meta>
+  </metadata>
+  <contqueries>
+    <contquery name="cq" timing-threshold="1000">
+      <windows>
+        <window-source insert-only="true" pubsub="true" autogen-key="true" queue-height="32" name="w_audio">
+          <schema>
+            <fields>
+              <field name="id" type="int64" key="true"/>
+              <field name="audio" type="int64"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="audio" name="audio" active="false">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="devicename"><![CDATA[hw:0,0]]></property>
+                <property name="blocksize"><![CDATA[160000]]></property>
+                <property name="samplerate"><![CDATA[16000]]></property>
+                <property name="wavfilename"><![CDATA[espwav]]></property>
+              </properties>
+            </connector>
+            <connector class="python" name="python">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="blocksize"><![CDATA[160000]]></property>
+                <property name="code"><![CDATA[#python code  
+from files.esp_whisper_funs import publish_fun_ac  
+image_gen = publish_fun_ac()
+def publish():
+  return next(image_gen)
+  #python code]]></property>
+              </properties>
+            </connector>
+            <connector class="fs" name="sub1" active="false">
+              <properties>
+                <property name="type"><![CDATA[sub]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
+                <property name="fsname"><![CDATA[audio.csv]]></property>
+                <property name="snapshot"><![CDATA[true]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-python events="preproc" output-insert-only="true" process-blocks="true" index="pi_EMPTY" name="w_preproc">
+          <schema>
+            <fields>
+              <field name="id" type="int64" key="true"/>
+              <field name="audio_pcm" type="blob"/>
+              <field name="max_length" type="blob"/>
+              <field name="min_length" type="blob"/>
+              <field name="num_beams" type="blob"/>
+              <field name="num_return_sequences" type="blob"/>
+              <field name="length_penalty" type="blob"/>
+              <field name="repetition_penalty" type="blob"/>
+            </fields>
+          </schema>
+          <code file="@ESP_PROJECT_HOME@/files/esp_whisper_funs.py"/>
+        </window-python>
+        <window-model-reader model-type="onnx" name="w_reader">
+          <description><![CDATA[w_reader is a Model Reader window. This window reads the ONNX model and passes it to the w_score window. Also, pre-processing steps for the incoming events are specified in this window.]]></description>
+          <parameters>
+            <properties>
+              <property name="reference"><![CDATA[@ESP_PROJECT_HOME@/analytics/whisper_sm_int8_cpu.onnx]]></property>
+              <property name="loggingLevel"><![CDATA[warning]]></property>
+              <property name="execProvider"><![CDATA[cpu]]></property>
+            </properties>
+          </parameters>
+        </window-model-reader>
+        <window-score name="w_score">
+          <description><![CDATA[w_score is a Score window. This window executes the ONNX model's code when data passes through the window.]]></description>
+          <schema>
+            <fields>
+              <field key="true" name="id" type="int64"/>
+              <field name="generated_ids" type="blob"/>
+            </fields>
+          </schema>
+          <models>
+            <offline model-type="onnx">
+              <input-map>
+                <properties>
+                  <property name="audio_pcm"><![CDATA[audio_pcm]]></property>
+                  <property name="max_length"><![CDATA[max_length]]></property>
+                  <property name="min_length"><![CDATA[min_length]]></property>
+                  <property name="num_beams"><![CDATA[num_beams]]></property>
+                  <property name="num_return_sequences"><![CDATA[num_return_sequences]]></property>
+                  <property name="length_penalty"><![CDATA[length_penalty]]></property>
+                  <property name="repetition_penalty"><![CDATA[repetition_penalty]]></property>
+                </properties>
+              </input-map>
+              <output-map>
+                <properties>
+                  <property name="generated_ids"><![CDATA[generated_ids]]></property>
+                </properties>
+              </output-map>
+            </offline>
+          </models>
+        </window-score>
+        <window-python events="postproc" output-insert-only="true" name="w_postproc">
+          <schema>
+            <fields>
+              <field name="id" type="int64" key="true"/>
+              <field name="words" type="string"/>
+              <field name="timestamp" type="string"/>
+            </fields>
+          </schema>
+          <copy><![CDATA[id]]></copy>
+          <code file="@ESP_PROJECT_HOME@/files/esp_whisper_funs.py"/>
+          <connectors>
+            <connector class="fs" name="out_score_Connector">
+              <properties>
+                <property name="type"><![CDATA[sub]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
+                <property name="fsname"><![CDATA[@ESP_PROJECT_OUTPUT@/out_score.csv]]></property>
+                <property name="snapshot"><![CDATA[true]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-python>
+      </windows>
+      <edges>
+        <edge source="w_audio" target="w_preproc" role="data"/>
+        <edge role="model" source="w_reader" target="w_score"/>
+        <edge source="w_preproc" target="w_score" role="data"/>
+        <edge source="w_score" target="w_postproc" role="data"/>
+      </edges>
+    </contquery>
+  </contqueries>
+</project>
