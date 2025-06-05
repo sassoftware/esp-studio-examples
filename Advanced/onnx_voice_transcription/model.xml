@@ -1,10 +1,11 @@
 <project name="Whisper" pubsub="auto" threads="4" heartbeat-interval="1" index="pi_EMPTY">
   <metadata>
-    <meta id="layout">{"cq":{"w_audio":{"x":170,"y":50},"w_postproc":{"x":170,"y":450},"w_preproc":{"x":170,"y":175},"w_reader":{"x":410,"y":175},"w_score":{"x":170,"y":295}}}</meta>
-    <meta id="studioUploadedBy">sasadm</meta>
-    <meta id="studioUploaded">1746732556293</meta>
-    <meta id="studioModifiedBy">sasadm</meta>
-    <meta id="studioModified">1747330551994</meta>
+	<meta id="layout">{"cq":{"w_audio":{"x":170,"y":50},"w_postproc":{"x":170,"y":450},"w_preproc":{"x":170,"y":175},"w_reader":{"x":410,"y":175},"w_score":{"x":170,"y":295}}}</meta>
+	<meta id="studioUploadedBy">sasboot</meta>
+	<meta id="studioUploaded">1749112164027</meta>
+	<meta id="studioModifiedBy">sasboot</meta>
+	<meta id="studioModified">1749112760743</meta>
+	<meta id="studioTags">Example</meta>
   </metadata>
   <contqueries>
     <contquery name="cq" timing-threshold="1000">
