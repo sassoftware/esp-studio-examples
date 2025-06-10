@@ -4,7 +4,7 @@ This example demonstrates how you can use an ONNX model to detect objects in an 
 
 ---
 **NOTE:**
-Use this example with SAS Event Stream Processing 2025.02 and later.
+Use this example with SAS Event Stream Processing 2025.06 and later.
 
 ---
 
@@ -38,7 +38,7 @@ The following figure shows the diagram of the project:
 - w_score is a Score window. This window executes the ONNX model when data passes through the window. The events from the w_reader window are pre-processed (as defined in the w_reader window) and converted to a tensor format. A tensor is an n-dimensional array that contains the same type of data. The output from the w_score window is another tensor.
 - w_postprocess is a Python window. The Python code converts the model output (tensor format) into easier formats, so that the outputs can be handled by subsequent windows. In general, a project that references an ONNX model is likely to require post-processing of data after scoring has taken place.
 - w_object_tracker is an Object Tracker window that enables you to track objects over time. 
-- w_annotate is a Python window. The Python code in this window annotates the image with the results from the model. 
+- w_annotate is a Python Custom window. The Python code in this window annotates the image with the results from the model.
 - w_counter is a Counter window that provides an indication of the overall performance.
 
 ### w_data
@@ -123,7 +123,7 @@ For more information, see [Using Object Tracker Windows](https://go.documentatio
 
 ### w_annotate
 
-The w_annotate window is another Python window. Click the w_annotate window to explore its settings. In the right pane, expand **Python Settings** and scroll down to the code editor:
+The w_annotate window is the [Computer Vision Annotation Custom window](https://github.com/sassoftware/esp-studio-custom-windows/tree/main/Computer%20Vision%20Annotation). Click the w_annotate window to explore its settings. In the right pane, expand **Mappings** and select the view file button:
 - The Python code in this window annotates the image with the results from the model.
 - As in the previous Python window, w_postprocess, the `esp_utils` package is used for some common operations.
 - The output of the window is now a JPG image, which can be visualized in Grafana. 

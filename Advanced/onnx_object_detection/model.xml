@@ -1,10 +1,10 @@
 <project heartbeat-interval="1" index="pi_EMPTY" luaroot="@ESP_PROJECT_OUTPUT@/luaroot" name="computer_vision_with_onnx" pubsub="auto" threads="8" use-tagged-token="true">
   <metadata>
     <meta id="studioUploadedBy">anonymousUser</meta>
-    <meta id="studioUploaded">1737394254408</meta>
+    <meta id="studioUploaded">1749542503745</meta>
     <meta id="studioModifiedBy">anonymousUser</meta>
-    <meta id="studioModified">1737394402650</meta>
-    <meta id="layout">{"contquery":{"w_annotate":{"x":330,"y":525},"w_counter":{"x":330,"y":640},"w_data":{"x":330,"y":50},"w_object_tracker":{"x":330,"y":415},"w_postprocess":{"x":330,"y":295},"w_reader":{"x":90,"y":50},"w_score":{"x":330,"y":175}}}</meta>
+    <meta id="studioModified">1749543126044</meta>
+    <meta id="layout">{"contquery":{"w_annotate":{"x":50,"y":540},"w_counter":{"x":50,"y":665},"w_data":{"x":290,"y":50},"w_object_tracker":{"x":50,"y":420},"w_postprocess":{"x":50,"y":295},"w_reader":{"x":50,"y":50},"w_score":{"x":50,"y":175}}}</meta>
     <meta id="studioTags">Example</meta>
   </metadata>
   <properties>
@@ -62,6 +62,7 @@
           <parameters>
             <properties>
               <property name="reference"><![CDATA[@ESP_PROJECT_HOME@/analytics/yolov7/yolov7-tiny_640x640.onnx]]></property>
+              <property name="loggingLevel"><![CDATA[warning]]></property>
               <property name="execProvider"><![CDATA[cuda]]></property>
               <property name="cudaDeviceId"><![CDATA[0]]></property>
             </properties>
@@ -145,7 +146,7 @@ def postprocess_event(output):
     event["Object_labels"] = event["Object_labels"][:-1] # remove last comma
     event["_nObjects_"] = len(output)
     return event
-          ]]>          </code>
+                    ]]></code>
         </window-python>
         <window-object-tracker name="w_object_tracker">
           <description><![CDATA[w_object_tracker is an Object Tracker window. This window enables you to track objects over time.]]></description>
@@ -156,100 +157,56 @@ def postprocess_event(output):
         <window-counter name="w_counter">
           <description><![CDATA[w_counter is a Counter window. This window provides an indication of the overall performance.]]></description>
         </window-counter>
-        <window-python events="annotate_event" name="w_annotate">
-          <description><![CDATA[w_annotate is a Python window. The Python code in this window draws the predicted bounding boxes of the model on the image.]]></description>
+        <window-custom type="Computer Vision Annotation" version="3" name="w_annotate">
+          <description><![CDATA[Annotate the results of an object detection and/or a keypoint detection model.]]></description>
           <schema>
             <fields>
               <field key="true" name="id" type="int64"/>
               <field name="image" type="blob"/>
             </fields>
           </schema>
-          <copy><![CDATA[id]]></copy>
-          <code><![CDATA[import cv2          
-import esp_utils
-
-
-font_face = cv2.FONT_HERSHEY_SIMPLEX
-font_scale = 0.3
-thickness = 1
-box_color = (5, 74, 153)[::-1]  # SAS Blue (b,g,r)
-margin = 2
-
-def annotate_event(data, context):
-    event = {}
-    image = esp_utils.image_conversion.sas_wide_image_to_opencv_image(data['image']) 
-    image = annotate_object_tracker_array(image.copy(), data)
-    
-    # Create a jpeg output image such that we can display it in Grafana
-    image = esp_utils.image_conversion.opencv_image_to_blob_image(image)
-    event['image'] = image
-    return event
-    
-
-def draw_bbox(image, start_point, end_point, text):
-    """Draw a bounding box"""
-    cv2.rectangle(image, start_point, end_point, box_color, 1)
-
-    if sum(box_color) / 3 < 150:
-        text_color = (255, 255, 255)  # (b,g,r)
-    else:
-        text_color = (0, 0, 0)  # (b,g,r)
-    text_size = cv2.getTextSize(text, font_face, font_scale, thickness)
-
-    text_width = int(text_size[0][0])
-    text_height = int(text_size[0][1])
-    line_height = text_size[1]
-
-    x_min, y_min = start_point
-    text_x = x_min + margin
-    text_y = y_min - line_height - margin
-
-    # draw a filled rectangle around text
-    cv2.rectangle(
-        image,
-        (text_x - margin, text_y + line_height + margin),
-        (text_x + text_width + margin, text_y - text_height - margin),
-        box_color,
-        -1,
-    )
-
-    cv2.putText(
-        image,
-        text,
-        (text_x, text_y),
-        font_face,
-        font_scale,
-        text_color,
-        thickness,
-        cv2.LINE_AA,
-    )
-    return image
-
-    
-def annotate_object_tracker_array(image, data):
-    """Annotate results from an object tracker window"""
-    for i in range(int(data["Object_density"])):
-        start_point = (int(data["Object_x"][i]), int(data["Object_y"][i]))
-        end_point = (
-            int(data["Object_x"][i] + data["Object_w"][i]),
-            int(data["Object_y"][i] + data["Object_h"][i]),
-        )
-        image = draw_bbox(
-            image,
-            start_point,
-            end_point,
-            f"{data['Object_id'][i]} - {data['Object_label'].split(',')[i]} ({data['Object_score'][i]*100:.0f}%)"
-        )
-    return image
-                    ]]>          </code>
-        </window-python>
+          <plugin code="@ESP_PROJECT_HOME@/custom_windows/Computer Vision Annotation/Computer Vision Annotation.py">
+            <input-map description="Fields related to image and object detection are required. Fields related to keypoints are optional. Object ID (for object tracking) and attributes are also optional.">
+              <properties>
+                <property name="image" description="Input image (blob)" required="true"><![CDATA[image]]></property>
+                <property name="label" description="Delimited list containing the class of the detected objects (string)" required="true"><![CDATA[Object_label]]></property>
+                <property name="x" description="Top left X-coordinates of the bounding boxes (array(dbl))" required="true"><![CDATA[Object_x]]></property>
+                <property name="y" description="Top left Y-coordinates of the bounding boxes  (array(dbl))" required="true"><![CDATA[Object_y]]></property>
+                <property name="w" description="Widths of the bounding boxes (array(dbl))" required="true"><![CDATA[Object_w]]></property>
+                <property name="h" description="Heights of the bounding boxes (array(dbl))" required="true"><![CDATA[Object_h]]></property>
+                <property name="score" description="Confidence scores array (array(dbl))" required="true"><![CDATA[Object_score]]></property>
+                <property name="object_id" description="Tracked object ID, for example from the Object Tracker window (array(i32))"><![CDATA[Object_id]]></property>
+                <property name="attribute" description="Delimited list containing the attribute(s) of the detected objects (string)"/>
+                <property name="object_track_count" description="Number of tracks per detected object (array(i32))"/>
+                <property name="object_track_kpts_count" description="Number of keypoints per detected object for the track (array(i32))"/>
+                <property name="object_track_kpts_x" description="X-coordinates for the keypoints track (array(dbl))"/>
+                <property name="object_track_kpts_y" description="Y-coordinates for the keypoints track (array(dbl))"/>
+                <property name="object_track_kpts_score" description="Confidence scores for the keypoints track (array(dbl))"/>
+                <property name="object_track_kpts_label_id" description="Label IDs for the keypoints track (array(i32))"/>
+              </properties>
+            </input-map>
+            <output-map description="Add an output field, of type `blob`, to store the annotated image. If you use the same image as used in the input variables, the original image is overwritten with an annotated image.">
+              <properties>
+                <property name="annotated_image" description="Annotated image (blob)"><![CDATA[image]]></property>
+              </properties>
+            </output-map>
+            <initialization description="Set the options for the custom window. Note that either `png` or `jpg` is needed as the value for `output_image_encoding` to display images in Grafana.">
+              <properties>
+                <property name="input_image_encoding" description="Input image encoding - must be one of the following: `wide`, `jpg`, `png`"><![CDATA[wide]]></property>
+                <property name="output_image_encoding" description="Output image encoding - must be one of the following: `wide`, `jpg`, `png`"><![CDATA[jpg]]></property>
+                <property name="object_label_separator" description="Object label separator"><![CDATA[,]]></property>
+                <property name="kpts_labels" description="Keypoint labels"/>
+              </properties>
+            </initialization>
+          </plugin>
+        </window-custom>
       </windows>
       <edges>
-        <edge source="w_object_tracker" target="w_annotate"/>
         <edge role="data" source="w_data" target="w_score"/>
         <edge role="model" source="w_reader" target="w_score"/>
         <edge role="data" source="w_score" target="w_postprocess"/>
         <edge role="data" source="w_postprocess" target="w_object_tracker"/>
+        <edge source="w_object_tracker" target="w_annotate"/>
         <edge source="w_annotate" target="w_counter"/>
       </edges>
     </contquery>
