@@ -203,7 +203,7 @@ def postprocess(output):
           <description><![CDATA[Annotate the results of an object detection and/or a keypoint detection model.]]></description>
           <schema>
             <fields>
-              <field name="id" type="string" key="true"/>
+              <field name="id" type="int64" key="true"/>
               <field name="image" type="blob"/>
             </fields>
           </schema>

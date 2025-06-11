@@ -157,7 +157,7 @@ def postprocess_event(output):
         <window-counter name="w_counter">
           <description><![CDATA[w_counter is a Counter window. This window provides an indication of the overall performance.]]></description>
         </window-counter>
-        <window-custom type="Computer Vision Annotation" version="3" name="w_annotate">
+        <window-custom type="Computer Vision Annotation" version="1" name="w_annotate">
           <description><![CDATA[Annotate the results of an object detection and/or a keypoint detection model.]]></description>
           <schema>
             <fields>
