@@ -2,9 +2,9 @@
   <description><![CDATA[This example demonstrates how you can use an ONNX model to detect keypoints of a person in an incoming video stream. It uses pose estimation, which is a computer vision technique for recognizing and categorizing the positions of a human.]]></description>
   <metadata>
     <meta id="studioUploadedBy">anonymousUser</meta>
-    <meta id="studioUploaded">1749551416702</meta>
+    <meta id="studioUploaded">1750064099860</meta>
     <meta id="studioModifiedBy">anonymousUser</meta>
-    <meta id="studioModified">1749552066748</meta>
+    <meta id="studioModified">1750067020008</meta>
     <meta id="layout">{"contquery":{"w_annotate":{"x":50,"y":535},"w_counter":{"x":50,"y":665},"w_data":{"x":290,"y":50},"w_object_tracker_array":{"x":50,"y":420},"w_postprocess":{"x":50,"y":295},"w_reader":{"x":50,"y":50},"w_score":{"x":50,"y":175}}}</meta>
     <meta id="studioTags">Example</meta>
   </metadata>
@@ -218,7 +218,7 @@ def postprocess(output):
                 <property name="h" description="Heights of the bounding boxes (array(dbl))" required="true"><![CDATA[Object_h]]></property>
                 <property name="score" description="Confidence scores array (array(dbl))" required="true"><![CDATA[Object_score]]></property>
                 <property name="object_id" description="Tracked object ID, for example from the Object Tracker window (array(i32))"><![CDATA[Object_id]]></property>
-                <property name="attribute" description="Delimited list containing the attribute(s) of the detected objects (string)"><![CDATA[Object_attributes]]></property>
+                <property name="attribute" description="Delimited list containing the attribute(s) of the detected objects (string)"/>
                 <property name="object_track_count" description="Number of tracks per detected object (array(i32))"><![CDATA[Object_track_count]]></property>
                 <property name="object_track_kpts_count" description="Number of keypoints per detected object for the track (array(i32))"><![CDATA[Object_track_kpts_count]]></property>
                 <property name="object_track_kpts_x" description="X-coordinates for the keypoints track (array(dbl))"><![CDATA[Object_track_kpts_x]]></property>
