@@ -1,0 +1,80 @@
+<project name="filter" threads="1" pubsub="auto" heartbeat-interval="1" luaroot="@ESP_PROJECT_OUTPUT@/luaroot">
+  <metadata>
+    <meta id="layout">{"FilterQuery":{"Filter":{"x":-80,"y":5},"Source":{"x":50,"y":50},"SourceWindow":{"x":-80,"y":-130}}}</meta>
+    <meta id="studioUploadedBy">anonymous</meta>
+    <meta id="studioUploaded">1756222470332</meta>
+    <meta id="studioModifiedBy">anonymous</meta>
+    <meta id="studioModified">1756222532121</meta>
+    <meta id="studioTags">Example</meta>
+  </metadata>
+  <contqueries>
+    <contquery name="FilterQuery">
+      <windows>
+        <!-- Source window to receive data from Lua -->
+        <window-source insert-only="true" autogen-key="true" index="pi_EMPTY" name="SourceWindow">
+          <description><![CDATA[Generate temperature values for various sensors.]]></description>
+          <schema>
+            <fields>
+              <field name="sensor_id" type="string"/>
+              <field name="temperature" type="double"/>
+              <field name="timestamp" type="int64"/>
+              <field name="key" type="string" key="true"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="lua" name="SensorData">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="interval"><![CDATA[500 milliseconds]]></property>
+                <property name="code"><![CDATA[
+
+                    local   id = 1
+
+                    function publish()
+                        local   event = {}
+
+                        --event.key = esp_getGuids()[1]
+                        event.key = tostring(id)
+                        event.temperature = math.random(65,90)
+                        event.timestamp = esp_getSystemMicro()
+                        event.sensor_id = "Sensor" .. id
+
+                        id = id + 1
+                        -- returning true stops connector
+                        if(esp_inject(event) == false) then 		      
+                             return true 
+                        end		
+
+                        if id == 11 then
+                            return true
+                        end
+
+                       return false
+
+                    end
+                ]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <!-- Filter window to pass only high temperature readings -->
+        <!-- Output window to collect filtered results -->
+        <window-filter func="filter" index="pi_EMPTY" name="Filter">
+          <description><![CDATA[If the temperature is above 75 degrees forward event.]]></description>
+          <use><![CDATA[temperature]]></use>
+          <code><![CDATA[
+function filter(event,context)
+    if event.temperature > 75 then  -- pass events if temp is above 75 
+        return true 
+    else
+        return false
+    end 
+end]]></code>
+        </window-filter>
+      </windows>
+      <edges>
+        <edge source="SourceWindow" target="Filter"/>
+      </edges>
+    </contquery>
+  </contqueries>
+</project>

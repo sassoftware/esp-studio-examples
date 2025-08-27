@@ -1,0 +1,58 @@
+<project name="copy" threads="1" pubsub="auto" heartbeat-interval="1">
+  <metadata>
+    <meta id="layout">{"cq1":{"Copy_Count_Jumping":{"x":50,"y":175},"Copy_Count_Sliding":{"x":290,"y":175},"Copy_EventTime_Sliding":{"x":1005,"y":175},"Copy_SystemTime_Jumping":{"x":530,"y":175},"Copy_SystemTime_Sliding":{"x":765,"y":175},"Source":{"x":530,"y":50}}}</meta>
+    <meta id="studioUploadedBy">anonymous</meta>
+    <meta id="studioUploaded">1756224170069</meta>
+    <meta id="studioModifiedBy">anonymous</meta>
+    <meta id="studioModified">1756224309595</meta>
+    <meta id="studioTags">Example</meta>
+  </metadata>
+  <contqueries>
+    <contquery name="cq1">
+      <windows>
+        <window-source index="pi_EMPTY" name="Source">
+          <schema>
+            <fields>
+              <field name="motor" type="string" key="true"/>
+              <field name="time" type="stamp" key="true"/>
+              <field name="vibration" type="double"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="fs" name="input_Connector">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="rate"><![CDATA[1]]></property>
+                <property name="maxevents"><![CDATA[11]]></property>
+                <property name="fsname"><![CDATA[@ESP_PROJECT_HOME@/test_files/input.csv]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-copy name="Copy_SystemTime_Sliding">
+          <retention type="bytime_sliding"><![CDATA[5 seconds]]></retention>
+        </window-copy>
+        <window-copy name="Copy_EventTime_Sliding">
+          <retention type="bytime_sliding" field="time"><![CDATA[5 seconds]]></retention>
+        </window-copy>
+        <window-copy name="Copy_SystemTime_Jumping">
+          <retention type="bytime_jumping"><![CDATA[5 seconds]]></retention>
+        </window-copy>
+        <window-copy name="Copy_Count_Sliding">
+          <retention type="bycount_sliding"><![CDATA[10]]></retention>
+        </window-copy>
+        <window-copy name="Copy_Count_Jumping">
+          <retention type="bycount_jumping"><![CDATA[10]]></retention>
+        </window-copy>
+      </windows>
+      <edges>
+        <edge source="Source" target="Copy_SystemTime_Sliding"/>
+        <edge source="Source" target="Copy_EventTime_Sliding"/>
+        <edge source="Source" target="Copy_SystemTime_Jumping"/>
+        <edge source="Source" target="Copy_Count_Sliding"/>
+        <edge source="Source" target="Copy_Count_Jumping"/>
+      </edges>
+    </contquery>
+  </contqueries>
+</project>
