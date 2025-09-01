@@ -1,19 +1,19 @@
-<project name="Whisper" pubsub="auto" threads="4" heartbeat-interval="1" index="pi_EMPTY">
+<project heartbeat-interval="1" index="pi_EMPTY" name="Whisper" pubsub="auto" threads="4">
   <metadata>
-	<meta id="layout">{"cq":{"w_audio":{"x":170,"y":50},"w_postproc":{"x":170,"y":450},"w_preproc":{"x":170,"y":175},"w_reader":{"x":410,"y":175},"w_score":{"x":170,"y":295}}}</meta>
-	<meta id="studioUploadedBy">sasboot</meta>
-	<meta id="studioUploaded">1749112164027</meta>
-	<meta id="studioModifiedBy">sasboot</meta>
-	<meta id="studioModified">1749112760743</meta>
-	<meta id="studioTags">Example</meta>
+    <meta id="layout">{"cq":{"w_audio":{"x":170,"y":50},"w_postproc":{"x":170,"y":450},"w_preproc":{"x":170,"y":175},"w_reader":{"x":410,"y":175},"w_score":{"x":170,"y":295}}}</meta>
+    <meta id="studioUploadedBy">appadmin</meta>
+    <meta id="studioUploaded">1755198331502</meta>
+    <meta id="studioModifiedBy">appadmin</meta>
+    <meta id="studioModified">1755268321025</meta>
+    <meta id="studioTags">Example</meta>
   </metadata>
   <contqueries>
     <contquery name="cq" timing-threshold="1000">
       <windows>
-        <window-source insert-only="true" pubsub="true" autogen-key="true" queue-height="32" name="w_audio">
+        <window-source autogen-key="true" insert-only="true" pubsub="true" queue-height="32" name="w_audio">
           <schema>
             <fields>
-              <field name="id" type="int64" key="true"/>
+              <field key="true" name="id" type="int64"/>
               <field name="audio" type="int64"/>
             </fields>
           </schema>
@@ -39,20 +39,20 @@ def publish():
   #python code]]></property>
               </properties>
             </connector>
-            <connector class="fs" name="sub1" active="false">
+            <connector class="fs" name="audio_Connector" active="false">
               <properties>
                 <property name="type"><![CDATA[sub]]></property>
                 <property name="fstype"><![CDATA[csv]]></property>
-                <property name="fsname"><![CDATA[audio.csv]]></property>
+                <property name="fsname"><![CDATA[@ESP_PROJECT_OUTPUT@/audio.csv]]></property>
                 <property name="snapshot"><![CDATA[true]]></property>
               </properties>
             </connector>
           </connectors>
         </window-source>
-        <window-python events="preproc" output-insert-only="true" process-blocks="true" index="pi_EMPTY" name="w_preproc">
+        <window-python events="preproc" index="pi_EMPTY" name="w_preproc" output-insert-only="true" process-blocks="true">
           <schema>
             <fields>
-              <field name="id" type="int64" key="true"/>
+              <field key="true" name="id" type="int64"/>
               <field name="audio_pcm" type="blob"/>
               <field name="max_length" type="blob"/>
               <field name="min_length" type="blob"/>
@@ -66,6 +66,17 @@ def publish():
         </window-python>
         <window-model-reader model-type="onnx" name="w_reader">
           <description><![CDATA[w_reader is a Model Reader window. This window reads the ONNX model and passes it to the w_score window. Also, pre-processing steps for the incoming events are specified in this window.]]></description>
+          <warmup-steps count="2" type="random">
+            <tensors>
+              <tensor onnx-field="audio_pcm" tensor-file="@ESP_PROJECT_HOME@/files/warmup-whisper.safetensors" type="file"/>
+              <tensor onnx-field="max_length" tensor-file="@ESP_PROJECT_HOME@/files/warmup-whisper.safetensors" type="file"/>
+              <tensor onnx-field="min_length" tensor-file="@ESP_PROJECT_HOME@/files/warmup-whisper.safetensors" type="file"/>
+              <tensor onnx-field="num_beams" tensor-file="@ESP_PROJECT_HOME@/files/warmup-whisper.safetensors" type="file"/>
+              <tensor onnx-field="num_return_sequences" tensor-file="@ESP_PROJECT_HOME@/files/warmup-whisper.safetensors" type="file"/>
+              <tensor onnx-field="length_penalty" tensor-file="@ESP_PROJECT_HOME@/files/warmup-whisper.safetensors" type="file"/>
+              <tensor onnx-field="repetition_penalty" tensor-file="@ESP_PROJECT_HOME@/files/warmup-whisper.safetensors" type="file"/>
+            </tensors>
+          </warmup-steps>
           <parameters>
             <properties>
               <property name="reference"><![CDATA[@ESP_PROJECT_HOME@/analytics/whisper_sm_int8_cpu.onnx]]></property>
@@ -103,10 +114,10 @@ def publish():
             </offline>
           </models>
         </window-score>
-        <window-python events="postproc" output-insert-only="true" name="w_postproc">
+        <window-python events="postproc" name="w_postproc" output-insert-only="true">
           <schema>
             <fields>
-              <field name="id" type="int64" key="true"/>
+              <field key="true" name="id" type="int64"/>
               <field name="words" type="string"/>
               <field name="timestamp" type="string"/>
             </fields>
@@ -126,10 +137,10 @@ def publish():
         </window-python>
       </windows>
       <edges>
-        <edge source="w_audio" target="w_preproc" role="data"/>
+        <edge role="data" source="w_audio" target="w_preproc"/>
         <edge role="model" source="w_reader" target="w_score"/>
-        <edge source="w_preproc" target="w_score" role="data"/>
-        <edge source="w_score" target="w_postproc" role="data"/>
+        <edge role="data" source="w_preproc" target="w_score"/>
+        <edge role="data" source="w_score" target="w_postproc"/>
       </edges>
     </contquery>
   </contqueries>

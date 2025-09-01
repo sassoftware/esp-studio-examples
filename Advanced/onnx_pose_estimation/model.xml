@@ -1,10 +1,10 @@
 <project heartbeat-interval="1" index="pi_EMPTY" luaroot="@ESP_PROJECT_OUTPUT@/luaroot" name="pose_estimation_with_onnx" pubsub="auto" threads="8" use-tagged-token="true">
   <description><![CDATA[This example demonstrates how you can use an ONNX model to detect keypoints of a person in an incoming video stream. It uses pose estimation, which is a computer vision technique for recognizing and categorizing the positions of a human.]]></description>
   <metadata>
-    <meta id="studioUploadedBy">anonymousUser</meta>
-    <meta id="studioUploaded">1750064099860</meta>
-    <meta id="studioModifiedBy">anonymousUser</meta>
-    <meta id="studioModified">1750067020008</meta>
+    <meta id="studioUploadedBy">appadmin</meta>
+    <meta id="studioUploaded">1755206878646</meta>
+    <meta id="studioModifiedBy">appadmin</meta>
+    <meta id="studioModified">1755268929216</meta>
     <meta id="layout">{"contquery":{"w_annotate":{"x":50,"y":535},"w_counter":{"x":50,"y":665},"w_data":{"x":290,"y":50},"w_object_tracker_array":{"x":50,"y":420},"w_postprocess":{"x":50,"y":295},"w_reader":{"x":50,"y":50},"w_score":{"x":50,"y":175}}}</meta>
     <meta id="studioTags">Example</meta>
   </metadata>
@@ -60,6 +60,7 @@
               </step>
             </pre>
           </processing-steps>
+          <warmup-steps type="random" count="1"/>
           <parameters>
             <properties>
               <property name="reference"><![CDATA[@ESP_PROJECT_HOME@/analytics/yolov7_pose/yolov7-w6-pose_fp16_io_fp32.onnx]]></property>
@@ -93,11 +94,11 @@
             </offline>
           </models>
         </window-score>
-        <window-python events="postprocess" output-insert-only="true" name="w_postprocess">
+        <window-python events="postprocess" name="w_postprocess" output-insert-only="true">
           <description><![CDATA[w_postprocess is a Python window. The Python code in this window converts the model output (tensor format) to more usable formats.]]></description>
           <schema>
             <fields>
-              <field name="id" type="int64" key="true"/>
+              <field key="true" name="id" type="int64"/>
               <field name="_nObjects_" type="int32"/>
               <field name="Object_x" type="array(dbl)"/>
               <field name="Object_y" type="array(dbl)"/>
@@ -192,52 +193,52 @@ def postprocess(output):
         </window-python>
         <window-object-tracker name="w_object_tracker_array">
           <description><![CDATA[w_object_tracker_array is an Object Tracker window. This window enables you to track objects over time.]]></description>
-          <tracker method="bytetrack" track-thresh="0.5" high-thresh="0.6" match-thresh="0.8" velocity-vector-frames="10" max-track-lives="10" track-retention="10"/>
-          <output mode="array" tracks="10" keypoints="true" velocity-vector="true"/>
-          <input count="_nObjects_" score="Object_score" label="Object_labels" attributes="_Object%_attributes" label-separator="," coord-type="rect" x="Object_x" y="Object_y" width="Object_width" height="Object_height" kpts-count="Object_kpts_count" kpts-x="Object_kpts_x" kpts-y="Object_kpts_y" kpts-score="Object_kpts_score" kpts-label-id="Object_kpts_label_id"/>
+          <tracker high-thresh="0.6" match-thresh="0.8" max-track-lives="10" method="bytetrack" track-retention="10" track-thresh="0.5" velocity-vector-frames="10"/>
+          <output keypoints="true" mode="array" tracks="10" velocity-vector="true"/>
+          <input attributes="_Object%_attributes" coord-type="rect" count="_nObjects_" height="Object_height" kpts-count="Object_kpts_count" kpts-label-id="Object_kpts_label_id" kpts-score="Object_kpts_score" kpts-x="Object_kpts_x" kpts-y="Object_kpts_y" label="Object_labels" label-separator="," score="Object_score" width="Object_width" x="Object_x" y="Object_y"/>
         </window-object-tracker>
         <window-counter name="w_counter">
           <description><![CDATA[w_counter is a Counter window. This window provides an indication of the overall performance.]]></description>
         </window-counter>
-        <window-custom type="Computer Vision Annotation" version="1" name="w_annotate">
+        <window-custom name="w_annotate" type="Computer Vision Annotation" version="1">
           <description><![CDATA[Annotate the results of an object detection and/or a keypoint detection model.]]></description>
           <schema>
             <fields>
-              <field name="id" type="int64" key="true"/>
+              <field key="true" name="id" type="int64"/>
               <field name="image" type="blob"/>
             </fields>
           </schema>
           <plugin code="@ESP_PROJECT_HOME@/custom_windows/Computer Vision Annotation/Computer Vision Annotation.py">
             <input-map description="Fields related to image and object detection are required. Fields related to keypoints are optional. Object ID (for object tracking) and attributes are also optional.">
               <properties>
-                <property name="image" description="Input image (blob)" required="true"><![CDATA[image]]></property>
-                <property name="label" description="Delimited list containing the class of the detected objects (string)" required="true"><![CDATA[Object_label]]></property>
-                <property name="x" description="Top left X-coordinates of the bounding boxes (array(dbl))" required="true"><![CDATA[Object_x]]></property>
-                <property name="y" description="Top left Y-coordinates of the bounding boxes  (array(dbl))" required="true"><![CDATA[Object_y]]></property>
-                <property name="w" description="Widths of the bounding boxes (array(dbl))" required="true"><![CDATA[Object_w]]></property>
-                <property name="h" description="Heights of the bounding boxes (array(dbl))" required="true"><![CDATA[Object_h]]></property>
-                <property name="score" description="Confidence scores array (array(dbl))" required="true"><![CDATA[Object_score]]></property>
-                <property name="object_id" description="Tracked object ID, for example from the Object Tracker window (array(i32))"><![CDATA[Object_id]]></property>
-                <property name="attribute" description="Delimited list containing the attribute(s) of the detected objects (string)"/>
-                <property name="object_track_count" description="Number of tracks per detected object (array(i32))"><![CDATA[Object_track_count]]></property>
-                <property name="object_track_kpts_count" description="Number of keypoints per detected object for the track (array(i32))"><![CDATA[Object_track_kpts_count]]></property>
-                <property name="object_track_kpts_x" description="X-coordinates for the keypoints track (array(dbl))"><![CDATA[Object_track_kpts_x]]></property>
-                <property name="object_track_kpts_y" description="Y-coordinates for the keypoints track (array(dbl))"><![CDATA[Object_track_kpts_y]]></property>
-                <property name="object_track_kpts_score" description="Confidence scores for the keypoints track (array(dbl))"><![CDATA[Object_track_kpts_score]]></property>
-                <property name="object_track_kpts_label_id" description="Label IDs for the keypoints track (array(i32))"><![CDATA[Object_track_kpts_label_id]]></property>
+                <property description="Input image (blob)" name="image" required="true"><![CDATA[image]]></property>
+                <property description="Delimited list containing the class of the detected objects (string)" name="label" required="true"><![CDATA[Object_label]]></property>
+                <property description="Top left X-coordinates of the bounding boxes (array(dbl))" name="x" required="true"><![CDATA[Object_x]]></property>
+                <property description="Top left Y-coordinates of the bounding boxes  (array(dbl))" name="y" required="true"><![CDATA[Object_y]]></property>
+                <property description="Widths of the bounding boxes (array(dbl))" name="w" required="true"><![CDATA[Object_w]]></property>
+                <property description="Heights of the bounding boxes (array(dbl))" name="h" required="true"><![CDATA[Object_h]]></property>
+                <property description="Confidence scores array (array(dbl))" name="score" required="true"><![CDATA[Object_score]]></property>
+                <property description="Tracked object ID, for example from the Object Tracker window (array(i32))" name="object_id"><![CDATA[Object_id]]></property>
+                <property description="Delimited list containing the attribute(s) of the detected objects (string)" name="attribute"/>
+                <property description="Number of tracks per detected object (array(i32))" name="object_track_count"><![CDATA[Object_track_count]]></property>
+                <property description="Number of keypoints per detected object for the track (array(i32))" name="object_track_kpts_count"><![CDATA[Object_track_kpts_count]]></property>
+                <property description="X-coordinates for the keypoints track (array(dbl))" name="object_track_kpts_x"><![CDATA[Object_track_kpts_x]]></property>
+                <property description="Y-coordinates for the keypoints track (array(dbl))" name="object_track_kpts_y"><![CDATA[Object_track_kpts_y]]></property>
+                <property description="Confidence scores for the keypoints track (array(dbl))" name="object_track_kpts_score"><![CDATA[Object_track_kpts_score]]></property>
+                <property description="Label IDs for the keypoints track (array(i32))" name="object_track_kpts_label_id"><![CDATA[Object_track_kpts_label_id]]></property>
               </properties>
             </input-map>
             <output-map description="Add an output field, of type `blob`, to store the annotated image. If you use the same image as used in the input variables, the original image is overwritten with an annotated image.">
               <properties>
-                <property name="annotated_image" description="Annotated image (blob)"><![CDATA[image]]></property>
+                <property description="Annotated image (blob)" name="annotated_image"><![CDATA[image]]></property>
               </properties>
             </output-map>
             <initialization description="Set the options for the custom window. Note that either `png` or `jpg` is needed as the value for `output_image_encoding` to display images in Grafana.">
               <properties>
-                <property name="input_image_encoding" description="Input image encoding - must be one of the following: `wide`, `jpg`, `png`"><![CDATA[wide]]></property>
-                <property name="output_image_encoding" description="Output image encoding - must be one of the following: `wide`, `jpg`, `png`"><![CDATA[jpg]]></property>
-                <property name="object_label_separator" description="Object label separator"><![CDATA[,]]></property>
-                <property name="kpts_labels" description="Keypoint labels"><![CDATA[nose,l_eye,r_eye,l_ear,r_ear,l_shoulder,r_shoulder,l_elbow,r_elbow,l_wrist,r_wrist,l_hip,r_hip,l_knee,r_knee,l_ankle,r_ankle]]></property>
+                <property description="Input image encoding - must be one of the following: `wide`, `jpg`, `png`" name="input_image_encoding"><![CDATA[wide]]></property>
+                <property description="Output image encoding - must be one of the following: `wide`, `jpg`, `png`" name="output_image_encoding"><![CDATA[jpg]]></property>
+                <property description="Object label separator" name="object_label_separator"><![CDATA[,]]></property>
+                <property description="Keypoint labels" name="kpts_labels"><![CDATA[nose,l_eye,r_eye,l_ear,r_ear,l_shoulder,r_shoulder,l_elbow,r_elbow,l_wrist,r_wrist,l_hip,r_hip,l_knee,r_knee,l_ankle,r_ankle]]></property>
               </properties>
             </initialization>
           </plugin>

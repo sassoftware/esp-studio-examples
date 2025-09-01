@@ -80,6 +80,7 @@ Explore the settings for this window:
    - The `yolov7-tiny_640x640.onnx` file is the model that is used to detect objects in the input images.<br/>You could replace this model with another model. However, changing the model would require you to also adjust other parts of the example project, including Python code.
    - The selected execution provider is CUDA, which means that hardware acceleration is used. </br>SAS Event Stream Processing Studio does not detect which execution providers have been deployed. Contact your system administrator for more information about which execution providers are available to you.
 3. Expand **Pre-processing**. The **Enable pre-processing** check box is selected and the pre-processing steps are defined below it. These settings are applied to each event that arrives in the w_reader window. In this example, four steps are defined: resize, color, normalize, and encode. These steps are necessary for the ONNX model to function properly. The order of the steps is also important. 
+4. Expand **Model Warm-up**. The default warm-up tensor type is specified as **Random tensor** and the number of warm-up steps is set to 1. For more information, see [XML Language Elements Relevant to Model Warm-up] (https://go.documentation.sas.com/doc/en/espcdc/default/espxmllang/n0tippzgzce4uzn1kin6j79h732v.htm).
 
 ### w_score 
 
