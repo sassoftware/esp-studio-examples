@@ -37,7 +37,7 @@ This example is configured for batch transcription of WAV files. For live transc
 ## Workflow
 The following figure shows the diagram of the project:
 
-<img src="studio_whisper_graph.png" alt="Diagram of the project" width="50%" height = "50%">
+<img src="img/studio_whisper_graph.png" alt="Diagram of the project" width="50%" height = "50%">
 
 - w_audio is a Source window. This is where individual amplitude values from a WAV file or microphone are streamed in.
 - w_preproc is a Python window. The Python code converts individual amplitude values into a tensor suitable for ONNX runtime.
@@ -156,7 +156,7 @@ When you enter test mode in SAS Event Stream Processing Studio, complete the fol
 4.	In the Deployment Settings window, adjust the settings as shown in the following image. Make sure you request 4 GB of memory, though it probably runs with only 2 GB.
 
     <!-- ![Deployment settings](img/deployment_settings.png "Deployment settings ") -->
-    <img alt="Deployment settings" src="studio_whisper_memory.png"  width="50%" height="50%">
+    <img alt="Deployment settings" src="img/studio_whisper_memory.png"  width="50%" height="50%">
 5.	Click **OK** to close the Deployment Settings window.
 6.	Click **OK** to close the Load and Start Project in Cluster window.
 
