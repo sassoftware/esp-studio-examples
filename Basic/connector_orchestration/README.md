@@ -25,7 +25,7 @@ The project consists of the following windows:
 
 ### Orchestration
 
-![image-20250714140753097](img/image-20250714140753097.png)	
+![image-20250904111601595](img/image-20250904111601595.png)	
 
 To access the project's connector orchestration, do the following steps:
 1. Click ![Project button](img/project-properties-button.png "Project button").
@@ -45,7 +45,7 @@ Rather than starting all the connectors simultaneously, this project uses connec
 
 ### Orchestration Graph
 
-<img src="img/image-20250714141558124.png" alt="image-20250714141558124" width=50% height=50% />
+<img src="img/image-20250714141558124.png" alt="image-20250714141558124" width=50% height=50% />	
 
 This orchestration ensures the following:
 
