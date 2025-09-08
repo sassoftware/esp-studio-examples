@@ -3,7 +3,7 @@
 ## Overview
 
 This example demonstrates how to use SAS Event Stream Processing to build and continuously update a linear regression model on a high-dimensional stream of data in real time. It includes a Source window that ingests streaming data, a Training window that updates a regression model, and a Scoring window that applies the model to incoming data points.
-i
+
 For more information about how to install and use example projects, see [Using the Examples](https://github.com/sassoftware/esp-studio-examples#using-the-examples).
 
 ## Use Case
