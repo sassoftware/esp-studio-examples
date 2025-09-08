@@ -1,0 +1,202 @@
+<project heartbeat-interval="1" luaroot="@ESP_PROJECT_OUTPUT@/luaroot" name="source" pubsub="auto" threads="1">
+  <description><![CDATA[Show examples of how to use the source window to input data into an ESP project.   This ESP project demonstrates multiple types of source connectors which are inputs or publishers into ESP.]]></description>
+  <metadata>
+    <meta id="layout">{"cq1":{"Counter_CSV":{"x":470,"y":175},"Counter_Eventhub":{"x":680,"y":-165},"Counter_Kafka":{"x":895,"y":-170},"Counter_MQTT":{"x":465,"y":-165},"Counter_timed":{"x":890,"y":175},"Counter_video":{"x":680,"y":175},"Source_CSV":{"x":470,"y":50},"Source_Eventhub":{"x":680,"y":-280},"Source_Kafka":{"x":895,"y":-280},"Source_MQTT":{"x":465,"y":-280},"Source_timed":{"x":890,"y":50},"Source_video":{"x":680,"y":50}}}</meta>
+    <meta id="studioUploadedBy">anonymous</meta>
+    <meta id="studioUploaded">1755271027920</meta>
+    <meta id="studioModifiedBy">anonymous</meta>
+    <meta id="studioModified">1755275911040</meta>
+  </metadata>
+  <contqueries>
+    <contquery name="cq1">
+      <windows>
+        <window-source autogen-key="true" index="pi_EMPTY" insert-only="true" name="Source_Eventhub">
+          <description><![CDATA[Read data from an Azure Event hub.  This example is turned off because it requires that an Eventhub be created in Azure.]]></description>
+          <schema>
+            <fields>
+              <field key="true" name="index" type="int64"/>
+              <field name="message" type="string"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector active="false" class="eventhubs" name="EventhubInput">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="eventhubsincludeindex"><![CDATA[true]]></property>
+                <property name="eventhubsconnectionstring"><![CDATA[Endpoint=sb://saslorahub.servicebus.windows.net/;SharedAccessKeyName=ESPListen;SharedAccessKey=cgyjWy4xu0XxxYMFcx32RdxhS17JHvLl8SyrdIWVi6U=]]></property>
+                <property name="eventhubspath"><![CDATA[lorahub]]></property>
+                <property name="eventhubsconsumergroup"><![CDATA[esp]]></property>
+                <property name="eventhubspartition"><![CDATA[0]]></property>
+                <property name="eventhubsformat"><![CDATA[opaque]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-source autogen-key="true" index="pi_EMPTY" insert-only="true" name="Source_Kafka">
+          <schema>
+            <fields>
+              <field key="true" name="index" type="int64"/>
+              <field name="message" type="string"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector active="false" class="kafka" name="kafkainCurrent">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="kafkaglobalconfig"><![CDATA[security.protocol=SASL_SSL;sasl.username=$ConnectionString;sasl.password="Endpoint=sb://saslorahub.servicebus.windows.net/;SharedAccessKeyName=ESPListen;SharedAccessKey=cgyjWy4xu0XxxYMFcx32RdxhS17JHvLl8SyrdIWVi6U=;EntityPath=lorahub";sasl.mechanism=PLAIN;ssl.ca.location=/etc/pki/tls/cert.pem]]></property>
+                <property name="kafkaconsumergroupid"><![CDATA[lastread]]></property>
+                <property name="kafkatype"><![CDATA[opaquestring]]></property>
+                <property name="urlhostport"><![CDATA[notusedwhennotHA]]></property>
+                <property name="kafkahostport"><![CDATA[saslorahub.servicebus.windows.net:9093]]></property>
+                <property name="kafkatopic"><![CDATA[lorahub]]></property>
+              </properties>
+            </connector>
+            <connector active="false" class="kafka" name="kafkainAll">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="kafkainitialoffset"><![CDATA[smallest]]></property>
+                <property name="kafkaglobalconfig"><![CDATA[security.protocol=SASL_SSL;sasl.username=$ConnectionString;sasl.password="Endpoint=sb://saslorahub.servicebus.windows.net/;SharedAccessKeyName=ESPListen;SharedAccessKey=cgyjWy4xu0XxxYMFcx32RdxhS17JHvLl8SyrdIWVi6U=;EntityPath=lorahub";sasl.mechanism=PLAIN;ssl.ca.location=/etc/pki/tls/cert.pem]]></property>
+                <property name="kafkapartition"><![CDATA[-1]]></property>
+                <property name="kafkatype"><![CDATA[opaquestring]]></property>
+                <property name="urlhostport"><![CDATA[notusedwhennotHA]]></property>
+                <property name="kafkahostport"><![CDATA[saslorahub.servicebus.windows.net:9093]]></property>
+                <property name="kafkatopic"><![CDATA[lorahub]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-source autogen-key="true" index="pi_EMPTY" insert-only="true" name="Source_timed">
+          <description><![CDATA[Show an example of the timer connector injecting events at an interval.]]></description>
+          <schema>
+            <fields>
+              <field key="true" name="id" type="int64"/>
+              <field name="time" type="stamp"/>
+              <field name="label" type="string"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="timer" name="timer_connector">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="basetime"><![CDATA[2020-06-08 00:56:00]]></property>
+                <property name="interval"><![CDATA[60]]></property>
+                <property name="unit"><![CDATA[second]]></property>
+                <property name="label"><![CDATA[minutely]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-source index="pi_EMPTY" insert-only="true" name="Source_video">
+          <description><![CDATA[This is where video frames enter the project.]]></description>
+          <schema>
+            <fields>
+              <field key="true" name="id" type="int64"/>
+              <field name="image" type="blob"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="videocap" name="video_publisher" active="false">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="inputrate"><![CDATA[10]]></property>
+                <property name="repeatcount"><![CDATA[999]]></property>
+                <property name="resize_x"><![CDATA[1280]]></property>
+                <property name="resize_y"><![CDATA[720]]></property>
+                <property name="blocksize"><![CDATA[1]]></property>
+                <property name="filename"><![CDATA[@ESP_PROJECT_HOME@/test_files/intersection.mp4]]></property>
+                <property name="publishformat"><![CDATA[wide]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-source autogen-key="true" index="pi_EMPTY" insert-only="true" name="Source_CSV">
+          <description><![CDATA[Show various examples of the File/Socket Connector]]></description>
+          <schema>
+            <fields>
+              <field key="true" name="key" type="int64"/>
+              <field name="dt" type="date"/>
+              <field name="long" type="double"/>
+              <field name="lat" type="double"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="fs" name="iss_input" active="false">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="dateformat"><![CDATA[%m/%d/%Y:%H:%M:%S]]></property>
+                <property name="fsname"><![CDATA[@ESP_PROJECT_HOME@/files/iss_input_with_key_field.csv]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
+              </properties>
+            </connector>
+            <connector class="fs" name="iss_input_repeat">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="dateformat"><![CDATA[%m/%d/%Y:%H:%M:%S]]></property>
+                <property name="repeatcount"><![CDATA[100]]></property>
+                <property name="fsname"><![CDATA[@ESP_PROJECT_HOME@/files/iss_input_with_key_field.csv]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
+              </properties>
+            </connector>
+            <connector class="fs" name="iss_input_rate" active="false">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="dateformat"><![CDATA[%m/%d/%Y:%H:%M:%S]]></property>
+                <property name="rate"><![CDATA[1]]></property>
+                <property name="repeatcount"><![CDATA[100]]></property>
+                <property name="fsname"><![CDATA[@ESP_PROJECT_HOME@/files/iss_input_with_key_field.csv]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
+              </properties>
+            </connector>
+            <connector class="mqtt" name="MQTToutput" connection-name="ISSdata" active="false">
+              <properties>
+                <property name="type"><![CDATA[sub]]></property>
+                <property name="mqttport"><![CDATA[1883]]></property>
+                <property name="snapshot"><![CDATA[false]]></property>
+                <property name="mqtthost"><![CDATA[test.mosquitto.org]]></property>
+                <property name="mqtttopic"><![CDATA[ExampleforESP]]></property>
+                <property name="mqttqos"><![CDATA[0]]></property>
+                <property name="mqttmsgtype"><![CDATA[json]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-counter index="pi_EMPTY" name="Counter_CSV"/>
+        <window-counter index="pi_EMPTY" name="Counter_video"/>
+        <window-counter index="pi_EMPTY" name="Counter_timed"/>
+        <window-source autogen-key="true" index="pi_EMPTY" insert-only="true" name="Source_MQTT">
+          <schema>
+            <fields>
+              <field key="true" name="key" type="int64"/>
+              <field name="topic" type="string"/>
+              <field name="message" type="string"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector active="false" class="mqtt" name="MQTTinput">
+              <description><![CDATA[read from topic]]></description>
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="mqttport"><![CDATA[1883]]></property>
+                <property name="mqtthost"><![CDATA[test.mosquitto.org]]></property>
+                <property name="mqtttopic"><![CDATA[ExampleforESP]]></property>
+                <property name="mqttqos"><![CDATA[0]]></property>
+                <property name="mqttmsgtype"><![CDATA[opaquestring]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-counter index="pi_EMPTY" name="Counter_MQTT"/>
+        <window-counter index="pi_EMPTY" name="Counter_Eventhub"/>
+        <window-counter index="pi_EMPTY" name="Counter_Kafka"/>
+      </windows>
+      <edges>
+        <edge source="Source_CSV" target="Counter_CSV"/>
+        <edge source="Source_video" target="Counter_video"/>
+        <edge source="Source_timed" target="Counter_timed"/>
+        <edge source="Source_Kafka" target="Counter_Kafka"/>
+        <edge source="Source_Eventhub" target="Counter_Eventhub"/>
+        <edge source="Source_MQTT" target="Counter_MQTT"/>
+      </edges>
+    </contquery>
+  </contqueries>
+</project>
