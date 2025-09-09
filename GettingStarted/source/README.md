@@ -301,4 +301,4 @@ The output tab should look similar to the figure below:
 The videos and images provided in this example are to be used only with the project provided. Using or altering these videos and images beyond the example for any other purpose is prohibited.
 
 ## Additional Resources
-For more information, see [SAS Help Center: Using Remove State Windows](https://documentation.sas.com/?cdcId=espcdc&cdcVersion=default&docsetId=espcreatewindows&docsetTarget=p0usk3uf3bcnebn1m99g1jbvvhxu).
+For more information, see [SAS Help Center: Overview to Source Windows](https://go.documentation.sas.com/doc/en/espcdc/default/espcreatewindows/p1h7eov9msvacmn1st88y7nlun1e.htm).
