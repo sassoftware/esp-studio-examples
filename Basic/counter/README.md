@@ -25,7 +25,7 @@ Explore the settings for the Source_CSV window:
 3. In the right pane, expand **Input Data (Publisher) Connectors**.
       - `iss_input`: This connector reads the file from beginning to end once. It is useful for batch-style loading.
       - `iss_input_repeat`: This connector repeats the file input a specified number of times (for example, repeatcount = 100). It is useful for simulations or testing with looped input data.
-      - `iss_input_rate`: This connector adds a pacing mechanism to simulate streaming input (for example, rate = 1 record per second). It is useful for...FILL THIS IN  
+      - `iss_input_rate`: This connector adds a pacing mechanism to simulate streaming input (for example, rate = 1 record per second). It is useful for defining the rate in which events are injected into the stream.
       NOTE: You can view a connector's configuration by selecting the connector from the table, and then clicking ![edit](img/edit.png). These connectors are set to inactive by default. You can enable one or more connectors depending on your scenario.
 4. Expand **Subscriber Connectors**. Notice that this window includes a different type of connector. The MQTToutput connector is configured as a subscriber connector. Subscriber connectors output data from a project to an external file or system. 
 5. Click ![Output Schema](img/output-schema-icon.png "Output Schema"). Fields include:
