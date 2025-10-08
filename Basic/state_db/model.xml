@@ -1,0 +1,251 @@
+<project heartbeat-interval="1" luaroot="@ESP_PROJECT_OUTPUT@/luaroot" name="state_db" pubsub="auto" threads="1">
+      
+    <description><![CDATA[Basic example of using StateDB windows with Redis: reading, writing, and aggregating data.]]></description>
+      
+    <metadata>
+            
+        <meta id="layout">{"cq1":{"getMaxByGroup":{"x":290,"y":295},"getSavedStamp":{"x":530,"y":295},"inputRate":{"x":290,"y":50},"saveToRedis":{"x":50,"y":295},"sensorsData":{"x":290,"y":175}}}</meta>
+            
+        <meta id="studioUploadedBy">anonymous</meta>
+            
+        <meta id="studioUploaded">1756898373824</meta>
+            
+        <meta id="studioModifiedBy">anonymous</meta>
+            
+        <meta id="studioModified">1756908072635</meta>
+            
+        <meta id="studioTags">Example</meta>
+          
+    </metadata>
+      
+    <properties>
+            
+        <property name="REDIS_HOST"><![CDATA[127.0.0.1]]></property>
+            
+        <property name="REDIS_PORT"><![CDATA[6379]]></property>
+          
+    </properties>
+      
+    <contqueries>
+            
+        <contquery name="cq1">
+                  
+            <windows>
+                        
+                <window-source autogen-key="true" index="pi_EMPTY" insert-only="true" name="inputRate" output-insert-only="true">
+                              
+                    <schema>
+                                    
+                        <fields>
+                                          
+                            <field key="true" name="id" type="int64"/>
+                                          
+                            <field name="time" type="stamp"/>
+                                          
+                            <field name="label" type="string"/>
+                                        
+                        </fields>
+                                  
+                    </schema>
+                              
+                    <connectors>
+                                    
+                        <connector class="timer" name="dummyStream">
+                                          
+                            <properties>
+                                                
+                                <property name="type"><![CDATA[pub]]></property>
+                                                
+                                <property name="label"><![CDATA[dummy data]]></property>
+                                                
+                                <property name="timeformat"><![CDATA[%Y-%m-%d %H:%M:%S]]></property>
+                                                
+                                <property name="maxevents"><![CDATA[1000000]]></property>
+                                                
+                                <property name="interval"><![CDATA[1]]></property>
+                                                
+                                <property name="unit"><![CDATA[second]]></property>
+                                                
+                                <property name="basetime"><![CDATA[2023-01-01 00:00:01]]></property>
+                                              
+                            </properties>
+                                        
+                        </connector>
+                                  
+                    </connectors>
+                            
+                </window-source>
+                        
+                <window-lua events="create" index="pi_EMPTY" name="sensorsData" output-insert-only="true">
+                              
+                    <schema>
+                                    
+                        <fields>
+                                          
+                            <field key="true" name="sensor_id" type="int64"/>
+                                          
+                            <field name="sensor_group" type="string"/>
+                                          
+                            <field name="sensor_stmp" type="stamp"/>
+                                        
+                        </fields>
+                                  
+                    </schema>
+                              
+                    <code><![CDATA[--[[ 
+    Created by Andrey Matveenko on 12/25/2025, 4:34:34 PM
+--]]
+
+local group_gen = 'default'
+
+
+function create(data, context)
+    local event = {} 
+    local i = math.random(0, 2) 
+
+
+    if i == 0 then
+        group_gen = 'mezzanine'
+    elseif i == 1 then
+        group_gen = 'reception'
+    else
+        group_gen = 'workshop'
+    end
+
+
+    event.sensor_id = data.id % 10
+    event.sensor_group = group_gen
+    event.sensor_stmp = data.time
+
+
+    return event 
+end
+]]></code>
+                            
+                </window-lua>
+                        
+                <window-statedb-writer name="saveToRedis">
+                              
+                    <statedb cluster="false" hostname="@REDIS_HOST@" keep-alive-ping="15" port="@REDIS_PORT@" type="redis"/>
+                              
+                    <write prefix="stream" ttl="60">
+                                    
+                        <secondary-indexes>
+                                          
+                            <secondary-index name="SENSOR_GROUP">
+                                                
+                                <fields>
+                                                      
+                                    <field name="sensor_group"/>
+                                                    
+                                </fields>
+                                              
+                            </secondary-index>
+                                        
+                        </secondary-indexes>
+                                    
+                        <output>
+                                          
+                            <field-selection db-name="SENSOR_ID" name="sensor_id"/>
+                                          
+                            <field-selection db-name="SENSOR_GROUP" name="sensor_group"/>
+                                          
+                            <field-selection db-name="SENSOR_STMP" name="sensor_stmp"/>
+                                        
+                        </output>
+                                  
+                    </write>
+                            
+                </window-statedb-writer>
+                        
+                <window-statedb-reader name="getSavedStamp">
+                              
+                    <statedb cluster="false" hostname="@REDIS_HOST@" keep-alive-ping="15" port="@REDIS_PORT@" type="redis"/>
+                              
+                    <query prefix="stream" query="sensor_id==SENSOR_ID"/>
+                              
+                    <schema>
+                                    
+                        <fields>
+                                          
+                            <field key="true" name="sensor_id" type="int64"/>
+                                          
+                            <field name="sensor_group" type="string"/>
+                                          
+                            <field name="sensor_stmp" type="stamp"/>
+                                          
+                            <field name="sensor_saved_stmp" type="stamp"/>
+                                        
+                        </fields>
+                                  
+                    </schema>
+                              
+                    <output>
+                                    
+                        <field-selection name="sensor_id" source="input"/>
+                                    
+                        <field-selection name="sensor_group" source="input"/>
+                                    
+                        <field-selection name="sensor_stmp" source="input"/>
+                                    
+                        <field-selection name="SENSOR_STMP" source="query"/>
+                                  
+                    </output>
+                            
+                </window-statedb-reader>
+                        
+                <window-statedb-reader name="getMaxByGroup">
+                              
+                    <statedb cluster="false" hostname="@REDIS_HOST@" keep-alive-ping="15" port="@REDIS_PORT@" type="redis"/>
+                              
+                    <query prefix="stream" query="sensor_group==SENSOR_GROUP"/>
+                              
+                    <schema>
+                                    
+                        <fields>
+                                          
+                            <field key="true" name="sensor_id" type="int64"/>
+                                          
+                            <field name="sensor_group" type="string"/>
+                                          
+                            <field name="sensor_stmp" type="stamp"/>
+                                          
+                            <field name="sensor_group_max_id" type="int64"/>
+                                        
+                        </fields>
+                                  
+                    </schema>
+                              
+                    <output>
+                                    
+                        <field-selection name="sensor_id" source="input"/>
+                                    
+                        <field-selection name="sensor_group" source="input"/>
+                                    
+                        <field-selection name="sensor_stmp" source="input"/>
+                                    
+                        <field-selection aggregate="ESP_aMax" name="SENSOR_ID" source="query"/>
+                                  
+                    </output>
+                            
+                </window-statedb-reader>
+                      
+            </windows>
+                  
+            <edges>
+                        
+                <edge source="inputRate" target="sensorsData"/>
+                        
+                <edge slot="0" source="sensorsData" target="getSavedStamp"/>
+                        
+                <edge source="sensorsData" target="getMaxByGroup"/>
+                        
+                <edge source="sensorsData" target="saveToRedis"/>
+                      
+            </edges>
+                
+        </contquery>
+          
+    </contqueries>
+    
+</project>

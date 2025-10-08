@@ -2,10 +2,10 @@
   <description><![CDATA[This example simulates healthcare data streaming into a model and detects measurements that fall outside an acceptable range. A Lua snippet in the project subscribes to windows, stores values, and reads a JSON file. Lua connectors are also used.]]></description>
   <metadata>
     <meta id="layout">{"cq":{"addMetricInfo":{"x":610,"y":175},"alert":{"x":260,"y":50},"analysis":{"x":260,"y":175},"isAlert":{"x":750,"y":295},"metrics":{"x":610,"y":50},"patients":{"x":50,"y":50},"statistic":{"x":830,"y":50}}}</meta>
-    <meta id="studioUploadedBy">anonymousUser</meta>
-    <meta id="studioUploaded">1722341616197</meta>
-    <meta id="studioModifiedBy">anonymousUser</meta>
-    <meta id="studioModified">1722342111950</meta>
+    <meta id="studioUploadedBy">anonymous</meta>
+    <meta id="studioUploaded">1759849970074</meta>
+    <meta id="studioModifiedBy">anonymous</meta>
+    <meta id="studioModified">1759850110590</meta>
     <meta id="studioTags">Example</meta>
   </metadata>
   <lua-snippets>
@@ -187,7 +187,7 @@ end]]></property>
             <connector class="lua" name="pub">
               <properties>
                 <property name="type"><![CDATA[pub]]></property>
-                <property name="interval"><![CDATA[1000 milliseconds]]></property>
+                <property name="interval"><![CDATA[2000 milliseconds]]></property>
                 <property name="code"><![CDATA[math.randomseed(os.time())
 
 function publish()
@@ -230,7 +230,10 @@ function publish()
 
     if (#events > 0)
     then
-        esp_inject(events)
+        for i, evt in ipairs(events) do
+            esp_inject({evt})    -- inject a single event as a one-element table
+            esp_sleep(20)       -- pause before the next event
+        end
     end
 end]]></property>
               </properties>
@@ -271,7 +274,7 @@ end]]></property>
             <right-select>lower,upper,system</right-select>
           </output>
         </window-join>
-        <window-filter init="init" name="isAlert">
+        <window-filter init="init" name="isAlert" func="filter">
           <description><![CDATA[The "isAlert" Filter window generates alerts only for the patients who are found in the data from the patients.json file.]]></description>
           <code><![CDATA[local   patient_data = nil
 

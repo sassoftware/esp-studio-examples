@@ -1,56 +1,129 @@
-<project name="aggregate" pubsub="auto" threads="1" heartbeat-interval="1" luaroot="@ESP_PROJECT_OUTPUT@/luaroot">
-  <description><![CDATA[This model applies aggregation functions to a group of stock market trades. When new events arrive in the Aggregate window, they are placed into aggregate groups. After a new event enters the event stream, the aggregation functions are called. The functions then modify the aggregation groups accordingly. Aggregate field calculation functions or expressions that are registered to the Aggregate window must appear in non-key fields, which in this model are totalQuant and maxPrice.]]></description>
+<project heartbeat-interval="1" name="aggregate" pubsub="auto" threads="1">
   <metadata>
-    <meta id="studioUploadedBy">anonymousUser</meta>
-    <meta id="studioUploaded">1696245860999</meta>
-    <meta id="studioModifiedBy">anonymousUser</meta>
-    <meta id="studioModified">1696245867709</meta>
-    <meta id="layout">{"contQuery":{"aggregateWindow":{"x":50,"y":175},"sourceWindow":{"x":50,"y":50}}}</meta>
+    <meta id="layout">{"cq1":{"Aggregate_Normal":{"x":295,"y":335},"Aggregate_Timed":{"x":765,"y":335},"Copy_EventTime_Sliding":{"x":765,"y":200},"Copy_SystemTime_Sliding":{"x":295,"y":195},"Source":{"x":530,"y":50}}}</meta>
+    <meta id="studioUploadedBy">anonymous</meta>
+    <meta id="studioUploaded">1759830397071</meta>
+    <meta id="studioModifiedBy">anonymous</meta>
+    <meta id="studioModified">1759831960865</meta>
     <meta id="studioTags">Example</meta>
   </metadata>
   <contqueries>
-    <contquery name="contQuery" trace="aggregateWindow">
+    <contquery name="cq1">
       <windows>
-        <window-source pubsub="true" name="sourceWindow">
-          <description><![CDATA[The Source window in this model receives input data from a CSV file containing a group of stock market trades. The input data specifies the trader ID, the stock market symbol of the purchased stock, the quantity of stock purchased per trade, and the cost of purchasing the stock per trade.]]></description>
+        <window-source index="pi_EMPTY" insert-only="true" name="Source">
           <schema>
             <fields>
-              <field name="ID" type="int32" key="true"/>
-              <field name="symbol" type="string"/>
-              <field name="quantity" type="int32"/>
-              <field name="price" type="double"/>
+              <field name="motor" type="string" key="true"/>
+              <field name="time" type="stamp" key="true"/>
+              <field name="vibration" type="double"/>
             </fields>
           </schema>
           <connectors>
-            <connector class="fs" name="input_aggregate">
+            <connector class="python" name="input_publisher">
               <properties>
                 <property name="type"><![CDATA[pub]]></property>
-                <property name="fsname"><![CDATA[@ESP_PROJECT_HOME@/test_files/input-aggregate.csv]]></property>
-                <property name="fstype"><![CDATA[csv]]></property>
+                <property name="maxevents"><![CDATA[10]]></property>
+                <property name="interval"><![CDATA[1 second]]></property>
+                <property name="init"><![CDATA[init]]></property>
+                <property name="publish"><![CDATA[publish]]></property>
+                <property name="code"><![CDATA[import esp
+import os
+
+lines = []
+def init():
+   global lines
+   project_home = os.environ['ESP_PROJECT_HOME'] 
+   inputFile = f"{project_home}/test_files/input.csv"
+   print(inputFile)
+   with open(inputFile, 'r') as file:
+       lines = file.readlines()
+
+count = 1     
+def publish():
+   global count
+   event_data = {}
+   fields = lines[count].split(',')
+   event_data['motor'] = fields[2]
+   event_data['time'] = fields[3]
+   event_data['vibration'] = fields[4]
+   
+   count += 1
+   done = False
+   if(count >= len(lines)):
+       done = True
+   return {
+        "events": event_data,
+        "done": done
+   }
+]]></property>
               </properties>
             </connector>
           </connectors>
         </window-source>
-        <window-aggregate pubsub="true" name="aggregateWindow">
-          <description><![CDATA[Incoming events from the Source window are placed into aggregate groups. The Aggregate window in this model contains two aggregation functions, ESP_aMax and ESP_aSum.
-
-ESP_aMax identifies the maximum price paid to purchase a stock in the aggregation group. ESP_aSum calculates the sum of the aggregation group.]]></description>
+        <window-copy name="Copy_SystemTime_Sliding">
+          <retention type="bytime_sliding"><![CDATA[5 seconds]]></retention>
+        </window-copy>
+        <window-copy name="Copy_EventTime_Sliding">
+          <retention field="time" type="bytime_sliding"><![CDATA[10 seconds]]></retention>
+        </window-copy>
+        <window-aggregate name="Aggregate_Timed">
           <schema>
             <fields>
-              <field name="symbol" type="string" key="true"/>
-              <field name="totalQuant" type="int32"/>
-              <field name="maxPrice" type="double"/>
+              <field key="true" name="motor" type="string"/>
+              <field name="time" type="stamp"/>
+              <field name="vibration" type="double"/>
+              <field name="timed_avg_vibration" type="double"/>
+              <field name="timed_count" type="int64"/>
+              <field name="timed_max" type="double"/>
+              <field name="timed_min" type="double"/>
+              <field name="timed_sum" type="double"/>
             </fields>
           </schema>
           <output>
-            <field-expr><![CDATA[ESP_aSum(quantity)]]></field-expr>
-            <field-expr><![CDATA[ESP_aMax(price)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(time)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(vibration)]]></field-expr>
+            <field-expr><![CDATA[ESP_aAveTimed(vibration, 5)]]></field-expr>
+            <field-expr><![CDATA[ESP_aCountTimed(5)]]></field-expr>
+            <field-expr><![CDATA[ESP_aMaxTimed(vibration, 5)]]></field-expr>
+            <field-expr><![CDATA[ESP_aMinTimed(vibration, 5)]]></field-expr>
+            <field-expr><![CDATA[ESP_aSumTimed(vibration, 5)]]></field-expr>
+          </output>
+        </window-aggregate>
+        <window-aggregate name="Aggregate_Normal">
+          <schema>
+            <fields>
+              <field name="motor" type="string" key="true"/>
+              <field name="time" type="stamp"/>
+              <field name="vibration" type="double"/>
+              <field name="avg_vibration" type="double"/>
+              <field name="count" type="int32"/>
+              <field name="first_vibration" type="double"/>
+              <field name="lag_vibration" type="double"/>
+              <field name="max_vibration" type="double"/>
+              <field name="min_vibration" type="double"/>
+              <field name="std_vibration" type="double"/>
+              <field name="sum_vibration" type="double"/>
+            </fields>
+          </schema>
+          <output>
+            <field-expr><![CDATA[ESP_aLast(time)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(vibration)]]></field-expr>
+            <field-expr><![CDATA[ESP_aAve(vibration)]]></field-expr>
+            <field-expr><![CDATA[ESP_aCount()]]></field-expr>
+            <field-expr><![CDATA[ESP_aFirst(vibration)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLag(vibration, 1)]]></field-expr>
+            <field-expr><![CDATA[ESP_aMax(vibration)]]></field-expr>
+            <field-expr><![CDATA[ESP_aMin(vibration)]]></field-expr>
+            <field-expr><![CDATA[ESP_aStd(vibration)]]></field-expr>
+            <field-expr><![CDATA[ESP_aSum(vibration)]]></field-expr>
           </output>
         </window-aggregate>
       </windows>
       <edges>
-        <description/>
-        <edge source="sourceWindow" target="aggregateWindow"/>
+        <edge source="Source" target="Copy_SystemTime_Sliding"/>
+        <edge source="Source" target="Copy_EventTime_Sliding"/>
+        <edge source="Copy_EventTime_Sliding" target="Aggregate_Timed"/>
+        <edge source="Copy_SystemTime_Sliding" target="Aggregate_Normal"/>
       </edges>
     </contquery>
   </contqueries>

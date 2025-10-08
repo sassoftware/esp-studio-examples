@@ -72,7 +72,6 @@ The following figure shows the **analysis** tab:
 
 ![analysis tab](img/analysis.png "analysis tab")
 
-You might see warnings in the Log pane about windows being throttled. You can ignore these warnings.
 
 ## Additional Resources
 

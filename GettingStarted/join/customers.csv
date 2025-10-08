@@ -1,0 +1,5 @@
+opcode,type,CustomerID,CustomerName,City
+i,n,111,Alice,New York
+i,n,222,Bob,Chicago
+i,n,333,Charlie,Boston
+i,n,555,Diana,Seattle

@@ -1,0 +1,6 @@
+opcode,type,OrderID,CustomerID,Product,Amount
+i,n,ORD001,111,Laptop,1200
+i,n,ORD002,222,Phone,800
+i,n,ORD003,222,Tablet,600
+i,n,ORD004,555,Monitor,300
+i,n,ORD005,999,Keypad,15

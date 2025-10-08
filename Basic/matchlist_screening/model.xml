@@ -1,0 +1,232 @@
+<project name="matchlist_screening" threads="8" pubsub="auto" heartbeat-interval="1" luaroot="@ESP_PROJECT_OUTPUT@/luaroot">
+  <metadata>
+    <meta id="studioUploadedBy">sasboot</meta>
+    <meta id="studioUploaded">1759845671751</meta>
+    <meta id="studioModifiedBy">sasboot</meta>
+    <meta id="studioModified">1759845806715</meta>
+    <meta id="layout">{"cq1_r1":{"change_key":{"x":185,"y":-140},"data_quality":{"x":-55,"y":-140},"func_to_cq2_r1":{"x":50,"y":295},"lookup_sender":{"x":70,"y":45},"prepare_list":{"x":185,"y":-250},"src_transactions":{"x":-55,"y":-360},"watch_list":{"x":185,"y":-360}}}</meta>
+    <meta id="studioTags">Example</meta>
+  </metadata>
+  <contqueries>
+    <contquery name="cq1_r1" index="pi_EMPTY">
+      <windows>
+        <window-source index="pi_EMPTY" insert-only="true" autogen-key="true" pubsub="true" name="src_transactions">
+          <schema>
+            <fields>
+              <field name="tran_id" type="int64" key="true"/>
+              <field name="sum" type="double"/>
+              <field name="currency" type="string"/>
+              <field name="sender" type="string"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="lua" name="pub_trans">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="code"><![CDATA[function publish()
+
+local event = {}
+
+
+event.tran_id = 1
+event.sum = 1000
+event.currency="USD"
+event.sender="Zenthora Tech"
+
+esp_inject(event)
+
+event.tran_id = 2
+event.sum = 700
+event.currency="USD"
+event.sender="'Zenthora Tech Inc'"
+
+esp_inject(event)
+
+
+event.tran_id = 3
+event.sum = 2500
+event.currency="USD"
+event.sender="Zenthora Inc"
+
+esp_inject(event)
+
+event.tran_id = 4
+event.sum = 3500
+event.currency="GPB"
+event.sender="Alexander Smith"
+
+esp_inject(event)
+
+event.tran_id = 5
+event.sum = 50
+event.currency="GPB"
+event.sender="Mr Alex Smith"
+
+esp_inject(event)
+
+event.tran_id = 6
+event.sum = 20
+event.currency="GPB"
+event.sender="Dr Alexander Smith"
+
+esp_inject(event)
+
+
+
+
+
+
+
+
+return true
+end]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-compute pubsub="true" index="pi_EMPTY" name="data_quality">
+          <expr-initialize>
+            <initializer type="string"><![CDATA[dq dataq
+string error
+
+dataq = DQ_INITIALIZE()
+print("DQ init value:" & dataq)
+
+error=dataq.LOADQKB("ENUSA")
+print("DQ locale read:" & error)]]></initializer>
+          </expr-initialize>
+          <schema>
+            <fields>
+              <field name="tran_id" type="int64" key="true"/>
+              <field name="sum" type="double"/>
+              <field name="currency" type="string"/>
+              <field name="sender" type="string"/>
+              <field name="sender_type" type="string"/>
+              <field name="sender_matchcode" type="string"/>
+            </fields>
+          </schema>
+          <output>
+            <field-expr><![CDATA[sum]]></field-expr>
+            <field-expr><![CDATA[currency]]></field-expr>
+            <field-expr><![CDATA[sender]]></field-expr>
+            <field-expr><![CDATA[string output;
+dataq.IDENTIFY("Field Content", sender, output);
+return output;]]></field-expr>
+            <field-expr><![CDATA[string output2;
+if output=="INDIVIDUAL"   
+dataq.matchcode("NAME", 65, sender, output2);
+
+else 
+dataq.matchcode("ORGANIZATION", 65, sender, output2);
+
+
+return output2;]]></field-expr>
+          </output>
+        </window-compute>
+        <window-source name="watch_list">
+          <schema>
+            <fields>
+              <field name="company_name" type="string" key="true"/>
+              <field name="risk_level" type="int32"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="lua" name="pub_watchlist">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="code"><![CDATA[function publish()
+
+local event = {}
+
+
+event.company_name = "\"Zenthora Tech Inc.\""
+event.risk_level = 3
+
+esp_inject(event)
+
+
+
+return true
+end]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-compute name="prepare_list">
+          <expr-initialize>
+            <initializer type="string"><![CDATA[dq dataq
+string error
+
+dataq = DQ_INITIALIZE()
+print("DQ init value:" & dataq)
+
+error=dataq.LOADQKB("ENUSA")
+print("DQ locale read:" & error)]]></initializer>
+          </expr-initialize>
+          <schema>
+            <fields>
+              <field name="company_name" type="string" key="true"/>
+              <field name="risk_level" type="int32"/>
+              <field name="match_code" type="string"/>
+            </fields>
+          </schema>
+          <output>
+            <field-expr><![CDATA[risk_level]]></field-expr>
+            <field-expr><![CDATA[string output_mc;
+dataq.matchcode("ORGANIZATION", 65, company_name, output_mc);
+return output_mc;]]></field-expr>
+          </output>
+        </window-compute>
+        <window-compute index="pi_HASH" name="change_key">
+          <schema>
+            <fields>
+              <field name="match_code" type="string" key="true"/>
+              <field name="company_name" type="string"/>
+              <field name="risk_level" type="int32"/>
+            </fields>
+          </schema>
+          <output>
+            <field-expr><![CDATA[company_name]]></field-expr>
+            <field-expr><![CDATA[risk_level]]></field-expr>
+          </output>
+        </window-compute>
+        <window-join name="lookup_sender">
+          <join type="leftouter" no-regenerates="true">
+            <conditions>
+              <fields left="sender_matchcode" right="match_code"/>
+            </conditions>
+          </join>
+          <output>
+            <field-selection name="sum" source="l_sum"/>
+            <field-selection name="currency" source="l_currency"/>
+            <field-selection name="sender" source="l_sender"/>
+            <field-selection name="sender_type" source="l_sender_type"/>
+            <field-selection name="sender_matchcode" source="l_sender_matchcode"/>
+            <field-selection name="company_name" source="r_company_name"/>
+            <field-selection name="risk_level" source="r_risk_level"/>
+          </output>
+        </window-join>
+      </windows>
+      <edges>
+        <edge source="src_transactions" target="data_quality"/>
+        <edge source="watch_list" target="prepare_list"/>
+        <edge source="prepare_list" target="change_key"/>
+        <edge source="data_quality" target="lookup_sender" role="left"/>
+        <edge source="change_key" target="lookup_sender" role="right"/>
+      </edges>
+    </contquery>
+  </contqueries>
+  <project-connectors>
+    <connector-groups>
+      <connector-group name="Connector_Group_1">
+        <connector-entry connector="cq1_r1/watch_list/pub_watchlist" state="finished"/>
+      </connector-group>
+      <connector-group name="Connector_Group_2">
+        <connector-entry connector="cq1_r1/src_transactions/pub_trans" state="finished"/>
+      </connector-group>
+    </connector-groups>
+    <edges>
+      <edge source="Connector_Group_1" target="Connector_Group_2"/>
+    </edges>
+  </project-connectors>
+</project>

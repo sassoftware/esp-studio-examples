@@ -1,90 +1,162 @@
 <project name="join" pubsub="auto" threads="1" heartbeat-interval="1" luaroot="@ESP_PROJECT_OUTPUT@/luaroot">
   <description><![CDATA[A Join window receives events from a left input window and a right input window. It produces a single output stream of joined events. Joined events are created according to a user-specified join type and user-defined join conditions. This model joins a set of trades with their corresponding traders.]]></description>
   <metadata>
-    <meta id="studioUploadedBy">user1</meta>
-    <meta id="studioUploaded">1709646923753</meta>
-    <meta id="studioModifiedBy">user1</meta>
-    <meta id="studioModified">1709647031070</meta>
-    <meta id="layout">{"contquery_01":{"joinWindow":{"x":50,"y":175},"sourceWindow_01":{"x":290,"y":50},"sourceWindow_02":{"x":50,"y":50}}}</meta>
+    <meta id="studioUploadedBy">anonymousUser</meta>
+    <meta id="studioUploaded">1756912657240</meta>
+    <meta id="studioModifiedBy">anonymousUser</meta>
+    <meta id="studioModified">1756914613522</meta>
+    <meta id="layout">{"contquery_01":{"Customers":{"x":355,"y":-295},"FullOuterJoin":{"x":460,"y":-60},"InnerJoin":{"x":80,"y":165},"LeftOuterJoin":{"x":300,"y":165},"Loyalty":{"x":570,"y":-295},"Orders":{"x":90,"y":-115},"RightOuterJoin":{"x":520,"y":165}}}</meta>
     <meta id="studioTags">Example</meta>
   </metadata>
   <contqueries>
     <contquery name="contquery_01">
       <windows>
-        <window-source index="pi_HASH" pubsub="true" name="sourceWindow_01">
-          <description><![CDATA[The first Source window in this model receives input data from a CSV file containing a group of stock market share purchases. The input data specifies the trade ID, the stock market symbol of the purchased stock, the quantity of stock purchased per trade, the cost of purchasing the stock per trade, and the trader ID.]]></description>
+        <window-source index="pi_EMPTY" pubsub="true" name="Orders">
+          <description><![CDATA[This Source window provides the information on which products were ordered by the customer.]]></description>
           <schema>
             <fields>
-              <field name="ID" type="int32" key="true"/>
-              <field name="symbol" type="string"/>
-              <field name="quantity" type="int32"/>
-              <field name="price" type="double"/>
-              <field name="traderID" type="int32"/>
+              <field name="OrderID" type="string" key="true"/>
+              <field name="CustomerID" type="int32"/>
+              <field name="Product" type="string"/>
+              <field name="Amount" type="int32"/>
             </fields>
           </schema>
           <connectors>
-            <connector class="fs" name="input_join1">
+            <connector class="fs" name="orders_Connector">
               <properties>
                 <property name="type"><![CDATA[pub]]></property>
-                <property name="fsname"><![CDATA[@ESP_PROJECT_HOME@/test_files/input1.csv]]></property>
+                <property name="header"><![CDATA[1]]></property>
+                <property name="fsname"><![CDATA[@ESP_PROJECT_HOME@/test_files/orders.csv]]></property>
                 <property name="fstype"><![CDATA[csv]]></property>
               </properties>
             </connector>
           </connectors>
         </window-source>
-        <window-source index="pi_RBTREE" pubsub="true" name="sourceWindow_02">
-          <description><![CDATA[The second Source window in this model receives input data from a CSV file containing the names of the traders that purchased the shares that are streamed through the model. The input data specifies the trader ID and the trader name.]]></description>
+        <window-source index="pi_RBTREE" pubsub="true" name="Customers">
+          <description><![CDATA[The Source window in this model receives input data from a CSV file containing a list of customers.  This gives us reference data for the orders which will be coming in from the Orders source window.]]></description>
           <schema>
             <fields>
-              <field name="traderID" type="int32" key="true"/>
-              <field name="name" type="string"/>
+              <field name="CustomerID" type="int32" key="true"/>
+              <field name="CustomerName" type="string"/>
+              <field name="City" type="string"/>
             </fields>
           </schema>
           <connectors>
-            <connector class="fs" name="input_join2">
+            <connector class="fs" name="customers_Connector">
               <properties>
                 <property name="type"><![CDATA[pub]]></property>
-                <property name="fsname"><![CDATA[@ESP_PROJECT_HOME@/test_files/input2.csv]]></property>
+                <property name="header"><![CDATA[1]]></property>
+                <property name="fsname"><![CDATA[@ESP_PROJECT_HOME@/test_files/customers.csv]]></property>
                 <property name="fstype"><![CDATA[csv]]></property>
               </properties>
             </connector>
           </connectors>
         </window-source>
-        <window-join index="pi_RBTREE" pubsub="true" name="joinWindow">
-          <description><![CDATA[The join order is determined at the edge level of the project. The left window is the first window that is defined as a connecting edge to the Join window. The second window that is defined as a connecting edge is the right window. In this model, sourceWindow_01, containing the trades, has been designated as the left window. SourceWindow_02, containing the trader names, has been designated as the right window. 
-
-This model uses a left-outer join type. A left-outer join produces joined output events for every event that arrives from the left window. Joined events are created even when there are no matching events from the right window. This model uses expressions to calculate output fields. The join condition specifies what fields from the left and right events are used to generate matches. In this model, the traderID field is used to generate matches.  The Join window produces a single output event for each match. The Join window specifies what fields from the left and right events are included in the output event.]]></description>
-          <join type="leftouter">
+        <window-join index="pi_RBTREE" pubsub="true" name="InnerJoin">
+          <description><![CDATA[Shows only records where CustomerID exists in both tables. Records are matched based on the CustomerID key.]]></description>
+          <join type="inner" left-index="pi_EMPTY">
             <conditions>
-              <fields left="traderID" right="traderID"/>
+              <fields left="CustomerID" right="CustomerID"/>
             </conditions>
           </join>
           <output>
-            <field-expr name="symbol" type="string"><![CDATA[l_symbol]]></field-expr>
-            <field-expr name="quantity" type="int32"><![CDATA[l_quantity]]></field-expr>
-            <field-expr name="price" type="double"><![CDATA[l_price]]></field-expr>
-            <field-expr name="traderName" type="string"><![CDATA[r_name]]></field-expr>
+            <field-expr name="CustomerID" type="int32"><![CDATA[l_CustomerID]]></field-expr>
+            <field-expr name="Product" type="string"><![CDATA[l_Product]]></field-expr>
+            <field-expr name="Amount" type="int32"><![CDATA[l_Amount]]></field-expr>
+            <field-expr name="CustomerName" type="string"><![CDATA[r_CustomerName]]></field-expr>
+            <field-expr name="City" type="string"><![CDATA[r_City]]></field-expr>
+            <field-expr name="Loyalty" type="string"><![CDATA[r_Loyalty]]></field-expr>
           </output>
         </window-join>
+        <window-join name="LeftOuterJoin">
+          <description><![CDATA[A left-outer join produces joined output events for every event that arrives from the left window. Joined events are created even when there are no matching events from the right window.]]></description>
+          <join type="leftouter" left-index="pi_EMPTY">
+            <conditions>
+              <fields left="CustomerID" right="CustomerID"/>
+            </conditions>
+          </join>
+          <output>
+            <field-expr name="CustomerID" type="int32"><![CDATA[l_CustomerID]]></field-expr>
+            <field-expr name="Product" type="string"><![CDATA[l_Product]]></field-expr>
+            <field-expr name="Amount" type="int32"><![CDATA[l_Amount]]></field-expr>
+            <field-expr name="CustomerName" type="string"><![CDATA[r_CustomerName]]></field-expr>
+            <field-expr name="City" type="string"><![CDATA[r_City]]></field-expr>
+            <field-expr name="Loyalty" type="string"><![CDATA[r_Loyalty]]></field-expr>
+          </output>
+        </window-join>
+        <window-join name="RightOuterJoin">
+          <join type="rightouter">
+            <conditions>
+              <fields left="CustomerID" right="CustomerID"/>
+            </conditions>
+          </join>
+          <output>
+            <field-expr name="CustomerName" type="string"><![CDATA[l_CustomerName]]></field-expr>
+            <field-expr name="City" type="string"><![CDATA[l_City]]></field-expr>
+            <field-expr name="Loyalty" type="string"><![CDATA[l_Loyalty]]></field-expr>
+            <field-expr name="CustomerID" type="int32"><![CDATA[r_CustomerID]]></field-expr>
+            <field-expr name="Product" type="string"><![CDATA[r_Product]]></field-expr>
+            <field-expr name="Amount" type="int32"><![CDATA[r_Amount]]></field-expr>
+          </output>
+        </window-join>
+        <window-join name="FullOuterJoin">
+          <description><![CDATA[FullOuterJoin combines Customers  and Loyalty, so that downstream you have a unified view of customer + loyalty info.]]></description>
+          <join type="fullouter">
+            <conditions>
+              <fields left="CustomerID" right="CustomerID"/>
+            </conditions>
+          </join>
+          <output>
+            <field-expr name="CustomerName" type="string"><![CDATA[l_CustomerName]]></field-expr>
+            <field-expr name="City" type="string"><![CDATA[l_City]]></field-expr>
+            <field-expr name="Loyalty" type="string"><![CDATA[r_Loyalty]]></field-expr>
+          </output>
+        </window-join>
+        <window-source name="Loyalty">
+          <description><![CDATA[The Source window in this model receives input data from a CSV file containing a list of customers loyalty information.  For example, gold, silver or bronze.  A complete customer picture is obtained by joining loyalty with Customers.]]></description>
+          <schema>
+            <fields>
+              <field name="CustomerID" type="int32" key="true"/>
+              <field name="Loyalty" type="string"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="fs" name="Loyalty_Connector">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="header"><![CDATA[1]]></property>
+                <property name="fsname"><![CDATA[@ESP_PROJECT_HOME@/test_files/loyalty.csv]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
       </windows>
       <edges>
         <description/>
-        <edge source="sourceWindow_01" target="joinWindow"/>
-        <edge source="sourceWindow_02" target="joinWindow" role="right"/>
+        <edge source="Orders" target="InnerJoin" role="left"/>
+        <edge source="Orders" target="LeftOuterJoin" role="left"/>
+        <edge source="Customers" target="FullOuterJoin" role="left"/>
+        <edge source="Loyalty" target="FullOuterJoin" role="right"/>
+        <edge source="FullOuterJoin" target="InnerJoin" role="right"/>
+        <edge source="FullOuterJoin" target="LeftOuterJoin" role="right"/>
+        <edge source="FullOuterJoin" target="RightOuterJoin" role="left"/>
+        <edge source="Orders" target="RightOuterJoin" role="right"/>
       </edges>
     </contquery>
   </contqueries>
   <project-connectors>
     <connector-groups>
-      <connector-group name="Traders">
-        <connector-entry connector="contquery_01/sourceWindow_02/input_join2" state="finished"/>
+      <connector-group name="Customers">
+        <connector-entry connector="contquery_01/Customers/customers_Connector" state="finished"/>
+        <connector-entry connector="contquery_01/Loyalty/Loyalty_Connector" state="finished"/>
       </connector-group>
-      <connector-group name="Trades">
-        <connector-entry connector="contquery_01/sourceWindow_01/input_join1" state="running"/>
+      <connector-group name="Orders">
+        <connector-entry connector="contquery_01/Orders/orders_Connector" state="running"/>
       </connector-group>
     </connector-groups>
     <edges>
-      <edge source="Traders" target="Trades"/>
+      <edge source="Customers" target="Orders"/>
     </edges>
   </project-connectors>
 </project>
