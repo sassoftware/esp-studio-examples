@@ -1,10 +1,6 @@
 <project name="join" pubsub="auto" threads="1" heartbeat-interval="1" luaroot="@ESP_PROJECT_OUTPUT@/luaroot">
   <description><![CDATA[A Join window receives events from a left input window and a right input window. It produces a single output stream of joined events. Joined events are created according to a user-specified join type and user-defined join conditions. This model joins a set of trades with their corresponding traders.]]></description>
   <metadata>
-    <meta id="studioUploadedBy">anonymousUser</meta>
-    <meta id="studioUploaded">1756912657240</meta>
-    <meta id="studioModifiedBy">anonymousUser</meta>
-    <meta id="studioModified">1756914613522</meta>
     <meta id="layout">{"contquery_01":{"Customers":{"x":355,"y":-295},"FullOuterJoin":{"x":460,"y":-60},"InnerJoin":{"x":80,"y":165},"LeftOuterJoin":{"x":300,"y":165},"Loyalty":{"x":570,"y":-295},"Orders":{"x":90,"y":-115},"RightOuterJoin":{"x":520,"y":165}}}</meta>
     <meta id="studioTags">Example</meta>
   </metadata>
@@ -149,6 +145,8 @@
     <connector-groups>
       <connector-group name="Customers">
         <connector-entry connector="contquery_01/Customers/customers_Connector" state="finished"/>
+      </connector-group>
+      <connector-group name="Loyalty">
         <connector-entry connector="contquery_01/Loyalty/Loyalty_Connector" state="finished"/>
       </connector-group>
       <connector-group name="Orders">
@@ -156,7 +154,8 @@
       </connector-group>
     </connector-groups>
     <edges>
-      <edge source="Customers" target="Orders"/>
+      <edge source="Customers" target="Loyalty"/>
+      <edge source="Loyalty" target="Orders"/>
     </edges>
   </project-connectors>
-</project>
+</project> 
