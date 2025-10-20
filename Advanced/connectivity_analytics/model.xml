@@ -1,0 +1,381 @@
+<project name="connectivity_analytics" threads="1" pubsub="auto" heartbeat-interval="1" index="pi_EMPTY" use-tagged-token="true">
+  <description><![CDATA[Intelligent Connectivity Analytics with CMP Stream]]></description>
+  <metadata>
+    <meta id="layout">{"cq1":{"add_cell_pos":{"x":490,"y":-425},"w_aggr_stats":{"x":635,"y":-890},"w_cells":{"x":695,"y":-535},"w_change_latency":{"x":485,"y":-790},"w_cmp_stream":{"x":280,"y":-1240},"w_copy":{"x":625,"y":-990},"w_join_avg":{"x":275,"y":-490},"w_latency_spike":{"x":485,"y":-630},"w_parsing":{"x":280,"y":-1115},"w_rate":{"x":590,"y":-1110},"w_retention":{"x":70,"y":-845},"w_rules":{"x":275,"y":-280},"w_usage_profile":{"x":70,"y":-720}}}</meta>
+    <meta id="studioUploadedBy">anonymous</meta>
+    <meta id="studioUploaded">1760953882824</meta>
+    <meta id="studioModifiedBy">anonymous</meta>
+    <meta id="studioModified">1760953932154</meta>
+    <meta id="studioTags">Example</meta>
+  </metadata>
+  <contqueries>
+    <contquery name="cq1">
+      <windows>
+        <window-source insert-only="true" autogen-key="true" name="w_cmp_stream">
+          <schema>
+            <fields>
+              <field name="id" type="int64" key="true"/>
+              <field name="json_data" type="string"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="fs" name="anomalies_Connector">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="rate"><![CDATA[10]]></property>
+                <property name="header"><![CDATA[0]]></property>
+                <property name="csvfielddelimiter"><![CDATA[|]]></property>
+                <property name="addcsvopcode"><![CDATA[true]]></property>
+                <property name="addcsvflags"><![CDATA[normal]]></property>
+                <property name="fsname"><![CDATA[@ESP_PROJECT_HOME@/files/anomalies.csv]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-lua events="create" name="w_parsing">
+          <schema>
+            <fields>
+              <field name="id" type="int64" key="true"/>
+              <field name="json_data" type="string"/>
+              <field name="timestamp" type="stamp"/>
+              <field name="device_id" type="string"/>
+              <field name="iccid" type="string"/>
+              <field name="status" type="string"/>
+              <field name="data_usage_mb" type="double"/>
+              <field name="signal_strength" type="double"/>
+              <field name="latency_ms" type="double"/>
+              <field name="jitter_ms" type="double"/>
+              <field name="session_status" type="string"/>
+              <field name="location" type="string"/>
+              <field name="roaming" type="string"/>
+              <field name="operator" type="string"/>
+              <field name="plan" type="string"/>
+            </fields>
+          </schema>
+          <copy><![CDATA[id,json_data]]></copy>
+          <use><![CDATA[id,json_data]]></use>
+          <code><![CDATA[--[[--Created by anonymousUser at 4/29/2025, 11:02:42 AM--]]--
+
+function create(data,context)
+
+
+
+    local   message_info = esp_parseJsonFrom("json_data")
+    if message_info == nil then
+        print("ERROR: Failed to parse message")
+        return {}
+    end
+
+
+    local   e = {}
+
+
+    e.timestamp = esp_getSystemMicro()
+    e.device_id = message_info.device_id
+    e.iccid = message_info.iccid
+    e.status = message_info.status
+    e.data_usage_mb = message_info.data_usage_mb
+    e.signal_strength = message_info.signal_strength
+    e.latency_ms = message_info.latency_ms
+    e.jitter_ms = message_info.jitter_ms
+    e.session_status = message_info.session_status
+    e.location = message_info.location
+    e.roaming = message_info.roaming
+    e.operator = message_info.operator
+    e.plan = message_info.plan
+
+        
+
+
+    return(e)
+
+end]]></code>
+        </window-lua>
+        <window-calculate algorithm="ChangeDetection" name="w_change_latency">
+          <description><![CDATA[Spikes in latency detection (e.g., network congestion).]]></description>
+          <schema>
+            <fields>
+              <field name="id" type="int64" key="true"/>
+              <field name="latency_ms" type="double"/>
+              <field name="changeVal" type="double"/>
+              <field name="eval" type="int32"/>
+              <field name="changeDetected" type="int32"/>
+              <field name="timestamp" type="stamp"/>
+              <field name="device_id" type="string"/>
+              <field name="iccid" type="string"/>
+            </fields>
+          </schema>
+          <parameters>
+            <properties>
+              <!-- Controls exponential decay; closer to 1 = slower adaptation -->
+              <property name="slidingAlpha"><![CDATA[0.98]]></property>
+              <!-- Disables half-life logic so only slidingAlpha is used -->
+              <property name="slidingHalfLifeSteps"><![CDATA[0]]></property>
+              <!-- Reference window size: how much history to compare against -->
+              <property name="refWindowSize"><![CDATA[100]]></property>
+              <!-- Threshold of KL divergence to raise change flag -->
+              <property name="changeThreshold"><![CDATA[0.2]]></property>
+              <!-- Histogram binning resolution -->
+              <property name="nBins"><![CDATA[50]]></property>
+              <!-- How many steps to evaluate change before resetting -->
+              <property name="maxEvalSteps"><![CDATA[100]]></property>
+              <!-- Enables adaptive evaluation windowing -->
+              <property name="adaptiveEval"><![CDATA[1]]></property>
+              <!-- Use KL divergence difference as the change measure -->
+              <property name="measure"><![CDATA[KLDivergenceDiff]]></property>
+              <!-- Show evaluation metrics in output -->
+              <property name="showEval"><![CDATA[1]]></property>
+              <!-- Hide all non-change-detected output if 0 -->
+              <property name="showAll"><![CDATA[1]]></property>
+            </properties>
+          </parameters>
+          <input-map>
+            <properties>
+              <property name="input"><![CDATA[latency_ms]]></property>
+            </properties>
+          </input-map>
+          <output-map>
+            <properties>
+              <property name="evaluatedOut"><![CDATA[eval]]></property>
+              <property name="changeValueOut"><![CDATA[changeVal]]></property>
+              <property name="changeDetectedOut"><![CDATA[changeDetected]]></property>
+            </properties>
+          </output-map>
+        </window-calculate>
+        <window-filter func="filter" name="w_latency_spike">
+          <use><![CDATA[changeDetected]]></use>
+          <code><![CDATA[--[[--Created by anonymousUser at 4/29/2025, 4:37:58 PM--]]--
+function filter(event,context)
+    return (event.changeDetected==1)
+end]]></code>
+        </window-filter>
+        <window-aggregate index="pi_HASH" name="w_aggr_stats">
+          <schema>
+            <fields>
+              <field name="location" type="string" key="true"/>
+              <field name="operator" type="string" key="true"/>
+              <field name="latency_ms" type="double"/>
+              <field name="jitter_ms" type="double"/>
+              <field name="signal_strength" type="double"/>
+            </fields>
+          </schema>
+          <output>
+            <field-expr><![CDATA[ESP_aAveTimed(latency_ms, 100)]]></field-expr>
+            <field-expr><![CDATA[ESP_aAveTimed(jitter_ms, 100)]]></field-expr>
+            <field-expr><![CDATA[ESP_aAve(signal_strength)]]></field-expr>
+          </output>
+        </window-aggregate>
+        <window-aggregate index="pi_HASH" name="w_usage_profile">
+          <schema>
+            <fields>
+              <field name="device_id" type="string" key="true"/>
+              <field name="roaming" type="string" key="true"/>
+              <field name="data_usage_mb" type="double"/>
+            </fields>
+          </schema>
+          <output>
+            <field-expr><![CDATA[ESP_aAve(data_usage_mb)]]></field-expr>
+          </output>
+        </window-aggregate>
+        <window-copy index="pi_HASH" name="w_retention">
+          <retention type="bytime_sliding"><![CDATA[4 days]]></retention>
+        </window-copy>
+        <window-join name="w_join_avg">
+          <join type="leftouter" no-regenerates="true">
+            <conditions>
+              <fields left="device_id" right="device_id"/>
+              <fields left="roaming" right="roaming"/>
+            </conditions>
+          </join>
+          <output>
+            <field-selection name="json_data" source="l_json_data"/>
+            <field-selection name="timestamp" source="l_timestamp"/>
+            <field-selection name="device_id" source="l_device_id"/>
+            <field-selection name="iccid" source="l_iccid"/>
+            <field-selection name="status" source="l_status"/>
+            <field-selection name="data_usage_mb" source="l_data_usage_mb"/>
+            <field-selection name="signal_strength" source="l_signal_strength"/>
+            <field-selection name="latency_ms" source="l_latency_ms"/>
+            <field-selection name="jitter_ms" source="l_jitter_ms"/>
+            <field-selection name="session_status" source="l_session_status"/>
+            <field-selection name="location" source="l_location"/>
+            <field-selection name="roaming" source="l_roaming"/>
+            <field-selection name="operator" source="l_operator"/>
+            <field-selection name="plan" source="l_plan"/>
+            <field-selection name="data_usage_avg_mb" source="r_data_usage_mb"/>
+          </output>
+        </window-join>
+        <window-lua events="create" index="pi_EMPTY" output-insert-only="true" name="w_rules">
+          <schema>
+            <fields>
+              <field name="alert_id" type="int64" key="true"/>
+              <field name="id" type="int64"/>
+              <field name="timestamp" type="stamp"/>
+              <field name="device_id" type="string"/>
+              <field name="iccid" type="string"/>
+              <field name="alert_type" type="string"/>
+              <field name="alert_description" type="string"/>
+              <field name="alert_priority" type="int64"/>
+              <field name="cell_id_lat" type="double"/>
+              <field name="cell_id_lon" type="double"/>
+            </fields>
+          </schema>
+          <copy/>
+          <code><![CDATA[local alert_id = 1
+
+function create(data,context)
+
+    local   alerts = {}
+    local array_idx = 1
+    -- Monitoring rules --
+    -- RULE 1: zero data, no signal
+    
+    if context.input=="w_join_avg" and data.session_status == "dropped" and data.status == "inactive" and data.data_usage_mb == 0.0 then
+        local alert = {}
+        alert.alert_id = alert_id
+        alert.id = data.id
+        alert.timestamp = data.timestamp
+        alert.device_id = data.device_id
+        alert.iccid = data.iccid
+        alert.alert_type = esp_toString("ANOMALY_NO_SIGNAL")
+        alert.alert_description = esp_toString("Device outside coverage area")
+        alert.alert_priority = 2
+        alert.cell_id_lat =  0
+        alert.cell_id_lon = 0
+        alerts[array_idx] = alert
+        alert_id = alert_id + 1
+        array_idx = array_idx + 1
+    end
+    
+    
+
+    -- RULE 2: unusual high traffic consumption
+    if context.input=="w_join_avg" and ((data.data_usage_mb -  data.data_usage_avg_mb)>1000) and (data.data_usage_mb ~= 0)   then
+    
+        local alert = {}
+        alert.alert_id = alert_id
+        alert.id = data.id
+        alert.timestamp = data.timestamp
+        alert.device_id = data.device_id
+        alert.iccid = data.iccid
+        alert.alert_type = esp_toString("ANOMALY_USAGE")
+        alert.alert_description = esp_toString("Attacked device or malware")
+        alert.alert_priority = 3
+        alert.cell_id_lat =  0
+        alert.cell_id_lon = 0
+        alerts[array_idx] = alert
+        alert_id = alert_id + 1
+        array_idx = array_idx + 1
+    
+    end
+    
+    -- Detected anomalies --
+    -- higher latency, jitter, dropped session
+    if context.input == "add_cell_pos" and data.changeDetected==1  then
+
+        local alert = {}
+        alert.alert_id = alert_id
+        alert.id = data.id
+        alert.timestamp = data.timestamp
+        alert.device_id = data.device_id
+        alert.iccid = data.iccid
+        alert.alert_type = esp_toString("ANOMALY_LATENCY_SPIKE")
+        alert.alert_description = esp_toString("Equipment failures due to high demand")
+        alert.alert_priority = 1
+        alert.cell_id_lat =  24.7743 + math.random(0, 1)/100
+        alert.cell_id_lon = 46.7386 + math.random(0, 1)/100
+        alerts[array_idx] = alert
+        alert_id = alert_id + 1
+        array_idx = array_idx + 1
+
+    end
+    
+    if array_idx > 1 then
+        return(alerts)
+    else 
+        return false
+    end
+end]]></code>
+        </window-lua>
+        <window-counter count-interval="1 seconds" index="pi_HASH" name="w_rate"/>
+        <window-source index="pi_HASH" name="w_cells">
+          <schema>
+            <fields>
+              <field name="cell_id" type="int32" key="true"/>
+              <field name="cell_id_lat" type="double"/>
+              <field name="cell_id_lon" type="double"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="lua" name="geo_data">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="code"><![CDATA[function publish()
+   local event = {}
+event.cell_id = 1
+event.cell_id_lat = 24.7743
+event.cell_id_lon = 46.7386
+
+esp_inject(event)
+
+   return true
+end]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-join name="add_cell_pos">
+          <join type="leftouter" no-regenerates="true">
+            <conditions>
+              <fields left="changeDetected" right="cell_id"/>
+            </conditions>
+          </join>
+          <output>
+            <field-selection name="latency_ms" source="l_latency_ms"/>
+            <field-selection name="changeVal" source="l_changeVal"/>
+            <field-selection name="eval" source="l_eval"/>
+            <field-selection name="changeDetected" source="l_changeDetected"/>
+            <field-selection name="timestamp" source="l_timestamp"/>
+            <field-selection name="device_id" source="l_device_id"/>
+            <field-selection name="iccid" source="l_iccid"/>
+            <field-selection name="cell_id_lat" source="r_cell_id_lat"/>
+            <field-selection name="cell_id_lon" source="r_cell_id_lon"/>
+          </output>
+        </window-join>
+        <window-copy index="pi_HASH" name="w_copy">
+          <retention type="bytime_sliding"><![CDATA[1 hours]]></retention>
+        </window-copy>
+      </windows>
+      <edges>
+        <edge source="w_cmp_stream" target="w_parsing"/>
+        <edge source="w_parsing" target="w_change_latency" role="data"/>
+        <edge source="w_change_latency" target="w_latency_spike"/>
+        <edge source="w_parsing" target="w_retention"/>
+        <edge source="w_retention" target="w_usage_profile"/>
+        <edge source="w_parsing" target="w_join_avg" role="left"/>
+        <edge source="w_usage_profile" target="w_join_avg" role="right"/>
+        <edge source="w_join_avg" target="w_rules"/>
+        <edge source="w_cmp_stream" target="w_rate"/>
+        <edge source="w_latency_spike" target="add_cell_pos" role="left"/>
+        <edge source="w_cells" target="add_cell_pos" role="right"/>
+        <edge source="add_cell_pos" target="w_rules"/>
+        <edge source="w_parsing" target="w_copy"/>
+        <edge source="w_copy" target="w_aggr_stats"/>
+      </edges>
+    </contquery>
+  </contqueries>
+  <project-connectors>
+    <connector-groups>
+      <connector-group name="Connector_Group_1">
+        <connector-entry connector="cq1/w_cells/geo_data" state="finished"/>
+      </connector-group>
+      <connector-group name="Connector_Group_2">
+        <connector-entry connector="cq1/w_cmp_stream/anomalies_Connector" state="running"/>
+      </connector-group>
+    </connector-groups>
+    <edges>
+      <edge source="Connector_Group_1" target="Connector_Group_2"/>
+    </edges>
+  </project-connectors>
+</project>

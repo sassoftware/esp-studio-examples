@@ -1,0 +1,1191 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 379,
+  "links": [],
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 5,
+      "panels": [],
+      "title": "Real-time monitor",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "sasesp-plugin",
+        "uid": "P8052081D5634A876"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "light-green",
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "json-view"
+            },
+            "inspect": true
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "id"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 61
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 1
+      },
+      "id": 1,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "enablePagination": true,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "11.4.0",
+      "targets": [
+        {
+          "cqName": "cq1",
+          "datasource": {
+            "type": "sasesp-plugin",
+            "uid": "P8052081D5634A876"
+          },
+          "externalServerUrl": "wss://iot.viya-azure-gpu.unx.sas.com/SASEventStreamProcessingServer/esps-connectivity-5fanalytics",
+          "fields": [],
+          "internalServerUrl": "wss://esps-connectivity-5fanalytics.sas-viya:443",
+          "projectName": "connectivity_analytics",
+          "refId": "A",
+          "windowName": "w_cmp_stream"
+        }
+      ],
+      "title": "Input data",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "id",
+                "json_data"
+              ]
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "sasesp-plugin",
+        "uid": "P8052081D5634A876"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "max": 100,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 70
+              },
+              {
+                "color": "red",
+                "value": 85
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 12,
+        "y": 1
+      },
+      "id": 8,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": true,
+        "showThresholdMarkers": true,
+        "sizing": "auto"
+      },
+      "pluginVersion": "11.4.0",
+      "targets": [
+        {
+          "cqName": "cq1",
+          "datasource": {
+            "type": "sasesp-plugin",
+            "uid": "P8052081D5634A876"
+          },
+          "externalServerUrl": "wss://iot.viya-azure-gpu.unx.sas.com/SASEventStreamProcessingServer/esps-connectivity-5fanalytics",
+          "fields": [],
+          "internalServerUrl": "wss://esps-connectivity-5fanalytics.sas-viya:443",
+          "projectName": "connectivity_analytics",
+          "refId": "A",
+          "windowName": "w_rate"
+        }
+      ],
+      "title": "Rate (msg/sec)",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "intervalRate",
+                "@timestamp"
+              ]
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "desc": true,
+                "field": "@timestamp"
+              }
+            ]
+          }
+        },
+        {
+          "id": "limit",
+          "options": {
+            "limitField": "1"
+          }
+        }
+      ],
+      "transparent": true,
+      "type": "gauge"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 8
+      },
+      "id": 12,
+      "panels": [],
+      "title": "Analytics",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "sasesp-plugin",
+        "uid": "P8052081D5634A876"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 9
+      },
+      "id": 2,
+      "options": {
+        "bucketOffset": 0,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.4.0",
+      "targets": [
+        {
+          "cqName": "cq1",
+          "datasource": {
+            "type": "sasesp-plugin",
+            "uid": "P8052081D5634A876"
+          },
+          "externalServerUrl": "wss://iot.viya-azure-gpu.unx.sas.com/SASEventStreamProcessingServer/esps-connectivity-5fanalytics",
+          "fields": [],
+          "internalServerUrl": "wss://esps-connectivity-5fanalytics.sas-viya:443",
+          "projectName": "connectivity_analytics",
+          "refId": "A",
+          "windowName": "w_aggr_stats"
+        }
+      ],
+      "title": "Latency distribution",
+      "type": "histogram"
+    },
+    {
+      "datasource": {
+        "type": "sasesp-plugin",
+        "uid": "P8052081D5634A876"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 10,
+        "x": 12,
+        "y": 9
+      },
+      "id": 11,
+      "options": {
+        "displayMode": "lcd",
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "maxVizHeight": 300,
+        "minVizHeight": 10,
+        "minVizWidth": 0,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/.*/",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "valueMode": "color"
+      },
+      "pluginVersion": "11.4.0",
+      "targets": [
+        {
+          "cqName": "cq1",
+          "datasource": {
+            "type": "sasesp-plugin",
+            "uid": "P8052081D5634A876"
+          },
+          "externalServerUrl": "wss://iot.viya-azure-gpu.unx.sas.com/SASEventStreamProcessingServer/esps-connectivity-5fanalytics",
+          "fields": [],
+          "internalServerUrl": "wss://esps-connectivity-5fanalytics.sas-viya:443",
+          "projectName": "connectivity_analytics",
+          "refId": "A",
+          "windowName": "w_change_latency"
+        }
+      ],
+      "title": "KLDivergenceDiff (latency_ms)",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "@opcode": true,
+              "@timestamp": true,
+              "id": true
+            },
+            "indexByName": {},
+            "renameByName": {}
+          }
+        }
+      ],
+      "type": "bargauge"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 17
+      },
+      "id": 6,
+      "panels": [],
+      "title": "Alerts ",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "sasesp-plugin",
+        "uid": "P8052081D5634A876"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "transparent",
+            "mode": "fixed"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "color-background"
+            },
+            "filterable": true,
+            "inspect": true
+          },
+          "mappings": [
+            {
+              "options": {
+                "1": {
+                  "color": "light-red",
+                  "index": 1
+                },
+                "2": {
+                  "color": "super-light-red",
+                  "index": 0
+                },
+                "3": {
+                  "color": "super-light-blue",
+                  "index": 2
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "alert_type"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 234
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "alert_priority"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 151
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 18
+      },
+      "id": 10,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "enablePagination": true,
+          "fields": [],
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "11.4.0",
+      "targets": [
+        {
+          "cqName": "cq1",
+          "datasource": {
+            "type": "sasesp-plugin",
+            "uid": "P8052081D5634A876"
+          },
+          "externalServerUrl": "wss://iot.viya-azure-gpu.unx.sas.com/SASEventStreamProcessingServer/esps-connectivity-5fanalytics",
+          "fields": [],
+          "internalServerUrl": "wss://esps-connectivity-5fanalytics.sas-viya:443",
+          "projectName": "connectivity_analytics",
+          "refId": "A",
+          "windowName": "w_rules"
+        }
+      ],
+      "title": "group:latency",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "byVariable": false,
+            "include": {
+              "names": [
+                "alert_priority",
+                "alert_type",
+                "device_id",
+                "iccid",
+                "timestamp"
+              ]
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "field": "timestamp"
+              }
+            ]
+          }
+        },
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "equal",
+                  "options": {
+                    "value": "1"
+                  }
+                },
+                "fieldName": "alert_priority"
+              }
+            ],
+            "match": "any",
+            "type": "include"
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "sasesp-plugin",
+        "uid": "P8052081D5634A876"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 10,
+        "x": 12,
+        "y": 18
+      },
+      "id": 7,
+      "options": {
+        "basemap": {
+          "config": {},
+          "name": "Layer 0",
+          "type": "default"
+        },
+        "controls": {
+          "mouseWheelZoom": true,
+          "showAttribution": true,
+          "showDebug": false,
+          "showMeasure": false,
+          "showScale": false,
+          "showZoom": true
+        },
+        "layers": [
+          {
+            "config": {
+              "showLegend": true,
+              "style": {
+                "color": {
+                  "fixed": "dark-green"
+                },
+                "opacity": 0.4,
+                "rotation": {
+                  "fixed": 0,
+                  "max": 360,
+                  "min": -360,
+                  "mode": "mod"
+                },
+                "size": {
+                  "fixed": 5,
+                  "max": 15,
+                  "min": 2
+                },
+                "symbol": {
+                  "fixed": "img/icons/marker/circle.svg",
+                  "mode": "fixed"
+                },
+                "symbolAlign": {
+                  "horizontal": "center",
+                  "vertical": "center"
+                },
+                "text": {
+                  "field": "device_id",
+                  "fixed": "",
+                  "mode": "field"
+                },
+                "textConfig": {
+                  "fontSize": 12,
+                  "offsetX": 50,
+                  "offsetY": 0,
+                  "textAlign": "center",
+                  "textBaseline": "middle"
+                }
+              }
+            },
+            "location": {
+              "latitude": "cell_id_lat",
+              "longitude": "cell_id_lon",
+              "mode": "coords"
+            },
+            "name": "Tracked cells",
+            "tooltip": true,
+            "type": "markers"
+          }
+        ],
+        "tooltip": {
+          "mode": "details"
+        },
+        "view": {
+          "allLayers": true,
+          "id": "fit",
+          "lat": 0,
+          "lon": 0,
+          "zoom": 15
+        }
+      },
+      "pluginVersion": "11.4.0",
+      "targets": [
+        {
+          "cqName": "cq1",
+          "datasource": {
+            "type": "sasesp-plugin",
+            "uid": "P8052081D5634A876"
+          },
+          "externalServerUrl": "wss://iot.viya-azure-gpu.unx.sas.com/SASEventStreamProcessingServer/esps-connectivity-5fanalytics",
+          "fields": [],
+          "internalServerUrl": "wss://esps-connectivity-5fanalytics.sas-viya:443",
+          "projectName": "connectivity_analytics",
+          "refId": "A",
+          "windowName": "w_rules"
+        }
+      ],
+      "title": "Latency spikes",
+      "transformations": [
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "equal",
+                  "options": {
+                    "value": "1"
+                  }
+                },
+                "fieldName": "alert_priority"
+              }
+            ],
+            "match": "any",
+            "type": "include"
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "alert_id",
+                "alert_priority",
+                "alert_type",
+                "cell_id_lat",
+                "cell_id_lon",
+                "device_id",
+                "iccid",
+                "id",
+                "timestamp"
+              ]
+            }
+          }
+        }
+      ],
+      "transparent": true,
+      "type": "geomap"
+    },
+    {
+      "datasource": {
+        "type": "sasesp-plugin",
+        "uid": "P8052081D5634A876"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "transparent",
+            "mode": "fixed"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "color-background"
+            },
+            "filterable": true,
+            "inspect": true
+          },
+          "mappings": [
+            {
+              "options": {
+                "1": {
+                  "color": "light-red",
+                  "index": 1
+                },
+                "2": {
+                  "color": "super-light-red",
+                  "index": 0
+                },
+                "3": {
+                  "color": "super-light-blue",
+                  "index": 2
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "alert_type"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 234
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "alert_priority"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 151
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 26
+      },
+      "id": 3,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "enablePagination": true,
+          "fields": [],
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "alert_type"
+          }
+        ]
+      },
+      "pluginVersion": "11.4.0",
+      "targets": [
+        {
+          "cqName": "cq1",
+          "datasource": {
+            "type": "sasesp-plugin",
+            "uid": "P8052081D5634A876"
+          },
+          "externalServerUrl": "wss://iot.viya-azure-gpu.unx.sas.com/SASEventStreamProcessingServer/esps-connectivity-5fanalytics",
+          "fields": [],
+          "internalServerUrl": "wss://esps-connectivity-5fanalytics.sas-viya:443",
+          "projectName": "connectivity_analytics",
+          "refId": "A",
+          "windowName": "w_rules"
+        }
+      ],
+      "title": "group:signal",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "byVariable": false,
+            "include": {
+              "names": [
+                "alert_priority",
+                "alert_type",
+                "device_id",
+                "iccid",
+                "timestamp"
+              ]
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "field": "timestamp"
+              }
+            ]
+          }
+        },
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "equal",
+                  "options": {
+                    "value": "2"
+                  }
+                },
+                "fieldName": "alert_priority"
+              }
+            ],
+            "match": "any",
+            "type": "include"
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "sasesp-plugin",
+        "uid": "P8052081D5634A876"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 16,
+        "w": 10,
+        "x": 12,
+        "y": 26
+      },
+      "id": 4,
+      "options": {
+        "dedupStrategy": "numbers",
+        "enableLogDetails": true,
+        "prettifyLogMessage": true,
+        "showCommonLabels": false,
+        "showLabels": false,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": false
+      },
+      "pluginVersion": "11.4.0",
+      "targets": [
+        {
+          "cqName": "cq1",
+          "datasource": {
+            "type": "sasesp-plugin",
+            "uid": "P8052081D5634A876"
+          },
+          "externalServerUrl": "wss://iot.viya-azure-gpu.unx.sas.com/SASEventStreamProcessingServer/esps-connectivity-5fanalytics",
+          "fields": [],
+          "internalServerUrl": "wss://esps-connectivity-5fanalytics.sas-viya:443",
+          "projectName": "connectivity_analytics",
+          "refId": "A",
+          "windowName": "w_rules"
+        }
+      ],
+      "title": "Logs",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "byVariable": false,
+            "include": {
+              "names": [
+                "alert_id",
+                "alert_priority",
+                "alert_type",
+                "device_id",
+                "iccid",
+                "timestamp"
+              ]
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "field": "timestamp"
+              }
+            ]
+          }
+        }
+      ],
+      "transparent": true,
+      "type": "logs"
+    },
+    {
+      "datasource": {
+        "type": "sasesp-plugin",
+        "uid": "P8052081D5634A876"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "transparent",
+            "mode": "fixed"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "color-background"
+            },
+            "filterable": true,
+            "inspect": true
+          },
+          "mappings": [
+            {
+              "options": {
+                "1": {
+                  "color": "light-red",
+                  "index": 1
+                },
+                "2": {
+                  "color": "super-light-red",
+                  "index": 0
+                },
+                "3": {
+                  "color": "super-light-blue",
+                  "index": 2
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "alert_type"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 234
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "alert_priority"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 151
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 34
+      },
+      "id": 9,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "enablePagination": true,
+          "fields": [],
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "11.4.0",
+      "targets": [
+        {
+          "cqName": "cq1",
+          "datasource": {
+            "type": "sasesp-plugin",
+            "uid": "P8052081D5634A876"
+          },
+          "externalServerUrl": "wss://iot.viya-azure-gpu.unx.sas.com/SASEventStreamProcessingServer/esps-connectivity-5fanalytics",
+          "fields": [],
+          "internalServerUrl": "wss://esps-connectivity-5fanalytics.sas-viya:443",
+          "projectName": "connectivity_analytics",
+          "refId": "A",
+          "windowName": "w_rules"
+        }
+      ],
+      "title": "group:usage",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "byVariable": false,
+            "include": {
+              "names": [
+                "alert_priority",
+                "alert_type",
+                "device_id",
+                "iccid",
+                "timestamp"
+              ]
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": {},
+            "sort": [
+              {
+                "field": "timestamp"
+              }
+            ]
+          }
+        },
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "equal",
+                  "options": {
+                    "value": "3"
+                  }
+                },
+                "fieldName": "alert_priority"
+              }
+            ],
+            "match": "any",
+            "type": "include"
+          }
+        }
+      ],
+      "type": "table"
+    }
+  ],
+  "preload": false,
+  "refresh": "",
+  "schemaVersion": 40,
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-5m",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Connectivity analytics",
+  "uid": "e6522183-cf82-49ba-bb87-205d9726f6d9",
+  "version": 6,
+  "weekStart": ""
+}
