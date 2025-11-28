@@ -2,12 +2,6 @@
 ## Overview
 This example demonstrates how to use a Lua-based Pattern window. The model identifies increases in a stock's price within a specific time interval.
 
----
-**NOTE:**
-Use this example with SAS Event Stream Processing 2024.03 and later. 
-
----
-
 For more information about how to install and use example projects, see [Using the Examples](https://github.com/sassoftware/esp-studio-examples#using-the-examples).
 
 ## Source Data
@@ -144,6 +138,7 @@ Explore the settings for this window:
     </tr>
     </table>
 
+
 7. Click **Next**.
 8. On the **Output and Events** page, observe the following settings:
      - The **Output function** field is set to `output`. This output function is defined on the **Lua Code** page.
@@ -160,13 +155,13 @@ If you do not use the **Install example** button in SAS Event Stream Processing 
 
 When you test the project, the results for each window appear on separate tabs.
 - The **sourceWindow_01** tab lists the stock trades that are received from the input file.
-- The **patternWindow_01** tab lists the matched patterns. After a while, a total of 23 rows appear in this tab.
+- The **patternWindow_01** tab lists the matched patterns. After a while, a total of 23 rows appear in this tab. 
 
 The following figure shows the results for the patternWindow01 tab:
 
 ![Results for the patternWindow01 tab](img/patternWindow01.png "Results for the patternWindow01 tab")
 
-You might see warnings in the Log pane about the sourceWindow_01 window being throttled. You can ignore these warnings.
+
 
 ## Additional Resources
 For more information, see [SAS Help Center: Using Lua in a Pattern Window](https://documentation.sas.com/?cdcId=espcdc&cdcVersion=default&docsetId=espcreatewindows&docsetTarget=n1rj6nmwuzuxisn12tjeu0o336tt.htm#n18zvo8e3r6y9fn1i5twt2mxease).

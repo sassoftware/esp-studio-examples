@@ -1,0 +1,91 @@
+<project name="kmeans_analytics" pubsub="auto" threads="1" use-tagged-token="true" heartbeat-interval="1">
+  <description><![CDATA[This example demonstrates the use of the machine learning algorithm k-means, which is often used for cluster analysis in data mining. The algorithm assigns data points to their nearest cluster centroid. Each cluster centroid is then recomputed based on the average of the cluster’s data points. In k-means clustering, an input event is augmented with a cluster number. This indicates the cluster that the observation falls into.]]></description>
+  <metadata>
+    <meta id="studioUploadedBy">anonymous</meta>
+    <meta id="studioUploaded">1764338999636</meta>
+    <meta id="studioModifiedBy">anonymous</meta>
+    <meta id="studioModified">1764339166380</meta>
+    <meta id="layout">{"contquery":{"w_scoring":{"x":125,"y":295},"w_source":{"x":120,"y":-110},"w_training":{"x":275,"y":90}}}</meta>
+    <meta id="studioTags">Example</meta>
+  </metadata>
+  <contqueries>
+    <contquery name="contquery" trace="w_training w_scoring">
+      <windows>
+        <window-source insert-only="true" index="pi_EMPTY" name="w_source">
+          <description><![CDATA[w_source is a Source window. This is where events from the events.csv file enter the model to be scored.]]></description>
+          <schema>
+            <fields>
+              <field name="id" type="int64" key="true"/>
+              <field name="x_c" type="double"/>
+              <field name="y_c" type="double"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="fs" name="events_Connector">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="rate"><![CDATA[1000]]></property>
+                <property name="fsname"><![CDATA[@ESP_PROJECT_HOME@/test_files/events.csv]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-train name="w_training" algorithm="KMEANS">
+          <description><![CDATA[w_training is a Train window. This window generates  a new clustering model using the k-means algorithm.]]></description>
+          <parameters>
+            <properties>
+              <property name="nClusters"><![CDATA[2]]></property>
+              <property name="initSeed"><![CDATA[1]]></property>
+              <property name="dampingFactor"><![CDATA[0.8]]></property>
+              <property name="fadeOutFactor"><![CDATA[0.05]]></property>
+              <property name="disturbFactor"><![CDATA[0.01]]></property>
+              <property name="nInit"><![CDATA[50]]></property>
+              <property name="velocity"><![CDATA[5]]></property>
+              <property name="commitInterval"><![CDATA[25]]></property>
+            </properties>
+          </parameters>
+          <input-map>
+            <properties>
+              <property name="inputs"><![CDATA[x_c, y_c]]></property>
+            </properties>
+          </input-map>
+        </window-train>
+        <window-score name="w_scoring">
+          <description><![CDATA[w_scoring is a Score window. This is where the events are scored. In k-means clustering, the input event is augmented with a cluster number that specifies the cluster that the observation falls into.]]></description>
+          <schema>
+            <fields>
+              <field name="id" type="int64" key="true"/>
+              <field name="x_c" type="double"/>
+              <field name="y_c" type="double"/>
+              <field name="seg" type="int32"/>
+              <field name="min_dist" type="double"/>
+              <field name="model_id" type="int64"/>
+            </fields>
+          </schema>
+          <models>
+            <online algorithm="KMEANS">
+              <input-map>
+                <properties>
+                  <property name="inputs"><![CDATA[x_c,y_c]]></property>
+                </properties>
+              </input-map>
+              <output-map>
+                <properties>
+                  <property name="labelOut"><![CDATA[seg]]></property>
+                  <property name="minDistanceOut"><![CDATA[min_dist]]></property>
+                  <property name="modelIdOut"><![CDATA[model_id]]></property>
+                </properties>
+              </output-map>
+            </online>
+          </models>
+        </window-score>
+      </windows>
+      <edges>
+        <edge source="w_source" target="w_training" role="data"/>
+        <edge source="w_source" target="w_scoring" role="data"/>
+        <edge source="w_training" target="w_scoring" role="model"/>
+      </edges>
+    </contquery>
+  </contqueries>
+</project>

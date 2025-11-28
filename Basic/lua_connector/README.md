@@ -2,12 +2,6 @@
 ## Overview
 This example contains a Source window with a Lua connector that reads RSS feeds from scientific sites and publishes them into the project every five seconds.
 
----
-**NOTE:**
-Use this example with SAS Event Stream Processing 2024.03 and later.
-
----
-
 For more information about how to install and use example projects, see [Using the Examples](https://github.com/sassoftware/esp-studio-examples#using-the-examples).
 
 ## Use Case
@@ -17,7 +11,7 @@ This example provides a simple demonstration of how you can use a Lua connector 
 Data is streamed from RSS feeds. No input files are required for this example.
 
 ## Workflow
-The following table explains the Lua code in the connector for the Source window. To view the Lua code in context, see the [model.xml](model.xml) file.
+The following table explains the Lua code in the connector for the Source window. To view the Lua code in context, see the [model.xml](model.xml) file. A counter window shows input rates for the events.
 
 <table>
 <tr>
@@ -43,7 +37,7 @@ local   feeds = {
 <td> Publishes events into the project. The "publish" function is required to use the Lua connector. When the "publish" function returns the value "true", the connector is finished. When the function returns the value "false", the connector keeps running.</td>
 <td>
 
-  
+
 ```
 function publish()
   for i,feed in ipairs(feeds)
@@ -60,7 +54,7 @@ function publish()
 end
 ```
 
-  
+
 </td>
 </tr>
 <tr>

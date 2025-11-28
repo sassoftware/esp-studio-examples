@@ -2,9 +2,9 @@
   <metadata>
     <meta id="layout">{"FilterQuery":{"Filter":{"x":-80,"y":5},"Source":{"x":50,"y":50},"SourceWindow":{"x":-80,"y":-130}}}</meta>
     <meta id="studioUploadedBy">anonymous</meta>
-    <meta id="studioUploaded">1756222470332</meta>
+    <meta id="studioUploaded">1764344837906</meta>
     <meta id="studioModifiedBy">anonymous</meta>
-    <meta id="studioModified">1756222532121</meta>
+    <meta id="studioModified">1764344889005</meta>
     <meta id="studioTags">Example</meta>
   </metadata>
   <contqueries>
@@ -25,7 +25,7 @@
             <connector class="lua" name="SensorData">
               <properties>
                 <property name="type"><![CDATA[pub]]></property>
-                <property name="interval"><![CDATA[500 milliseconds]]></property>
+                <property name="interval"><![CDATA[5 seconds]]></property>
                 <property name="code"><![CDATA[
 
                     local   id = 1
@@ -45,7 +45,7 @@
                              return true 
                         end		
 
-                        if id == 11 then
+                        if id == 110 then
                             return true
                         end
 

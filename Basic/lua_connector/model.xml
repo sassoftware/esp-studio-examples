@@ -1,12 +1,12 @@
 <project name="lua_connector" pubsub="auto" threads="4" heartbeat-interval="1" index="pi_EMPTY" luaroot="@ESP_PROJECT_OUTPUT@/luaroot">
   <description><![CDATA[This project contains a Source window with a Lua connector that reads RSS feeds from scientific sites and publishes them into the project.]]></description>
   <metadata>
-    <meta id="studioUploadedBy">anonymousUser</meta>
-    <meta id="studioUploaded">1722341255179</meta>
-    <meta id="studioModifiedBy">anonymousUser</meta>
-    <meta id="studioModified">1722341313376</meta>
-    <meta id="layout">{"cq":{"Source":{"x":50,"y":50}}}</meta>
+    <meta id="layout">{"cq":{"Counter":{"x":50,"y":175},"Source":{"x":50,"y":50}}}</meta>
     <meta id="studioTags">Example</meta>
+    <meta id="studioUploadedBy">anonymous</meta>
+    <meta id="studioUploaded">1764341003833</meta>
+    <meta id="studioModifiedBy">anonymous</meta>
+    <meta id="studioModified">1764341045942</meta>
   </metadata>
   <contqueries>
     <contquery name="cq">
@@ -77,7 +77,13 @@ end]]></property>
             </connector>
           </connectors>
         </window-source>
+        <window-counter name="Counter">
+          <description><![CDATA[Check throughput]]></description>
+        </window-counter>
       </windows>
+      <edges>
+        <edge source="Source" target="Counter"/>
+      </edges>
     </contquery>
   </contqueries>
 </project>

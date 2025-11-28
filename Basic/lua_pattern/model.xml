@@ -35,6 +35,7 @@
               <properties>
                 <property name="type"><![CDATA[pub]]></property>
                 <property name="dateformat"><![CDATA[%Y-%m-%d %H:%M:%S]]></property>
+                <property name="rate"><![CDATA[200]]></property>
                 <property name="fsname"><![CDATA[@ESP_PROJECT_HOME@/test_files/stocktrades.csv]]></property>
                 <property name="fstype"><![CDATA[csv]]></property>
               </properties>
