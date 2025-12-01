@@ -29,7 +29,7 @@ The [model.xml](model.xml) project performs the following actions:
 ## Workflow
 The following figure shows the diagram of the project:
 
-![Diagram of the project](img/studio_geofence_1.png "Diagram of the project")
+![image-20250926131422473](img/image-20250926131422473.png)
 
 - The ANPR, VehicleWatchList, and CriticalInfrastructure windows are Source windows that read data from the CSV files that are discussed in [Source Data](#source-data).
 - The WantedVehicleMatch window is a Join window. This is where a list of all vehicles found within close proximity of critical infrastructure sites and a list of all wanted vehicles are merged into one list.
@@ -134,8 +134,8 @@ The following figure shows the results for the GeofenceMatches tab:
 
 Notes:
 - If the project does not run, check that the SAS Event Stream Processing Studio user has Write access to the directory for the output file for the GeofenceMatches window.
+
 - If the table is empty, check that the publisher connectors for the ANPR, VehicleWatchList, and CriticalInfrastructure windows are set correctly to point to the CSV files.
-- You might see warnings in the **Log** pane about possible unbounded memory growth or throttling. You can ignore these warnings.
 
 ## Additional Resources
 For more information, see [SAS Help Center: Using Geofence Windows](https://documentation.sas.com/?cdcId=espcdc&cdcVersion=default&docsetId=espcreatewindows&docsetTarget=p0xru6q01dkxknn1t8gqo2q4zfu6).

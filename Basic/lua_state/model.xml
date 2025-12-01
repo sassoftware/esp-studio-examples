@@ -1,10 +1,10 @@
 <project name="lua_state" index="pi_EMPTY" pubsub="none" threads="4" heartbeat-interval="1" luaroot="@ESP_PROJECT_OUTPUT@/luaroot">
   <description><![CDATA[This project demonstrates how to maintain event state in Lua and use it to generate events. It streams stock trade data into the model and uses a Lua window to generate events when a new symbol price exceeds the current maximum price for that symbol.]]></description>
   <metadata>
-    <meta id="studioUploadedBy">sasboot</meta>
-    <meta id="studioUploaded">1722941082188</meta>
-    <meta id="studioModifiedBy">sasboot</meta>
-    <meta id="studioModified">1722941149112</meta>
+    <meta id="studioUploadedBy">anonymous</meta>
+    <meta id="studioUploaded">1759178990791</meta>
+    <meta id="studioModifiedBy">anonymous</meta>
+    <meta id="studioModified">1759179548321</meta>
     <meta id="layout">{"cq":{"generateEvents":{"x":50,"y":175},"trades":{"x":50,"y":50}}}</meta>
     <meta id="studioTags">Example</meta>
   </metadata>
@@ -32,6 +32,7 @@
             <connector class="fs" name="input_lua_state">
               <properties>
                 <property name="type"><![CDATA[pub]]></property>
+                <property name="rate"><![CDATA[1000]]></property>
                 <property name="fsname"><![CDATA[@ESP_PROJECT_HOME@/test_files/luaStateInput.csv]]></property>
                 <property name="fstype"><![CDATA[csv]]></property>
               </properties>

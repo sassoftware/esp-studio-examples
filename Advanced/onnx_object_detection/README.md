@@ -56,7 +56,7 @@ Explore the settings for this window:
     - The **Filename** field shows that the window reads incoming events from the `video.mp4` file.
     - The **Publishformat** field is set to `wide`, meaning that the frames from the video are published in wide encoding. Wide encoding is an uncompressed format that results in higher overall performance.
 8. Click **All properties**. 
-    - Observe that the **inputrate** field is set to 10, meaning that 10 frames per second are read from the video. 
+    - Observe that the **inputrate** field is set to 4, meaning that 4 frames per second are read from the video. 
     - The **publishrate** field determines how many events are sent to the project per second. Because this field does not have a value, it defaults to the value of the **inputrate** field.
     - The fields **resize_x** and **resize_y** are set to `@PUBLISH_WIDTH@` and `@PUBLISH_HEIGHT@` respectively, which define the resolution of the published frames. The values of these user-defined properties can be found at project level.
     - The **repeatcount** field is set to 999 to repeat the video many times. If your environment includes Grafana, repeating the video makes it is easier to see the annotated video in Grafana. If this field were set to 0, the Video Capture publisher would be finished quickly and it would be harder to see the results in Grafana. For more information, see [Visualizing Objects in Grafana](#visualizing-objects-in-grafana). 

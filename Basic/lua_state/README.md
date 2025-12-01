@@ -4,18 +4,9 @@
 
 The Lua window in SAS Event Stream Processing enables you to maintain and use event state to generate events.
 
----
-
-**NOTE:**
-Use these examples with SAS Event Stream Processing 2022.10 and later.
-
----
-
 For more information about how to install and use example projects, see [Using the Examples](https://github.com/sassoftware/esp-studio-examples#using-the-examples).
 
-## Example
-
-### Use Case
+## Use Case
 
 This example is built on the following scenario:
 
@@ -26,17 +17,17 @@ The Acme Stockbroking firm wants to track and analyze the maximum price for all 
 
 To view the project in its entirety, see the [model.xml](model.xml) file.
 
-### Source Data
+## Source Data
 
 The file `luaStateInput.csv` contains stock trade data. It is formatted as a CSV file to simplify the process for the purposes of this example. In a real-life scenario, this data would likely enter the project via a message broker such as RabbitMQ. To download a ZIP file containing `luaStateInput.csv`, click [here](luaStateInput.zip).
 
-### Workflow
+## Workflow
 
-#### trades
+### trades
 
 The trades window is a Source window. It receives input data from the file [luaStateInput.csv](luaStateInput.zip).
 
-#### generateEvents
+### generateEvents
 
 The generateEvents window is a Lua window. It contains Lua code that analyzes the input data and generates multiple events. To view the Lua code in context, see the [model.xml](model.xml) file.
 
@@ -106,17 +97,17 @@ end
 </tr>
 </table>
 
-### Test the Project and View the Results
+## Test the Project and View the Results
 
 When you test the project, the results for each window appear on separate tabs. In the following animated image, the window to the right shows input events as they are streamed into the trades window. The window to the left shows how the Lua code uses those events to periodically update the stock symbols, based on their price.
 
 ![luaState project output](img/lua_state.gif)
 
-### Next Steps
+## Next Steps
 
 Now that you have generated events from the stock trade data, you can add windows to the project to analyze the data.
 
-### Additional Resources
+## Additional Resources
 
 For more information, refer to the following resources:
 

@@ -7,13 +7,17 @@ streams a list of critical infrastructure sites, including site locations
 processes the list of vehicles and attempts to match any wanted vehicles that are in close proximity to critical infrastructure sites
 produces a list of wanted vehicles found in close proximity to critical infrastructure sites]]></description>
   <metadata>
-    <meta id="layout">{"cq1":{"ANPR":{"x":330,"y":50},"CriticalInfrastructure":{"x":610,"y":420},"Geofence":{"x":470,"y":295},"GeofenceMatches":{"x":330,"y":420},"VehicleWatchlist":{"x":50,"y":295},"WantedVehicleMatch":{"x":330,"y":175}}}</meta>
+    <meta id="layout">{"cq1":{"ANPR":{"x":530,"y":50},"CriticalInfrastructure":{"x":50,"y":175},"Geofence":{"x":50,"y":295},"GeofenceMatches":{"x":50,"y":420},"VehicleWatchlist":{"x":290,"y":50},"WantedVehicleMatch":{"x":290,"y":175}}}</meta>
     <meta id="studioTags">Example</meta>
+    <meta id="studioUploadedBy">anonymous</meta>
+    <meta id="studioUploaded">1764339572788</meta>
+    <meta id="studioModifiedBy">anonymous</meta>
+    <meta id="studioModified">1764339668846</meta>
   </metadata>
   <contqueries>
     <contquery name="cq1">
       <windows>
-        <window-source pubsub="true" insert-only="true" autogen-key="true" name="ANPR">
+        <window-source pubsub="true" insert-only="true" autogen-key="true" index="pi_EMPTY" name="ANPR">
           <description><![CDATA[The ANPR window is a Source window. This is where a list of all vehicles within close proximity of critical infrastructure sites from the anpr.csv file enter the model.]]></description>
           <schema>
             <fields>
@@ -38,7 +42,7 @@ produces a list of wanted vehicles found in close proximity to critical infrastr
             </connector>
           </connectors>
         </window-source>
-        <window-source pubsub="true" name="VehicleWatchlist">
+        <window-source pubsub="true" index="pi_EMPTY" name="VehicleWatchlist">
           <description><![CDATA[The VehicleWatchList window is a Source window. This is where a list of all vehicles on the vehicle watch list from the wantedvehicle.csv file enter the model.]]></description>
           <schema>
             <fields>
@@ -72,12 +76,12 @@ produces a list of wanted vehicles found in close proximity to critical infrastr
         </window-join>
         <window-geofence pubsub="true" name="Geofence">
           <description><![CDATA[The Geofence window is a Geofence window. This is where geofencing information that relates to the matched vehicles enter the model.]]></description>
-          <geofence coordinate-type="geographic" autosize-mesh="true" max-meshcells-per-geometry="500" log-invalid-geometry="true"/>
+          <geofence coordinate-type="geographic" autosize-mesh="true" max-meshcells-per-geometry="500"/>
           <geometry x-fieldname="long" y-fieldname="lat" radius="100" data-separator=" "/>
           <position x-fieldname="long" y-fieldname="lat" lookupdistance="100"/>
           <output geoid-fieldname="geoid"/>
         </window-geofence>
-        <window-source pubsub="true" name="CriticalInfrastructure">
+        <window-source pubsub="true" index="pi_EMPTY" name="CriticalInfrastructure">
           <description><![CDATA[The CriticalInfrastructure window is a Source window. This is where a list of sites that contain critical infrastructure from the infrastructure.csv file enter the model.]]></description>
           <schema>
             <fields>
@@ -99,15 +103,16 @@ produces a list of wanted vehicles found in close proximity to critical infrastr
             <connector class="fs" name="infrastructure_csv_reader">
               <properties>
                 <property name="type"><![CDATA[pub]]></property>
-                <property name="fsname"><![CDATA[@ESP_PROJECT_HOME@/test_files/infrastructure.csv]]></property>
-                <property name="fstype"><![CDATA[csv]]></property>
+                <property name="rate"><![CDATA[200]]></property>
                 <property name="header"><![CDATA[1]]></property>
                 <property name="ignorecsvparseerrors"><![CDATA[true]]></property>
+                <property name="fsname"><![CDATA[@ESP_PROJECT_HOME@/test_files/infrastructure.csv]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
               </properties>
             </connector>
           </connectors>
         </window-source>
-        <window-filter pubsub="true" name="GeofenceMatches">
+        <window-filter pubsub="true" func="filter" name="GeofenceMatches">
           <description><![CDATA[The GeofenceMatches window is a Filter window. This is where matches with null values are filtered out.]]></description>
           <use><![CDATA[geoid]]></use>
           <code><![CDATA[def filter(event,context):

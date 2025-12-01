@@ -1,17 +1,17 @@
 <project name="lua_parse_simple" pubsub="auto" threads="4" heartbeat-interval="1" luaroot="@ESP_PROJECT_OUTPUT@/luaroot">
   <description><![CDATA[This project uses a Lua window to parse JSON data from a CSV file to generate events.]]></description>
   <metadata>
-    <meta id="studioUploadedBy">anonymousUser</meta>
-    <meta id="studioUploaded">1722341372339</meta>
-    <meta id="studioModifiedBy">anonymousUser</meta>
-    <meta id="studioModified">1722341389484</meta>
     <meta id="layout">{"cq":{"CreateMulti":{"x":50,"y":175},"Source":{"x":50,"y":50}}}</meta>
     <meta id="studioTags">Example</meta>
+    <meta id="studioUploadedBy">anonymous</meta>
+    <meta id="studioUploaded">1764344209285</meta>
+    <meta id="studioModifiedBy">anonymous</meta>
+    <meta id="studioModified">1764344260362</meta>
   </metadata>
   <contqueries>
     <contquery name="cq" trace="Source CreateMulti">
       <windows>
-        <window-source insert-only="true" name="Source">
+        <window-source insert-only="true" index="pi_EMPTY" name="Source">
           <description><![CDATA[This window receives the input CSV file.]]></description>
           <schema>
             <fields>
@@ -29,7 +29,7 @@
             </connector>
           </connectors>
         </window-source>
-        <window-lua events="create" name="CreateMulti">
+        <window-lua events="create" index="pi_EMPTY" name="CreateMulti">
           <description><![CDATA[This window uses Lua code to parse the JSON data and generate multiple events.]]></description>
           <schema>
             <fields>

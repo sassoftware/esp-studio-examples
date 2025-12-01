@@ -1,12 +1,12 @@
 <project heartbeat-interval="1" luaroot="@ESP_PROJECT_OUTPUT@/luaroot" name="trades_lua" pubsub="auto" threads="4">
   <description><![CDATA[This model can be used to identify large securities transactions and the traders who were involved in those trades.]]></description>
   <metadata>
-    <meta id="studioUploadedBy">sasboot</meta>
-    <meta id="studioUploaded">1731925255590</meta>
-    <meta id="studioModifiedBy">sasboot</meta>
-    <meta id="studioModified">1731928123972</meta>
-    <meta id="layout">{"trades_cq":{"AddTraderName":{"x":170,"y":295},"BySecurity":{"x":50,"y":540},"LargeTrades":{"x":410,"y":175},"LargeTradesCopy":{"x":410,"y":295},"TotalCost":{"x":170,"y":420},"TotalCostCopy":{"x":290,"y":540},"Traders":{"x":170,"y":175},"Trades":{"x":410,"y":50}}}</meta>
+    <meta id="layout">{"trades_cq":{"AddTraderName":{"x":50,"y":295},"BySecurity":{"x":50,"y":665},"LargeTrades":{"x":290,"y":175},"LargeTradesCopy":{"x":290,"y":295},"TotalCost":{"x":50,"y":420},"TotalCostCopy":{"x":50,"y":540},"Traders":{"x":50,"y":175},"Trades":{"x":290,"y":50}}}</meta>
     <meta id="studioTags">Example</meta>
+    <meta id="studioUploadedBy">anonymous</meta>
+    <meta id="studioUploaded">1764341668597</meta>
+    <meta id="studioModifiedBy">anonymous</meta>
+    <meta id="studioModified">1764341698541</meta>
   </metadata>
   <contqueries>
     <contquery name="trades_cq">
@@ -15,7 +15,7 @@
           <description><![CDATA[This Source window is where the stock trades from the trades.csv file enter the model. When data is passed into this window, the following date format must be used: %d/%b/%Y:%H:%M:%S]]></description>
           <schema>
             <fields>
-              <field key="true" name="tradeID" type="string"/>
+              <field name="tradeID" type="string" key="true"/>
               <field name="security" type="string"/>
               <field name="quantity" type="int32"/>
               <field name="price" type="double"/>
@@ -28,17 +28,18 @@
               <properties>
                 <property name="type"><![CDATA[pub]]></property>
                 <property name="dateformat"><![CDATA[%d/%b/%Y:%H:%M:%S]]></property>
+                <property name="rate"><![CDATA[100]]></property>
                 <property name="fsname"><![CDATA[@ESP_PROJECT_HOME@/test_files/trades.csv]]></property>
                 <property name="fstype"><![CDATA[csv]]></property>
               </properties>
             </connector>
           </connectors>
         </window-source>
-        <window-source index="pi_EMPTY" insert-only="true" name="Traders">
+        <window-source index="pi_EMPTY" name="Traders">
           <description><![CDATA[This Source window is where the trader names from the traders.csv file enter the model.]]></description>
           <schema>
             <fields>
-              <field key="true" name="ID" type="int64"/>
+              <field name="ID" type="int64" key="true"/>
               <field name="name" type="string"/>
             </fields>
           </schema>
@@ -52,7 +53,7 @@
             </connector>
           </connectors>
         </window-source>
-        <window-filter index="pi_EMPTY" name="LargeTrades">
+        <window-filter index="pi_EMPTY" func="filter" name="LargeTrades">
           <description><![CDATA[This Filter window filters out all trades that are not in the specified range.]]></description>
           <use><![CDATA[quantity]]></use>
           <code><![CDATA[
@@ -61,9 +62,9 @@
 			end
 		  ]]></code>
         </window-filter>
-        <window-join index="pi_EMPTY" name="AddTraderName">
+        <window-join index="pi_EMPTY" collapse-updates="false" name="AddTraderName">
           <description><![CDATA[This Join window combines the large trades with their corresponding trader names.]]></description>
-          <join no-regenerates="true" type="leftouter">
+          <join type="leftouter" no-regenerates="true">
             <conditions>
               <fields left="traderID" right="ID"/>
             </conditions>
@@ -77,7 +78,7 @@
             <field-selection name="name" source="r_name"/>
           </output>
         </window-join>
-        <window-copy output-insert-only="true" name="LargeTradesCopy">
+        <window-copy collapse-updates="false" name="LargeTradesCopy">
           <description><![CDATA[This Copy window retains a list of all large trades, in accordance with the retention policy, but only shows Insert events.]]></description>
           <retention type="bytime_sliding"><![CDATA[5 minutes]]></retention>
         </window-copy>
@@ -85,7 +86,7 @@
           <description><![CDATA[This Compute window shows the total cost of each transaction. You can use this information to identify high-value transactions.]]></description>
           <schema>
             <fields>
-              <field key="true" name="tradeID" type="string"/>
+              <field name="tradeID" type="string" key="true"/>
               <field name="security" type="string"/>
               <field name="quantity" type="int32"/>
               <field name="price" type="double"/>
@@ -105,16 +106,15 @@
             <field-expr><![CDATA[name]]></field-expr>
           </output>
         </window-compute>
-        <window-copy name="TotalCostCopy">
-          <description><![CDATA[This Copy window retains a list of the total costs of each transaction, in accordance with the retention policy, but shows Insert events and then Delete events.
-]]></description>
-          <retention type="bytime_sliding"><![CDATA[2 minutes]]></retention>
+        <window-copy collapse-updates="false" name="TotalCostCopy">
+          <description><![CDATA[This Copy window retains a list of the total costs of each transaction, in accordance with the retention policy, but shows Insert events and then Delete events.]]></description>
+          <retention type="bytime_sliding"><![CDATA[1 days]]></retention>
         </window-copy>
-        <window-aggregate name="BySecurity">
+        <window-aggregate collapse-updates="false" name="BySecurity">
           <description><![CDATA[This Aggregate window shows all the inserts, deletes, and update blocks for the large trades.]]></description>
           <schema>
             <fields>
-              <field key="true" name="security" type="string"/>
+              <field name="security" type="string" key="true"/>
               <field name="quantityTotal" type="double"/>
               <field name="costTotal" type="double"/>
             </fields>
@@ -130,9 +130,9 @@
         <edge role="left" source="LargeTrades" target="AddTraderName"/>
         <edge role="right" source="Traders" target="AddTraderName"/>
         <edge source="LargeTrades" target="LargeTradesCopy"/>
-        <edge source="AddTraderName" target="TotalCost"/>
         <edge source="TotalCost" target="TotalCostCopy"/>
-        <edge source="TotalCost" target="BySecurity"/>
+        <edge source="AddTraderName" target="TotalCost"/>
+        <edge source="TotalCostCopy" target="BySecurity"/>
       </edges>
     </contquery>
   </contqueries>
