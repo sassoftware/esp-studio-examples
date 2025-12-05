@@ -1,0 +1,110 @@
+<project heartbeat-interval="1" name="forwarding" pubsub="auto" threads="4">
+  <description><![CDATA[This project provides a minimal working example of Python-based event forwarding within a simple ESP project, converting weather station temperature readings from Celsius to Fahrenheit.]]></description>
+  <metadata>
+    <meta id="layout">{"cq":{"convertTemp":{"x":50,"y":175},"python":{"x":50,"y":175},"source":{"x":50,"y":50},"weatherReadings":{"x":50,"y":50}},"cq2":{"readingsFahrenheit":{"x":50,"y":50}}}</meta>
+    <meta id="studioUploadedBy">anonymousUser</meta>
+    <meta id="studioUploaded">1764946380418</meta>
+    <meta id="studioModifiedBy">anonymousUser</meta>
+    <meta id="studioModified">1764946532193</meta>
+    <meta id="studioTags">Example</meta>
+  </metadata>
+  <contqueries>
+    <contquery name="cq" trace="weatherReadings convertTemp">
+      <windows>
+        <window-source index="pi_EMPTY" insert-only="true" name="weatherReadings">
+          <schema>
+            <fields>
+              <field key="true" name="station_id" type="string"/>
+              <field name="station_name" type="string"/>
+              <field name="year" type="int32"/>
+              <field name="temperatures" type="array(i32)"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="fs" name="input_publisher">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
+                <property name="fsname"><![CDATA[@ESP_PROJECT_HOME@/test_files/weather_input.csv]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-python events="create" index="pi_EMPTY" name="convertTemp">
+          <schema>
+            <fields>
+              <field key="true" name="id" type="string"/>
+              <field name="station_name" type="string"/>
+              <field name="year" type="int32"/>
+              <field name="temperature_f" type="int32"/>
+            </fields>
+          </schema>
+          <code><![CDATA[eventId = 1
+
+def create(data, context):
+    global eventId
+    events = []
+
+    # For each Celsius temperature, convert to Fahrenheit
+    for c in data["temperatures"]:
+
+        f = int(c * 1.8 + 32)  # Celsius → Fahrenheit
+
+        e = {}
+        e["id"] = str(eventId)
+        e["station_name"] = "\"" + data["station_name"] + "\""
+        e["year"] = data["year"]
+        e["temperature_f"] = f
+
+        events.append(e)
+        eventId += 1
+
+    return events]]></code>
+          <forwarding>
+            <destinations>
+              <destination window="readingsFahrenheit" contquery="cq2" blocksize="1"/>
+            </destinations>
+          </forwarding>
+          <connectors>
+            <connector class="fs" name="result_Connector">
+              <properties>
+                <property name="type"><![CDATA[sub]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
+                <property name="fsname"><![CDATA[@ESP_PROJECT_OUTPUT@/result.out]]></property>
+                <property name="snapshot"><![CDATA[true]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-python>
+      </windows>
+      <edges>
+        <edge source="weatherReadings" target="convertTemp"/>
+      </edges>
+    </contquery>
+    <contquery name="cq2" trace="readingsFahrenheit">
+      <windows>
+        <window-source index="pi_EMPTY" insert-only="true" name="readingsFahrenheit">
+          <schema>
+            <fields>
+              <field key="true" name="id" type="string"/>
+              <field name="station_name" type="string"/>
+              <field name="year" type="int32"/>
+              <field name="temperature_f" type="int32"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="fs" name="final_readings_Connector_1">
+              <properties>
+                <property name="type"><![CDATA[sub]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
+                <property name="fsname"><![CDATA[@ESP_PROJECT_OUTPUT@/final_readings.csv]]></property>
+                <property name="snapshot"><![CDATA[true]]></property>
+                <property name="dateformat"><![CDATA[%Y-%m-%d %H:%M:%S]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+      </windows>
+    </contquery>
+  </contqueries>
+</project>
