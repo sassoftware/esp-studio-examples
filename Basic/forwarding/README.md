@@ -51,7 +51,7 @@ The workflow contains two Continuous Queries:
 
 Explore the settings for the weatherReadings window:
 1. Open the project in SAS Event Stream Processing Studio and select the weatherReadings window. 
-2. Click <img src="img/outputSchema.png" alt="output schema icon" style="width:75%; height:auto;"/>. The window produces events that contain the following fields:
+2. Click <img src="img/outputSchema.png" alt="output schema icon" style="width:3%; height:auto;"/>. The window produces events that contain the following fields:
   - `station_id`  
   - `station_name`  
   - `year`  
@@ -107,5 +107,6 @@ Event forwarding enables Source windows to act as destinations for transformed e
  - Apply the pattern to other data types by using the same expansion-and-forwarding approach for any batched or nested sensor, financial, or multimedia data.
 
 ## Additional Resources
+
 
 For more information, see [SAS Help Center Working with Python Windows](https://go.documentation.sas.com/doc/bo/espcdc/default/espstudio/n07ceo2bin2787n1s1askvbca871.htm).
