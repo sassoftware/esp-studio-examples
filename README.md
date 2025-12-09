@@ -68,6 +68,7 @@ The [Basic](/Basic) directory contains projects that demonstrate how to use a fe
 | [copy](/Basic/copy) | Use a Copy window and different retention methods.<br>This example demonstrates how Copy windows operate and the different types of retention that they support. |
 | [counter](/Basic/counter) | Use Counter windows to monitor throughput.<br>This example demonstrates how to use Counter windows to monitor throughput. |
 | [filter](/Basic/filter) | Use a Filter window.<br>This example demonstrates how Filter windows operate. |
+| [forwarding](/Basic/forwarding) | Use a Python window to demonstrate event forwarding. |
 | [lua_compute](/Basic/lua_compute) | Use Lua code to modify user data.<br>The Lua window in this example is used as an alternative to a Compute window. <br>**Note:** Use this example with SAS Event Stream Processing 2021.2.1 and later.|
 | [lua_connector](/Basic/lua_connector) | Use a Lua connector.<br>This example contains a Source window with a Lua connector that reads RSS feeds from scientific sites and publishes them into the project. <br>**Note:** Use this example with SAS Event Stream Processing 2023.04 and later.|
 | [lua_module](/Basic/lua_module) | Use a Lua module.<br>This example demonstrates how you can define useful functions in a Lua module at project level and reference those functions from other Lua code in the project. <br>**Note:** Use this example with SAS Event Stream Processing 2023.12 and later.|
