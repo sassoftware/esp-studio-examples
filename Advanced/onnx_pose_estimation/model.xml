@@ -1,12 +1,13 @@
 <project heartbeat-interval="1" index="pi_EMPTY" luaroot="@ESP_PROJECT_OUTPUT@/luaroot" name="pose_estimation_with_onnx" pubsub="auto" threads="8" use-tagged-token="true">
   <description><![CDATA[This example demonstrates how you can use an ONNX model to detect keypoints of a person in an incoming video stream. It uses pose estimation, which is a computer vision technique for recognizing and categorizing the positions of a human.]]></description>
   <metadata>
-    <meta id="studioUploadedBy">appadmin</meta>
-    <meta id="studioUploaded">1755206878646</meta>
-    <meta id="studioModifiedBy">appadmin</meta>
-    <meta id="studioModified">1755268929216</meta>
-    <meta id="layout">{"contquery":{"w_annotate":{"x":50,"y":535},"w_counter":{"x":50,"y":665},"w_data":{"x":290,"y":50},"w_object_tracker_array":{"x":50,"y":420},"w_postprocess":{"x":50,"y":295},"w_reader":{"x":50,"y":50},"w_score":{"x":50,"y":175}}}</meta>
+    <meta id="studioUploadedBy">anonymousUser</meta>
+    <meta id="studioUploaded">1765972765046</meta>
+    <meta id="studioModifiedBy">anonymousUser</meta>
+    <meta id="studioModified">1765973089160</meta>
+    <meta id="layout">{"contquery":{"w_annotate":{"x":50,"y":540},"w_counter":{"x":50,"y":665},"w_data":{"x":290,"y":50},"w_object_tracker_array":{"x":50,"y":420},"w_postprocess":{"x":50,"y":295},"w_reader":{"x":50,"y":50},"w_score":{"x":50,"y":175}}}</meta>
     <meta id="studioTags">Example</meta>
+    <meta id="projectComputationalRequirements">{"minCpu":"3", "minGpu":"1", "minMem":"8"}</meta>
   </metadata>
   <properties>
     <property name="PUBLISH_WIDTH"><![CDATA[1280]]></property>

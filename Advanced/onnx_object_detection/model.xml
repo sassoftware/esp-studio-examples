@@ -1,11 +1,12 @@
 <project heartbeat-interval="1" index="pi_EMPTY" luaroot="@ESP_PROJECT_OUTPUT@/luaroot" name="computer_vision_with_onnx" pubsub="auto" threads="8" use-tagged-token="true">
   <metadata>
-    <meta id="studioUploadedBy">anonymous</meta>
-    <meta id="studioUploaded">1764343318315</meta>
-    <meta id="studioModifiedBy">anonymous</meta>
-    <meta id="studioModified">1764343373547</meta>
+    <meta id="studioUploadedBy">anonymousUser</meta>
+    <meta id="studioUploaded">1765973789399</meta>
+    <meta id="studioModifiedBy">anonymousUser</meta>
+    <meta id="studioModified">1765973789399</meta>
     <meta id="layout">{"contquery":{"w_annotate":{"x":50,"y":540},"w_counter":{"x":50,"y":665},"w_data":{"x":290,"y":50},"w_object_tracker":{"x":50,"y":420},"w_postprocess":{"x":50,"y":295},"w_reader":{"x":50,"y":50},"w_score":{"x":50,"y":175}}}</meta>
     <meta id="studioTags">Example</meta>
+    <meta id="projectComputationalRequirements">{"minCpu":"3", "minGpu":"1", "minMem":"8"}</meta>
   </metadata>
   <properties>
     <property name="PUBLISH_WIDTH"><![CDATA[1280]]></property>
