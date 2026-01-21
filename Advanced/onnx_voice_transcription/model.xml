@@ -1,11 +1,12 @@
 <project heartbeat-interval="1" index="pi_EMPTY" name="voice_transcription_with_onnx" pubsub="auto" threads="4">
   <metadata>
     <meta id="layout">{"cq":{"w_audio":{"x":170,"y":50},"w_postproc":{"x":170,"y":450},"w_preproc":{"x":170,"y":175},"w_reader":{"x":410,"y":175},"w_score":{"x":170,"y":295}}}</meta>
-    <meta id="studioUploadedBy">anonymous</meta>
-    <meta id="studioUploaded">1755198331502</meta>
-    <meta id="studioModifiedBy">anonymous</meta>
-    <meta id="studioModified">1755268321025</meta>
+    <meta id="studioUploadedBy">anonymous_user</meta>
+    <meta id="studioUploaded">1767009157385</meta>
+    <meta id="studioModifiedBy">anonymous_user</meta>
+    <meta id="studioModified">1767009237405</meta>
     <meta id="studioTags">Example</meta>
+    <meta id="projectComputationalRequirements">{"minCpu":"2", "minMem":"4"}</meta>
   </metadata>
   <contqueries>
     <contquery name="cq" timing-threshold="1000">
