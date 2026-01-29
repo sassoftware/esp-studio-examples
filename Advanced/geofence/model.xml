@@ -9,22 +9,22 @@ produces a list of wanted vehicles found in close proximity to critical infrastr
   <metadata>
     <meta id="layout">{"cq1":{"ANPR":{"x":530,"y":50},"CriticalInfrastructure":{"x":50,"y":175},"Geofence":{"x":50,"y":295},"GeofenceMatches":{"x":50,"y":420},"VehicleWatchlist":{"x":290,"y":50},"WantedVehicleMatch":{"x":290,"y":175}}}</meta>
     <meta id="studioTags">Example</meta>
-    <meta id="studioUploadedBy">anonymous</meta>
-    <meta id="studioUploaded">1764339572788</meta>
-    <meta id="studioModifiedBy">anonymous</meta>
-    <meta id="studioModified">1764339668846</meta>
+    <meta id="studioUploadedBy">anonymousUser</meta>
+    <meta id="studioUploaded">1769614939819</meta>
+    <meta id="studioModifiedBy">anonymousUser</meta>
+    <meta id="studioModified">1769620067670</meta>
   </metadata>
   <contqueries>
     <contquery name="cq1">
       <windows>
-        <window-source pubsub="true" insert-only="true" autogen-key="true" index="pi_EMPTY" name="ANPR">
+        <window-source pubsub="true" index="pi_EMPTY" name="ANPR">
           <description><![CDATA[The ANPR window is a Source window. This is where a list of all vehicles within close proximity of critical infrastructure sites from the anpr.csv file enter the model.]]></description>
           <schema>
             <fields>
-              <field name="vrm" type="string" key="false"/>
-              <field name="lat" type="double" key="false"/>
-              <field name="long" type="double" key="false"/>
-              <field name="date" type="stamp" key="false"/>
+              <field name="vrm" type="string"/>
+              <field name="lat" type="double"/>
+              <field name="long" type="double"/>
+              <field name="date" type="stamp"/>
               <field name="pkey" type="string" key="true"/>
             </fields>
           </schema>
@@ -62,7 +62,7 @@ produces a list of wanted vehicles found in close proximity to critical infrastr
         </window-source>
         <window-join pubsub="true" name="WantedVehicleMatch">
           <description><![CDATA[The WantedVehicleMatch window is a Join window. This is where a list of all vehicles found within close proximity of critical infrastructure sites, and a list of all wanted vehicles are merged into one list.]]></description>
-          <join type="inner">
+          <join type="inner" left-index="pi_HASH">
             <conditions>
               <fields left="vrm" right="vrm"/>
             </conditions>
@@ -86,17 +86,17 @@ produces a list of wanted vehicles found in close proximity to critical infrastr
           <schema>
             <fields>
               <field name="name" type="string" key="true"/>
-              <field name="lat" type="double" key="false"/>
-              <field name="long" type="double" key="false"/>
-              <field name="location" type="string" key="false"/>
-              <field name="county" type="string" key="false"/>
-              <field name="region" type="string" key="false"/>
-              <field name="type" type="string" key="false"/>
-              <field name="capacity" type="string" key="false"/>
-              <field name="opened" type="string" key="false"/>
-              <field name="closed" type="string" key="false"/>
-              <field name="demolished" type="string" key="false"/>
-              <field name="notes" type="string" key="false"/>
+              <field name="lat" type="double"/>
+              <field name="long" type="double"/>
+              <field name="location" type="string"/>
+              <field name="county" type="string"/>
+              <field name="region" type="string"/>
+              <field name="type" type="string"/>
+              <field name="capacity" type="string"/>
+              <field name="opened" type="string"/>
+              <field name="closed" type="string"/>
+              <field name="demolished" type="string"/>
+              <field name="notes" type="string"/>
             </fields>
           </schema>
           <connectors>
