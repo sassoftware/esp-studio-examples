@@ -1,3 +1,4 @@
+
 # SAS Event Stream Processing Studio Examples
 
 ## Overview
@@ -46,65 +47,79 @@ To import an example manually:
 
 ## Directory Contents
 
-### GettingStarted
-The [GettingStarted](/GettingStarted) directory contains a set of projects to help you get started quickly. Window code contains a description that describes its purpose.
+### End-to-end Examples
+
+The [End-to-end Examples](/EndToEndExamples) directory contains projects {{description}}.
 
 | Example | Description |
 | ------ | ------ |
-| [aggregate](/GettingStarted/aggregate) | Use the different types of aggregation functions supported by the Aggregate window.<br>This example demonstrates how to use the Aggregate window and the different types of aggregation functions that it supports. Aggregate windows enable you to add simple statistics such as sum, mean, and standard deviation to streaming data. Because these calculations are provided out of the box and implemented on streaming data, they are fast and match the rate of the incoming data.|
-| [compute](/GettingStarted/compute) | Use a Compute window to match people from the city of Apex.<br>You can use Compute windows to project input fields from one event to a new event and to augment this event with fields that result from a calculation. |
-| [fitstat](/GettingStarted/fitstat) | Use the FitStat (fit statistics) algorithm.<br>The goodness-of-fit of a statistical model describes how well a model fits a set of data. The measures summarize the difference between observed values and predicted values of the model under consideration.  |
-| [join](/GettingStarted/join) | Use Join windows with different join types. <br>This example demonstrates different ways to use Join windows. Join windows enable you to combine streaming data from multiple sources based on specific join conditions.|
-| [source](/GettingStarted/source) | Using connectors in Source windows.<br>This example demonstrates how you can use connectors to feed data from a variety of data sources into Source windows. |
-| [splitter](/GettingStarted/splitter) | Use a splitter.<br>You can use expressions to define window-output splitter-slot calculations (for example, you can use an expression to evaluate where to send a generated event). In this project, the splitter works with user-defined functions to calculate the slot number to decide which Copy window the event goes to. |
+| [activitytracker](/EndToEndExamples/activitytracker) | Use a job template to deploy a project to an edge server.<br>This example processes GPS data from activity tracker devices worn by players in a football match. The example demonstrates how you can publish a project in SAS Event Stream Processing Studio to make it available in SAS Event Stream Manager, and then use a job template to deploy the project to an edge server. |
+| [connectivity_analytics](/EndToEndExamples/connectivity_analytics) |Analyze telemetry data in telecom networks.<br>This example demonstrates how to use SAS Event Stream Processing to analyze telemetry data from a Connectivity Management Platform (CMP).|
+| [matchlist_screening](/EndToEndExamples/matchlist_screening) | Perform fuzzy lookups on streaming data using SAS Data Quality.<br>This example demonstrates how SAS Event Stream Processing can perform fuzzy lookups on streaming data using SAS Data Quality. This project uses Expression Engine Language (EEL) to load the SAS Quality Knowledge Base (QKB).|
+| [onnx_object_detection](/EndToEndExamples/onnx_object_detection) | Use an ONNX model to detect objects in an incoming video stream.<br>This example demonstrates how you can use an ONNX model to detect objects in an incoming video stream. Post-processing by a Python program converts scoring output to a more usable format. <br>**Note:** Use this example with SAS Event Stream Processing 2025.02 and later.|
+| [onnx_pose_estimation](/EndToEndExamples/onnx_pose_estimation) | Use an ONNX model to detect keypoints of a person in an incoming video stream.<br>This example uses pose estimation, which is a computer vision technique for recognizing and categorizing the positions of a human body. This example builds on the onnx_object_detection example.<br>**Note:** Use this example with SAS Event Stream Processing 2025.02 and later.|
+| [onnx_voice_transcription](/EndToEndExamples/onnx_voice_transcription) | Use an ONNX model to accurately transcribe audio. <br>This example uses post-processing by a Python program to convert the tokens that the model outputs into words.<br>**Note:** Use this example with SAS Event Stream Processing 2025.06 and later.|
+| [sailing](/EndToEndExamples/sailing) | Visualize data obtained from a set of boats.<br>This example identifies two geographical areas of interest. One area is an exclusion zone that the boats identified are not permitted to enter. The other is an area where a speed restriction has been applied.|
+| [trades](/EndToEndExamples/trades) | Identify large trades in stock market transactions.<br>This project identifies large securities transactions and the traders who were involved in those trades.|
 
-### Basic
+### Input Streams
 
-The [Basic](/Basic) directory contains projects that demonstrate how to use a few windows. See also [GettingStarted](/GettingStarted).
-
-| Example | Description |
-| ------ | ------ |
-| [connector_orchestration](/Basic/connector_orchestration) | Use connector orchestration to manage multiple connectors in a project.<br>This example demonstrates connector orchestration. This is a feature that controls the sequence and state of connector execution. |
-| [copy](/Basic/copy) | Use a Copy window and different retention methods.<br>This example demonstrates how Copy windows operate and the different types of retention that they support. |
-| [counter](/Basic/counter) | Use Counter windows to monitor throughput.<br>This example demonstrates how to use Counter windows to monitor throughput. |
-| [filter](/Basic/filter) | Use a Filter window.<br>This example demonstrates how Filter windows operate. |
-| [forwarding](/Basic/forwarding) | Use event forwarding.<br>This example demonstrates how event forwarding operates in Python windows. |
-| [lua_compute](/Basic/lua_compute) | Use Lua code to modify user data.<br>The Lua window in this example is used as an alternative to a Compute window. <br>**Note:** Use this example with SAS Event Stream Processing 2021.2.1 and later.|
-| [lua_connector](/Basic/lua_connector) | Use a Lua connector.<br>This example contains a Source window with a Lua connector that reads RSS feeds from scientific sites and publishes them into the project. <br>**Note:** Use this example with SAS Event Stream Processing 2023.04 and later.|
-| [lua_module](/Basic/lua_module) | Use a Lua module.<br>This example demonstrates how you can define useful functions in a Lua module at project level and reference those functions from other Lua code in the project. <br>**Note:** Use this example with SAS Event Stream Processing 2023.12 and later.|
-| [lua_parse](/Basic/lua_parse) | Use Lua code to parse JSON data and generate multiple events.<br>This example contains two projects. The Lua window in these projects is used as an alternative to a Functional window. The Basic Example Project contains step-by-step instructions about how to run the project. The Advanced Example Project is for demonstration purposes. <br>**Note:** Use these examples with SAS Event Stream Processing 2022.10 and later.|
-| [lua_pattern](/Basic/lua_pattern) | Use Lua code to identify increases in a stock's price over time.<br>The Pattern window in this example uses Lua code to define events of interest (EOI) to be matched. <br>**Note:** Use this example with SAS Event Stream Processing 2024.03 and later.|
-| [lua_state](/Basic/lua_state) | Use Lua code to maintain and use event state to generate events.<br>The Lua window in this project generates events every time a new stock symbol price exceeds the current maximum price for that stock symbol. <br>**Note:** Use these examples with SAS Event Stream Processing 2022.10 and later.|
-| [matchlist_screening](/Basic/matchlist_screening) | Perform fuzzy lookups on streaming data using SAS Data Quality.<br>This example demonstrates how SAS Event Stream Processing can perform fuzzy lookups on streaming data using SAS Data Quality. This project uses Expression Engine Language (EEL) to load the SAS Quality Knowledge Base (QKB).|
-| [python_compute](/Basic/python_compute) | Use Python code to modify user data.<br>The Python window in this example is used as an alternative to a Compute window. <br>**Note:** Use this example with SAS Event Stream Processing 2024.03 and later.|
-| [python_connector](/Basic/python_connector) | Use a Python connector.<br>This example contains a Source window with a Python connector that calls a JSON API to read Star Wars data and publish that data into the project every five seconds. <br>**Note:** Use this example with SAS Event Stream Processing 2023.12 and later.|
-| [python_module](/Basic/python_module) | Use a Python module.<br>This example demonstrates how you can define useful functions in a Python module at project level and reference those functions from other Python code in the project. <br>**Note:** Use this example with SAS Event Stream Processing 2024.02 and later.|
-| [python_pattern](/Basic/python_pattern) | Use Python code to identify decreases in a stock's price over time.<br>The Pattern window in this example uses Python code to define events of interest (EOI) to be matched. <br>**Note:** Use this example with SAS Event Stream Processing 2024.03 and later.|
-| [python_snippet](/Basic/python_snippet) | Use a Python snippet.<br>This example provides a simple demonstration of how to define a Python snippet and reference it. <br>**Note:** Use this example with SAS Event Stream Processing 2024.02 and later.|
-| [removestate](/Basic/removestate) | Transition a model from stateful to stateless.<br>This example demonstrates how to facilitate the transition of a stateful part of a model to a stateless part of a model.|
-| [short_time_fourier_transform](/Basic/short_time_fourier_transform) | Perform short-time Fourier transform (STFT) on streaming data.<br>This example demonstrates how to perform short-time Fourier transform (STFT) analysis on streaming data.|
-| [state_db](/Basic/state_db) | Use StateDB windows with Redis.<br>This example demonstrates how to use the StateDB Writer window and StateDB Reader window with the in-memory key–value database Redis.|
-| [union](/Basic/union) | Merge three event streams of stock market trades together.<br> A Union window unites two or more event streams using a strict policy or a loose policy.|
-
-### Advanced
-
-The [Advanced](/Advanced) directory contains projects that demonstrate the use of a larger number of windows together, or that are otherwise more complex than examples in the [Basic](/Basic) or [GettingStarted](/GettingStarted) directories.
+The [Input Streams](/InputStreams) directory contains projects {{description}}.
 
 | Example | Description |
 | ------ | ------ |
-| [activitytracker](/Advanced/activitytracker) | Use a job template to deploy a project to an edge server.<br>This example processes GPS data from activity tracker devices worn by players in a football match. The example demonstrates how you can publish a project in SAS Event Stream Processing Studio to make it available in SAS Event Stream Manager, and then use a job template to deploy the project to an edge server. |
-| [connectivity_analytics](/Advanced/connectivity_analytics) |Analyze telemetry data in telecom networks.<br>This example demonstrates how to use SAS Event Stream Processing to analyze telemetry data from a Connectivity Management Platform (CMP).|
-| [geofence](/Advanced/geofence) |Display a list of wanted vehicles found near critical infrastructure sites.<br>This example uses Join, Geofence, and Filter windows to match wanted vehicles that are in close proximity to critical infrastructure sites. <br>**Note:** Use this example with SAS Event Stream Processing 2024.01 and later.|
-| [kmeans_analytics](/Advanced/kmeans_analytics) |This example demonstrates the use of k-means clustering on streaming data. It includes a Source window that ingests signal samples, and Train and Score windows that build the k-means model and assign each incoming event to its closest cluster in real time.|
-| [linear_regression](/Advanced/linear_regression) |Build and update a linear regression model in real time.<br>This example demonstrates how to use SAS Event Stream Processing to build and continuously update a linear regression model on a high-dimensional stream of data in real time. |
-| [lua_snippet](/Advanced/lua_snippet) |Use a Lua snippet.<br>This example simulates health-care data streaming into a model and detects measurements that fall outside a specified range. A Lua snippet in the project subscribes to windows, stores values, and reads a JSON file. Lua connectors are also used to generate and inject data. <br>**Note:** Use this example with SAS Event Stream Processing 2023.04 and later.|
-| [onnx_object_detection](/Advanced/onnx_object_detection) | Use an ONNX model to detect objects in an incoming video stream.<br>This example demonstrates how you can use an ONNX model to detect objects in an incoming video stream. Post-processing by a Python program converts scoring output to a more usable format. <br>**Note:** Use this example with SAS Event Stream Processing 2025.02 and later.|
-| [onnx_pose_estimation](/Advanced/onnx_pose_estimation) | Use an ONNX model to detect keypoints of a person in an incoming video stream.<br>This example uses pose estimation, which is a computer vision technique for recognizing and categorizing the positions of a human body. This example builds on the onnx_object_detection example.<br>**Note:** Use this example with SAS Event Stream Processing 2025.02 and later.|
-| [onnx_voice_transcription](/Advanced/onnx_voice_transcription) | Use an ONNX model to accurately transcribe audio. <br>This example uses post-processing by a Python program to convert the tokens that the model outputs into words.<br>**Note:** Use this example with SAS Event Stream Processing 2025.06 and later.|
-| [sailing](/Advanced/sailing) | Visualize data obtained from a set of boats.<br>This example identifies two geographical areas of interest. One area is an exclusion zone that the boats identified are not permitted to enter. The other is an area where a speed restriction has been applied.|
-| [trades](/Advanced/trades) | Identify large trades in stock market transactions.<br>This project identifies large securities transactions and the traders who were involved in those trades.|
-| [transpose_long](/Advanced/transpose_long) | Transpose data from an aircraft, in long mode.<br>This project conceptualizes an event as a row that consists of multiple columns. You can use a Transpose window to interchange an event's rows as columns, and columns as rows. You will process information about the pitch, yaw, roll, and velocity of an aircraft in flight.|
-| [transpose_wide](/Advanced/transpose_wide) | Transpose data from an aircraft, in wide mode.<br>This project conceptualizes an event as a row that consists of multiple columns. You can use a Transpose window to interchange an event's rows as columns, and columns as rows. You will process information about the pitch, yaw, roll, and velocity of an aircraft in flight.|
+| [connector_orchestration](/InputStreams/connector_orchestration) | Use connector orchestration to manage multiple connectors in a project.<br>This example demonstrates connector orchestration. This is a feature that controls the sequence and state of connector execution. |
+| [lua_connector](/InputStreams/lua_connector) | Use a Lua connector.<br>This example contains a Source window with a Lua connector that reads RSS feeds from scientific sites and publishes them into the project. <br>**Note:** Use this example with SAS Event Stream Processing 2023.04 and later.|
+| [python_connector](/InputStreams/python_connector) | Use a Python connector.<br>This example contains a Source window with a Python connector that calls a JSON API to read Star Wars data and publish that data into the project every five seconds. <br>**Note:** Use this example with SAS Event Stream Processing 2023.12 and later.|
+| [source](/InputStreams/source) | Using connectors in Source windows.<br>This example demonstrates how you can use connectors to feed data from a variety of data sources into Source windows. |
+
+### Transformations
+
+The [Transformations](/Transformations) directory contains projects {{description}}.
+
+| Example | Description |
+| ------ | ------ |
+| [aggregate](/Transformations/aggregate) | Use the different types of aggregation functions supported by the Aggregate window.<br>This example demonstrates how to use the Aggregate window and the different types of aggregation functions that it supports. Aggregate windows enable you to add simple statistics such as sum, mean, and standard deviation to streaming data. Because these calculations are provided out of the box and implemented on streaming data, they are fast and match the rate of the incoming data.|
+| [compute](/Transformations/compute) | Use a Compute window to match people from the city of Apex.<br>You can use Compute windows to project input fields from one event to a new event and to augment this event with fields that result from a calculation. |
+| [copy](/Transformations/copy) | Use a Copy window and different retention methods.<br>This example demonstrates how Copy windows operate and the different types of retention that they support. |
+| [filter](/Transformations/filter) | Use a Filter window.<br>This example demonstrates how Filter windows operate. |
+| [join](/Transformations/join) | Use Join windows with different join types. <br>This example demonstrates different ways to use Join windows. Join windows enable you to combine streaming data from multiple sources based on specific join conditions.|
+| [lua_compute](/Transformations/lua_compute) | Use Lua code to modify user data.<br>The Lua window in this example is used as an alternative to a Compute window. <br>**Note:** Use this example with SAS Event Stream Processing 2021.2.1 and later.|
+| [lua_module](/Transformations/lua_module) | Use a Lua module.<br>This example demonstrates how you can define useful functions in a Lua module at project level and reference those functions from other Lua code in the project. <br>**Note:** Use this example with SAS Event Stream Processing 2023.12 and later.|
+| [lua_parse](/Transformations/lua_parse) | Use Lua code to parse JSON data and generate multiple events.<br>This example contains two projects. The Lua window in these projects is used as an alternative to a Functional window. The Basic Example Project contains step-by-step instructions about how to run the project. The Advanced Example Project is for demonstration purposes. <br>**Note:** Use these examples with SAS Event Stream Processing 2022.10 and later.|
+| [lua_snippet](/Transformations/lua_snippet) |Use a Lua snippet.<br>This example simulates health-care data streaming into a model and detects measurements that fall outside a specified range. A Lua snippet in the project subscribes to windows, stores values, and reads a JSON file. Lua connectors are also used to generate and inject data. <br>**Note:** Use this example with SAS Event Stream Processing 2023.04 and later.|
+| [lua_state](/Transformations/lua_state) | Use Lua code to maintain and use event state to generate events.<br>The Lua window in this project generates events every time a new stock symbol price exceeds the current maximum price for that stock symbol. <br>**Note:** Use these examples with SAS Event Stream Processing 2022.10 and later.|
+| [python_compute](/Transformations/python_compute) | Use Python code to modify user data.<br>The Python window in this example is used as an alternative to a Compute window. <br>**Note:** Use this example with SAS Event Stream Processing 2024.03 and later.|
+| [python_module](/Transformations/python_module) | Use a Python module.<br>This example demonstrates how you can define useful functions in a Python module at project level and reference those functions from other Python code in the project. <br>**Note:** Use this example with SAS Event Stream Processing 2024.02 and later.|
+| [python_snippet](/Transformations/python_snippet) | Use a Python snippet.<br>This example provides a simple demonstration of how to define a Python snippet and reference it. <br>**Note:** Use this example with SAS Event Stream Processing 2024.02 and later.|
+| [removestate](/Transformations/removestate) | Transition a model from stateful to stateless.<br>This example demonstrates how to facilitate the transition of a stateful part of a model to a stateless part of a model.|
+| [splitter](/Transformations/splitter) | Use a splitter.<br>You can use expressions to define window-output splitter-slot calculations (for example, you can use an expression to evaluate where to send a generated event). In this project, the splitter works with user-defined functions to calculate the slot number to decide which Copy window the event goes to. |
+| [transpose_long](/Transformations/transpose_long) | Transpose data from an aircraft, in long mode.<br>This project conceptualizes an event as a row that consists of multiple columns. You can use a Transpose window to interchange an event's rows as columns, and columns as rows. You will process information about the pitch, yaw, roll, and velocity of an aircraft in flight.|
+| [transpose_wide](/Transformations/transpose_wide) | Transpose data from an aircraft, in wide mode.<br>This project conceptualizes an event as a row that consists of multiple columns. You can use a Transpose window to interchange an event's rows as columns, and columns as rows. You will process information about the pitch, yaw, roll, and velocity of an aircraft in flight.|
+| [union](/Transformations/union) | Merge three event streams of stock market trades together.<br> A Union window unites two or more event streams using a strict policy or a loose policy.|
+
+### Utilities
+
+The [Utilities](/Utilities) directory contains projects {{description}}.
+
+| Example | Description |
+| ------ | ------ |
+| [counter](/Utilities/counter) | Use Counter windows to monitor throughput.<br>This example demonstrates how to use Counter windows to monitor throughput. |
+| [forwarding](/Utilities/forwarding) | Use event forwarding.<br>This example demonstrates how event forwarding operates in Python windows. |
+| [geofence](/Utilities/geofence) |Display a list of wanted vehicles found near critical infrastructure sites.<br>This example uses Join, Geofence, and Filter windows to match wanted vehicles that are in close proximity to critical infrastructure sites. <br>**Note:** Use this example with SAS Event Stream Processing 2024.01 and later.|
+| [lua_pattern](/Utilities/lua_pattern) | Use Lua code to identify increases in a stock's price over time.<br>The Pattern window in this example uses Lua code to define events of interest (EOI) to be matched. <br>**Note:** Use this example with SAS Event Stream Processing 2024.03 and later.|
+| [python_pattern](/Utilities/python_pattern) | Use Python code to identify decreases in a stock's price over time.<br>The Pattern window in this example uses Python code to define events of interest (EOI) to be matched. <br>**Note:** Use this example with SAS Event Stream Processing 2024.03 and later.|
+| [state_db](/Utilities/state_db) | Use StateDB windows with Redis.<br>This example demonstrates how to use the StateDB Writer window and StateDB Reader window with the in-memory key–value database Redis.|
+
+### Custom Windows
+
+The [Custom Windows](/CustomWindows) directory contains projects that make use of user defined Custom Windows that can be found on the [Custom Windows GitHub](https://github.com/sassoftware/esp-studio-custom-windows/tree/main).
+
+| Example | Description |
+| ------ | ------ |
+|[alert_suppression](/CustomWindows/alert_suppression) |Use the Alert Suppression Custom Window.<br>This project shows the basic usage of the Alert Suppression Custom Window to supress alerts based on an adjustable allowed frequency.<br>**Note:** Use this example with SAS Event Stream Processing 2025.05 and later. |
+|[event_sorter](/CustomWindows/event_sorter) |Use the Event Sorter Custom Window.<br>This project shows the basic usage of the Event Sorter Custom Window to sort incoming events based on the time they were created opposed to when they were available to the event stream.<br>**Note:** Use this example with SAS Event Stream Processing 2025.05 and later. |
+|[mathematical_operations](/CustomWindows/mathematical_operations) |Use the Mathematical Operations Custom Window.<br>This project shows the basic usage of the Mathematical Operations Custom Window to apply a selected mathematical operation to two numbers.<br>**Note:** Use this example with SAS Event Stream Processing 2025.05 and later. |
 
 ### Analytics
 
@@ -118,7 +133,6 @@ The [Analytics](/Analytics) directory contains projects that show how to use var
 |[analytics_dbscan](/Analytics/analytics_dbscan)| Use DBSCAN clustering.<br>It applies an insert-only input stream that consists of the following: 1. An ID that acts as the streams key. 2. An x coordinate of data. 3. A y coordinate of data. <!-- This project has a single continuous query with a Source window that receives the data to be scored, a Train window that generates and periodically updates the DBSCAN model, and a Score window that does the scoring. The model is controlled by the parameters specified in Train window. While the w_training Train window is fully parameterized, this example uses it to find which of two clusters the data points are closest to.--> |
 |[analytics_distributionfitting](/Analytics/analytics_distributionfitting) | Use the Distribution Fitting algorithm.<br>The algorithm supports fitting a Weibull, Gamma, or Normal distribution to a variable in the incoming data stream. <!--The project contains a single continuous query that consists of the following: 1. A Source window that receives the data to be analyzed. 2. A Calculate window that fits a Weibull distribution to a variable from an incoming data stream and publishes the variable's functional parameters as results.-->|
 |[analytics_fitstatistics](/Analytics/analytics_fitstatistics) | Use the FitStat (fit statistics) algorithm.<br>The goodness-of-fit of a statistical model describes how well a model fits a set of data. The measure summarizes the difference between observed values and predicted values of the model under consideration. <!--This project contains a single continuous query that consists of the following: 1. A Source window that receives scored data to be analyzed. 2. A Calculate window that calculates fit statistics and publishes the results.--> |
-| [analytics_kmeans](/Analytics/analytics_kmeans) | Use k-means clustering.<br> K-means clustering is often used in data mining. The algorithm assigns data points to their nearest cluster centroid. Each cluster centroid is then recomputed based on the average of the cluster's data points. In k-means clustering, an input event is augmented with a cluster number. This indicates the cluster that the observation falls into.|
 | [analytics_lagmonitoring](/Analytics/analytics_lagmonitoring) | Use the Lag Monitoring (LagMonitor) algorithm.<br>The Lag Monitoring algorithm computes the cross-correlation between a target time series and one or more additional time series. Results contain the selected lags and computed cross-correlation values that correspond to minimum, maximum, and maximum absolute value cross-correlations for each of the variables. <!--The project contains a single continuous query that consists of the following: 1. A Source window that receives the data to be analyzed. 2. A Calculate window that performs the LagMonitor calculation.--> |
 |[analytics_logisticregression](/Analytics/analytics_logisticregression) | Use online logistic regression on streaming data.<br> This project has an insert-only input data stream that consists of the following: 1. An ID that acts as the stream's key. 2. A y coordinate of data. 3. 784 x coordinates. <!--The project has a single continuous query with 1. a Source window that receives data events to score 2. A Train window that generates and periodically updates the logistic regression model. 3. a Score window that performs the scoring.-->|
 |[analytics_modelReader_digitalFilter](/Analytics/analytics_modelReader_digitalFilter) | Score data by using SODFIL.sasast.<br>This project shows how to use a Model Reader window to facilitate the scoring of an input data set using a pre-trained analytic store model. The analytic store model is SODFIL.sasast, which is a Digital Filter analytic store of Butterworth filter type. The analytic store was created using CAS. <!--This project contains a single continuous query that consists of the following: 1. A Source window, named Source1, that receives the input data set to be analyzed 2. A second Source window, named w_request, which receives a request event to load the ASTORE. 3. A Model Reader window, named w_reader, that receives request events that include the location and type of model, and publishes a model event that contains the ASTORE model to a Score window .4. A Score window, named Score1, which uses the model that it receives from the Model Reader window to perform scoring of the input data set.-->|
@@ -135,23 +149,16 @@ The [Analytics](/Analytics) directory contains projects that show how to use var
 |[analytics_textvectorization](/Analytics/analytics_textvectorization) | Use the TextVectorization algorithm.<br>Vectorizing text creates maps from words or n-grams to vector space. A vector space is an algebraic model to represent text documents as vectors of identifiers (for example, index terms). <!--This project contains a single continuous query that consists of the following: 1. A Source window that receives the text data to analyze. 2. A Calculate window that vectorizes text in incoming data events and publishes the results.--> |
 |[analytics_TFIDF](/Analytics/analytics_TFIDF) | Use the Term Frequency - Inverse Document Frequency (TFIDF) algorithm.<br>TFIDF can be used as a weighing factor in text mining or general information searches. <!--This project contains a single continuous query that consists of the following: 1. A Source window that receives scored data from a Score window to be analyzed. 2. A Calculate window that runs the TFIDF algorithm.--> |
 |[analytics_tSNE](/Analytics/analytics_tSNE) | Use the t-Distributed Stochastic Neighbor Embedding (t-SNE) algorithm.<br>The t-SNE algorithm is a machine learning algorithm for dimensionality reduction that is used to visualize high-dimensional data sets. <!--This project contains a single continuous query that consists of the following: 1. a Source window that receives data to be trained and scored. 2. a Train window that generates and periodically updates the t-SNE model 3. a Score window that performs the scoring.--> |
-
-### Custom Windows
-
-The [Custom Windows](/CustomWindows) directory contains projects that make use of user defined Custom Windows that can be found on the [Custom Windows GitHub](https://github.com/sassoftware/esp-studio-custom-windows/tree/main).
-
-| Example | Description |
-| ------ | ------ |
-|[alert_suppression](/CustomWindows/alert_suppression) |Use the Alert Suppression Custom Window.<br>This project shows the basic usage of the Alert Suppression Custom Window to supress alerts based on an adjustable allowed frequency.<br>**Note:** Use this example with SAS Event Stream Processing 2025.05 and later. |
-|[event_sorter](/CustomWindows/event_sorter) |Use the Event Sorter Custom Window.<br>This project shows the basic usage of the Event Sorter Custom Window to sort incoming events based on the time they were created opposed to when they were available to the event stream.<br>**Note:** Use this example with SAS Event Stream Processing 2025.05 and later. |
-|[mathematical_operations](/CustomWindows/mathematical_operations) |Use the Mathematical Operations Custom Window.<br>This project shows the basic usage of the Mathematical Operations Custom Window to apply a selected mathematical operation to two numbers.<br>**Note:** Use this example with SAS Event Stream Processing 2025.05 and later. |
+| [fitstat](/Analytics/fitstat) | Use the FitStat (fit statistics) algorithm.<br>The goodness-of-fit of a statistical model describes how well a model fits a set of data. The measures summarize the difference between observed values and predicted values of the model under consideration.  |
+| [kmeans_analytics](/Advanced/kmeans_analytics) |This example demonstrates the use of k-means clustering on streaming data. It includes a Source window that ingests signal samples, and Train and Score windows that build the k-means model and assign each incoming event to its closest cluster in real time.|
+| [linear_regression](/Advanced/linear_regression) |Build and update a linear regression model in real time.<br>This example demonstrates how to use SAS Event Stream Processing to build and continuously update a linear regression model on a high-dimensional stream of data in real time. |
+| [short_time_fourier_transform](/Basic/short_time_fourier_transform) | Perform short-time Fourier transform (STFT) on streaming data.<br>This example demonstrates how to perform short-time Fourier transform (STFT) analysis on streaming data.|
 
 ## Identifying Suitable Examples
 
 ### Examples with Practical Use Cases
 
-The following examples in the [Advanced](/Advanced) directory contain practical use cases.
-
+The following examples contain practical use cases.
 - activitytracker
 - geofence
 - onnx_object_detection
