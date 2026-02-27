@@ -49,7 +49,7 @@ To import an example manually:
 
 ### End-to-end Examples
 
-The [End-to-end Examples](/EndToEndExamples) directory contains projects {{description}}.
+The [End-to-end Examples](/EndToEndExamples) directory contains projects that demonstrate complete, real-world streaming solutions built with SAS Event Stream Processing. These examples typically combine multiple window types, connectors, and technologies to show how data flows from ingestion through processing, analytics, and output in a production-style scenario.
 
 | Example | Description |
 | ------ | ------ |
@@ -64,7 +64,7 @@ The [End-to-end Examples](/EndToEndExamples) directory contains projects {{descr
 
 ### Input Streams
 
-The [Input Streams](/InputStreams) directory contains projects {{description}}.
+The [Input Streams](/InputStreams) directory contains projects that demonstrate how data enters SAS Event Stream Processing models. These examples focus on Source windows and connectors, and show how to ingest streaming data from different external sources, including files, APIs, and custom connectors.
 
 | Example | Description |
 | ------ | ------ |
@@ -75,7 +75,7 @@ The [Input Streams](/InputStreams) directory contains projects {{description}}.
 
 ### Transformations
 
-The [Transformations](/Transformations) directory contains projects {{description}}.
+The [Transformations](/Transformations) directory contains projects that demonstrate how to transform, enrich, and manipulate streaming data within SAS Event Stream Processing. These examples focus on commonly used transformation windows and techniques, including filtering, joining, aggregating, transposing, and applying custom logic with Lua or Python.
 
 | Example | Description |
 | ------ | ------ |
@@ -100,7 +100,7 @@ The [Transformations](/Transformations) directory contains projects {{descriptio
 
 ### Utilities
 
-The [Utilities](/Utilities) directory contains projects {{description}}.
+The [Utilities](/Utilities) directory contains projects that demonstrate supporting and operational features of SAS Event Stream Processing. These examples show how to monitor, manage, and enhance streaming applications by using utility windows and features such as counters, patterns, state management, geofencing, and event forwarding.
 
 | Example | Description |
 | ------ | ------ |
