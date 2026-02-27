@@ -1,0 +1,536 @@
+<project heartbeat-interval="1" index="pi_EMPTY" luaroot="@ESP_PROJECT_OUTPUT@/luaroot" name="sailing" pubsub="auto" threads="4">
+  <description><![CDATA[This example shows an event stream of data obtained from a set of boats. The model identifies two geographical areas of interest. One area is an exclusion zone that the boats identified are not permitted to enter. The other is an area where a speed restriction has been applied. This example uses the following six files:
+The XML file (sailing.xml) is the project used in the example.
+geoArea.csv is an input file. This file contains events relating to the defined areas of interest.
+boat1.csv, boat2.csv, boat3.csv, and boat4.csv are input files. These files contains event streams for four boats. The event streams contain geographical coordinates of the boats' movements.]]></description>
+  <metadata>
+    <meta id="layout">{"cq1":{"Areas_Of_Interest":{"x":-330,"y":-440},"Boat1":{"x":-445,"y":-725},"Boat2":{"x":-225,"y":-725},"Boat3":{"x":-5,"y":-725},"Boat4":{"x":220,"y":-725},"Compute_ID1":{"x":-445,"y":-590},"Compute_ID2":{"x":-225,"y":-590},"Compute_ID3":{"x":-5,"y":-590},"Compute_ID4":{"x":210,"y":-590},"Filter_Inside_Exclusion_Zone":{"x":-230,"y":-55},"Filter_Speeding_In_Marina":{"x":-5,"y":-55},"Geofence_Area_Check":{"x":-115,"y":-315},"Last_Exclusion_Violation":{"x":-230,"y":70},"Last_Speeding_Event":{"x":-5,"y":70},"Retention_30Min":{"x":-115,"y":-185},"Union_All_Boats":{"x":-115,"y":-440}}}</meta>
+    <meta id="studioTags">Example</meta>
+    <meta id="studioUploadedBy">anonymous</meta>
+    <meta id="studioUploaded">1764343637630</meta>
+    <meta id="studioModifiedBy">anonymous</meta>
+    <meta id="studioModified">1764343649021</meta>
+  </metadata>
+  <properties>
+    <property name="EventsPerSecond"><![CDATA[5]]></property>
+  </properties>
+  <contqueries>
+    <contquery index="pi_EMPTY" name="cq1">
+      <windows>
+        <window-source index="pi_EMPTY" insert-only="true" pubsub="true" name="Boat1">
+          <description><![CDATA[There are four Source windows that receive event streams from the four boats identified: Boat1, Boat2, Boat3, and Boat4]]></description>
+          <schema>
+            <fields>
+              <field key="true" name="dateTime" type="string"/>
+              <field name="heading" type="double"/>
+              <field name="speed" type="double"/>
+              <field name="lat" type="double"/>
+              <field name="long" type="double"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="lua" name="Boat1">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="interval"><![CDATA[5000]]></property>
+                <property name="init"><![CDATA[onStart]]></property>
+                <property name="publish"><![CDATA[onInterval]]></property>
+                <property name="destroy"><![CDATA[onStop]]></property>
+                <property name="code"><![CDATA[
+-- boatReader.lua
+-- Publishes 2 boat records every 5 seconds
+
+local f = io.open("@ESP_PROJECT_HOME@/test_files/boat1.csv", "r")
+if not f then
+    print("Could not open boatdata.csv")
+end
+
+-- read header if present
+local header = f:read("*l")
+
+-- called when connector starts
+function onStart()
+    print("Lua connector started, publishing 2 records every 5s...")
+end
+
+-- called periodically based on 'interval' property
+function onInterval()
+    local events = {}
+
+    -- read up to 2 records from the file
+    for i = 1, 2 do
+        local line = f:read("*l")
+        if not line then
+            print("End of file reached, stopping.")
+            f:close()
+            return true -- stops connector
+        end
+
+        -- split CSV line
+        local fields = {}
+        for value in string.gmatch(line, "([^,]+)") do
+            table.insert(fields, value)
+        end
+
+        -- build event (adapt schema fields to your project!)
+        local event = {
+            dateTime   = fields[1],                -- timestamp string
+            heading   = tonumber(fields[2]),      -- numeric
+            speed     = tonumber(fields[3]),      -- numeric
+            lat  = tonumber(fields[4]),
+            long = tonumber(fields[5])
+        }
+           
+        table.insert(events, event)
+    end
+
+    -- publish events to ESP
+    if(esp_inject(event) == false) then -- false means call me again. 
+        return true   -- true means I am finished
+    end
+
+    esp_inject(events)
+end
+
+-- cleanup if connector is stopped
+function onStop()
+    if f then f:close() end
+    print("Lua connector stopped.")
+end
+]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-source index="pi_EMPTY" insert-only="true" pubsub="true" name="Boat2">
+          <schema>
+            <fields>
+              <field key="true" name="dateTime" type="string"/>
+              <field name="heading" type="double"/>
+              <field name="speed" type="double"/>
+              <field name="lat" type="double"/>
+              <field name="long" type="double"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="lua" name="Boat2">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="interval"><![CDATA[5000]]></property>
+                <property name="init"><![CDATA[onStart]]></property>
+                <property name="publish"><![CDATA[onInterval]]></property>
+                <property name="destroy"><![CDATA[onStop]]></property>
+                <property name="code"><![CDATA[-- boatReader.lua
+-- Publishes 2 boat records every 5 seconds
+
+local f = io.open("@ESP_PROJECT_HOME@/test_files/boat2.csv", "r")
+if not f then
+    print("Could not open boatdata.csv")
+end
+
+-- read header if present
+local header = f:read("*l")
+
+-- called when connector starts
+function onStart()
+    print("Lua connector started, publishing 2 records every 5s...")
+end
+
+-- called periodically based on 'interval' property
+function onInterval()
+    local events = {}
+
+    -- read up to 2 records from the file
+    for i = 1, 2 do
+        local line = f:read("*l")
+        if not line then
+            print("End of file reached, stopping.")
+            f:close()
+            return true -- stops connector
+        end
+
+        -- split CSV line
+        local fields = {}
+        for value in string.gmatch(line, "([^,]+)") do
+            table.insert(fields, value)
+        end
+
+        -- build event (adapt schema fields to your project!)
+        local event = {
+            dateTime   = fields[1],                -- timestamp string
+            heading   = tonumber(fields[2]),      -- numeric
+            speed     = tonumber(fields[3]),      -- numeric
+            lat  = tonumber(fields[4]),
+            long = tonumber(fields[5])
+        }
+        
+           
+        table.insert(events, event)
+    end
+
+    -- publish events to ESP
+    if(esp_inject(event) == false) then -- false means call me again. 
+        return true   -- true means I am finished
+    end
+
+    esp_inject(events)
+end
+
+-- cleanup if connector is stopped
+function onStop()
+    if f then f:close() end
+    print("Lua connector stopped.")
+end
+]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-compute index="pi_EMPTY" name="Compute_ID2" pubsub="true">
+          <schema>
+            <fields>
+              <field key="true" name="dateTime" type="string"/>
+              <field name="heading" type="double"/>
+              <field name="speed" type="double"/>
+              <field name="lat" type="double"/>
+              <field name="long" type="double"/>
+              <field name="BoatNumber" type="int32"/>
+            </fields>
+          </schema>
+          <output>
+            <field-expr><![CDATA[heading]]></field-expr>
+            <field-expr><![CDATA[speed]]></field-expr>
+            <field-expr><![CDATA[lat]]></field-expr>
+            <field-expr><![CDATA[long]]></field-expr>
+            <field-expr><![CDATA[2]]></field-expr>
+          </output>
+        </window-compute>
+        <window-compute index="pi_EMPTY" name="Compute_ID1" pubsub="true">
+          <description><![CDATA[There are four Compute windows that assign a boat number to each of the four boats identified: Compute_ID1, Compute_ID2, Compute_ID3, and Compute_ID4. This allows SAS Event Stream Processing to differentiate the boats before joining the streams together for processing.]]></description>
+          <expr-initialize>
+            <initializer type="string"/>
+          </expr-initialize>
+          <schema>
+            <fields>
+              <field key="true" name="dateTime" type="string"/>
+              <field name="heading" type="double"/>
+              <field name="speed" type="double"/>
+              <field name="lat" type="double"/>
+              <field name="long" type="double"/>
+              <field name="BoatNumber" type="int32"/>
+            </fields>
+          </schema>
+          <output>
+            <field-expr><![CDATA[heading]]></field-expr>
+            <field-expr><![CDATA[speed]]></field-expr>
+            <field-expr><![CDATA[lat]]></field-expr>
+            <field-expr><![CDATA[long]]></field-expr>
+            <field-expr><![CDATA[1]]></field-expr>
+          </output>
+        </window-compute>
+        <window-union index="pi_EMPTY" name="Union_All_Boats" pubsub="true" strict="false">
+          <description><![CDATA[This is a Union window that unifies the boats’ event streams.]]></description>
+        </window-union>
+        <window-source index="pi_EMPTY" insert-only="true" pubsub="true" name="Boat3">
+          <schema>
+            <fields>
+              <field key="true" name="dateTime" type="string"/>
+              <field name="heading" type="double"/>
+              <field name="speed" type="double"/>
+              <field name="lat" type="double"/>
+              <field name="long" type="double"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="lua" name="Boat3">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="interval"><![CDATA[3000]]></property>
+                <property name="init"><![CDATA[onStart]]></property>
+                <property name="publish"><![CDATA[onInterval]]></property>
+                <property name="destroy"><![CDATA[onStop]]></property>
+                <property name="code"><![CDATA[-- boatReader.lua
+-- Publishes 2 boat records every 5 seconds
+
+local f = io.open("@ESP_PROJECT_HOME@/test_files/boat3.csv", "r")
+if not f then
+    print("Could not open boatdata.csv")
+end
+
+-- read header if present
+local header = f:read("*l")
+
+-- called when connector starts
+function onStart()
+    print("Lua connector started, publishing 2 records every 5s...")
+end
+
+-- called periodically based on 'interval' property
+function onInterval()
+    local events = {}
+
+    -- read up to 5 records from the file
+    for i = 1, 5 do
+        local line = f:read("*l")
+        if not line then
+            print("End of file reached, stopping.")
+            f:close()
+            return true -- stops connector
+        end
+
+        -- split CSV line
+        local fields = {}
+        for value in string.gmatch(line, "([^,]+)") do
+            table.insert(fields, value)
+        end
+
+        -- build event (adapt schema fields to your project!)
+        local event = {
+            dateTime   = fields[1],                -- timestamp string
+            heading   = tonumber(fields[2]),      -- numeric
+            speed     = tonumber(fields[3]),      -- numeric
+            lat  = tonumber(fields[4]),
+            long = tonumber(fields[5])
+        }
+           
+        table.insert(events, event)
+    end
+
+    -- publish events to ESP
+    if(esp_inject(event) == false) then -- false means call me again. 
+        return true   -- true means I am finished
+    end
+
+    esp_inject(events)
+end
+
+-- cleanup if connector is stopped
+function onStop()
+    if f then f:close() end
+    print("Lua connector stopped.")
+end
+]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-compute index="pi_EMPTY" name="Compute_ID3" pubsub="true">
+          <schema>
+            <fields>
+              <field key="true" name="dateTime" type="string"/>
+              <field name="heading" type="double"/>
+              <field name="speed" type="double"/>
+              <field name="lat" type="double"/>
+              <field name="long" type="double"/>
+              <field name="BoatNumber" type="int32"/>
+            </fields>
+          </schema>
+          <output>
+            <field-expr><![CDATA[heading]]></field-expr>
+            <field-expr><![CDATA[speed]]></field-expr>
+            <field-expr><![CDATA[lat]]></field-expr>
+            <field-expr><![CDATA[long]]></field-expr>
+            <field-expr><![CDATA[3]]></field-expr>
+          </output>
+        </window-compute>
+        <window-source index="pi_EMPTY" insert-only="true" pubsub="true" name="Boat4">
+          <schema>
+            <fields>
+              <field key="true" name="dateTime" type="string"/>
+              <field name="heading" type="double"/>
+              <field name="speed" type="double"/>
+              <field name="lat" type="double"/>
+              <field name="long" type="double"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="lua" name="Boat4">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="interval"><![CDATA[5000]]></property>
+                <property name="init"><![CDATA[onStart]]></property>
+                <property name="publish"><![CDATA[onInterval]]></property>
+                <property name="destroy"><![CDATA[onStop]]></property>
+                <property name="code"><![CDATA[-- boatReader.lua
+-- Publishes 2 boat records every 5 seconds
+
+local f = io.open("@ESP_PROJECT_HOME@/test_files/boat4.csv", "r")
+if not f then
+    print("Could not open boatdata.csv")
+end
+
+-- read header if present
+local header = f:read("*l")
+
+-- called when connector starts
+function onStart()
+    print("Lua connector started, publishing 2 records every 5s...")
+end
+
+-- called periodically based on 'interval' property
+function onInterval()
+    local events = {}
+
+    -- read up to 2 records from the file
+    for i = 1, 2 do
+        local line = f:read("*l")
+        if not line then
+            print("End of file reached, stopping.")
+            f:close()
+            return true -- stops connector
+        end
+
+        -- split CSV line
+        local fields = {}
+        for value in string.gmatch(line, "([^,]+)") do
+            table.insert(fields, value)
+        end
+
+        -- build event (adapt schema fields to your project!)
+       local event = {
+            dateTime   = fields[1],                -- timestamp string
+            heading   = tonumber(fields[2]),      -- numeric
+            speed     = tonumber(fields[3]),      -- numeric
+            lat  = tonumber(fields[4]),
+            long = tonumber(fields[5])
+        }
+           
+        table.insert(events, event)
+    end
+
+    -- publish events to ESP
+    if(esp_inject(event) == false) then -- false means call me again. 
+        return true   -- true means I am finished
+    end
+
+    esp_inject(events)
+end
+
+-- cleanup if connector is stopped
+function onStop()
+    if f then f:close() end
+    print("Lua connector stopped.")
+end
+]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-compute index="pi_EMPTY" name="Compute_ID4" pubsub="true">
+          <schema>
+            <fields>
+              <field key="true" name="dateTime" type="string"/>
+              <field name="heading" type="double"/>
+              <field name="speed" type="double"/>
+              <field name="lat" type="double"/>
+              <field name="long" type="double"/>
+              <field name="BoatNumber" type="int32"/>
+            </fields>
+          </schema>
+          <output>
+            <field-expr><![CDATA[heading]]></field-expr>
+            <field-expr><![CDATA[speed]]></field-expr>
+            <field-expr><![CDATA[lat]]></field-expr>
+            <field-expr><![CDATA[long]]></field-expr>
+            <field-expr><![CDATA[4]]></field-expr>
+          </output>
+        </window-compute>
+        <window-geofence name="Geofence_Area_Check" pubsub="true" pubsub-index="pi_HASH">
+          <description><![CDATA[This is a Geofence window that defines the areas of interest.]]></description>
+          <geofence autosize-mesh="true" coordinate-type="geographic" log-invalid-geometry="true" max-meshcells-per-geometry="50"/>
+          <geometry data-fieldname="Poly_Data" data-separator=" " desc-fieldname="poly_desc" radius="1000" radius-fieldname="Poly_Radius"/>
+          <position lookupdistance="0" x-fieldname="long" y-fieldname="lat"/>
+          <output geodesc-fieldname="GeoDesc" geodistance-fieldname="GeoDist" geoid-fieldname="GeoID" geotype-fieldname="GeoType" include-geo-fields="Poly_Data,Poly_Radius"/>
+        </window-geofence>
+        <window-source index="pi_EMPTY" name="Areas_Of_Interest" pubsub="true">
+          <description><![CDATA[This is a Source window that receives an event stream defining the areas of interest that the boats are not permitted to enter.]]></description>
+          <schema>
+            <fields>
+              <field key="true" name="poly_id" type="int64"/>
+              <field name="poly_desc" type="string"/>
+              <field name="Poly_Data" type="string"/>
+              <field name="Poly_Radius" type="double"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="fs" name="Areas_Of_Interest">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="fsname"><![CDATA[@ESP_PROJECT_HOME@/test_files/geoArea.csv]]></property>
+                <property name="fstype"><![CDATA[csv]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-filter index="pi_HASH" name="Filter_Speeding_In_Marina" pubsub="true">
+          <use><![CDATA[GeoID,speed]]></use>
+          <code><![CDATA[function filter(data)
+    return data.GeoID == 1 and data.speed > 4
+end]]></code>
+        </window-filter>
+        <window-filter index="pi_HASH" name="Filter_Inside_Exclusion_Zone" pubsub="true">
+          <description><![CDATA[There are two Filter windows that identify if any of the boats have entered the exclusion zone and speed restriction zone and if any of the boats were speeding: Filter_Inside_Exclusion_Zone and Last_Speeding_Event.]]></description>
+          <use><![CDATA[GeoID]]></use>
+          <code><![CDATA[function filter(data)
+    return data.GeoID == 2
+end
+          ]]></code>
+        </window-filter>
+        <window-aggregate index="pi_HASH" name="Last_Exclusion_Violation" pubsub="true">
+          <description><![CDATA[There are two Aggregate windows that aggregate the last exclusion violation and the last speeding event : Last_Exclusion_Violation and Last_Speeding_Event]]></description>
+          <schema>
+            <fields>
+              <field key="true" name="BoatNumber" type="int32"/>
+              <field name="Minimum_Distance" type="double"/>
+              <field name="Location_Name" type="string"/>
+              <field name="First_dateTime" type="string"/>
+              <field name="Last_dateTime" type="string"/>
+            </fields>
+          </schema>
+          <output>
+            <field-expr><![CDATA[ESP_aMin(GeoDist)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(GeoDesc)]]></field-expr>
+            <field-expr><![CDATA[ESP_aFirst(dateTime)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(dateTime)]]></field-expr>
+          </output>
+        </window-aggregate>
+        <window-aggregate index="pi_HASH" name="Last_Speeding_Event" pubsub="true">
+          <schema>
+            <fields>
+              <field key="true" name="BoatNumber" type="int32"/>
+              <field name="Max_speed" type="double"/>
+              <field name="Location_Name" type="string"/>
+              <field name="dateTime" type="string"/>
+            </fields>
+          </schema>
+          <output>
+            <field-expr><![CDATA[ESP_aMax(speed)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(GeoDesc)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(dateTime)]]></field-expr>
+          </output>
+        </window-aggregate>
+        <window-copy index="pi_HASH" name="Retention_30Min" pubsub="true">
+          <description><![CDATA[This is a Copy window that is used to transition the model from stateless to stateful.]]></description>
+          <retention type="bytime_sliding"><![CDATA[30 minutes]]></retention>
+        </window-copy>
+      </windows>
+      <edges>
+        <edge source="Boat2" target="Compute_ID2"/>
+        <edge source="Boat1" target="Compute_ID1"/>
+        <edge source="Compute_ID2" target="Union_All_Boats"/>
+        <edge source="Compute_ID1" target="Union_All_Boats"/>
+        <edge source="Boat3" target="Compute_ID3"/>
+        <edge source="Compute_ID3" target="Union_All_Boats"/>
+        <edge source="Boat4" target="Compute_ID4"/>
+        <edge source="Compute_ID4" target="Union_All_Boats"/>
+        <edge role="position" source="Union_All_Boats" target="Geofence_Area_Check"/>
+        <edge role="geometry" source="Areas_Of_Interest" target="Geofence_Area_Check"/>
+        <edge source="Geofence_Area_Check" target="Retention_30Min"/>
+        <edge source="Retention_30Min" target="Filter_Inside_Exclusion_Zone"/>
+        <edge source="Retention_30Min" target="Filter_Speeding_In_Marina"/>
+        <edge source="Filter_Speeding_In_Marina" target="Last_Speeding_Event"/>
+        <edge source="Filter_Inside_Exclusion_Zone" target="Last_Exclusion_Violation"/>
+      </edges>
+    </contquery>
+  </contqueries>
+</project>
