@@ -1,6 +1,6 @@
 # Processing Data from Sailing Boats
 ## Overview
-This example processes data gathered from sailing boats, and includes configured MCP tools that an LLM can utilise to interact with the project when it runs.
+This example processes data gathered from sailing boats, and includes configured Model Context Protocol (MCP) tools that a Large Language Model (LLM) can utilise to interact with the project when it runs.
 
 For more information about how to install and use example projects, see [Using the Examples](https://github.com/sassoftware/esp-studio-examples#using-the-examples).
 
@@ -42,7 +42,7 @@ These MCP tools are configured within the project:
     - Outputs the array returned by the obtainSpeedingEvents function.
 - CheckBoatInExclusionZone
     - Takes five parameters: dateTime (timestamp of the boat event), heading, speed, lat (latitude) and long (longitude).
-    - The Scoring API is utilised; the provided data is published into the Score_Boat window, and the Filter_Inside_Exclusion_Zone window is used to "score" the data.
+    - The Scoring API is utilised; the data provided through the LLM is published into the Score_Boat window, and the Filter_Inside_Exclusion_Zone window is used to "score" the data. If the Filter_Inside_Exclusion_Zone produces an event as a result of the scoring action, the boat described by the data falls within the exclusion zone, otherwise the boat is outside the exclusion zone.
     - The processExclusionViolationCheck function is provided with the output of the scoring action, i.e. the event produced by the Filter_Inside_Exclusion_Zone window. The function returns a string indicating if the provided parameters comprise a boat that is within the exclusion zone.
     - Outputs the return of the processExclusionViolationCheck function.
 

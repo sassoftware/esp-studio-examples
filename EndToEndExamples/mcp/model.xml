@@ -1,23 +1,107 @@
-<project heartbeat-interval="1" index="pi_EMPTY" luaroot="@ESP_PROJECT_OUTPUT@/luaroot" name="sailing" pubsub="auto" threads="4">
-  <description><![CDATA[This example shows an event stream of data obtained from a set of boats. The model identifies two geographical areas of interest. One area is an exclusion zone that the boats identified are not permitted to enter. The other is an area where a speed restriction has been applied. This example uses the following six files:
+<project heartbeat-interval="1" index="pi_EMPTY" luaroot="@ESP_PROJECT_OUTPUT@/luaroot" name="sailing_with_mcp" pubsub="auto" threads="4">
+  <description><![CDATA[This example shows an event stream of data obtained from a set of boats. The model identifies two geographical areas of interest. One area is an exclusion zone that the boats identified are not permitted to enter. The other is an area where a speed restriction has been applied. A variety of MCP tools have been pre-configured, allowing an MCP client to interact with the model. This example uses the following six files:
 The XML file (sailing.xml) is the project used in the example.
 geoArea.csv is an input file. This file contains events relating to the defined areas of interest.
 boat1.csv, boat2.csv, boat3.csv, and boat4.csv are input files. These files contains event streams for four boats. The event streams contain geographical coordinates of the boats' movements.]]></description>
   <metadata>
-    <meta id="layout">{"cq1":{"Areas_Of_Interest":{"x":-330,"y":-440},"Boat1":{"x":-445,"y":-725},"Boat2":{"x":-225,"y":-725},"Boat3":{"x":-5,"y":-725},"Boat4":{"x":220,"y":-725},"Compute_ID1":{"x":-445,"y":-590},"Compute_ID2":{"x":-225,"y":-590},"Compute_ID3":{"x":-5,"y":-590},"Compute_ID4":{"x":210,"y":-590},"Filter_Inside_Exclusion_Zone":{"x":-230,"y":-55},"Filter_Speeding_In_Marina":{"x":-5,"y":-55},"Geofence_Area_Check":{"x":-115,"y":-315},"Last_Exclusion_Violation":{"x":-230,"y":70},"Last_Speeding_Event":{"x":-5,"y":70},"Retention_30Min":{"x":-115,"y":-185},"Union_All_Boats":{"x":-115,"y":-440}}}</meta>
+    <meta id="layout">{"cq1":{"Areas_Of_Interest":{"x":-330,"y":-440},"Boat1":{"x":-445,"y":-725},"Boat2":{"x":-225,"y":-725},"Boat3":{"x":-5,"y":-725},"Boat4":{"x":220,"y":-725},"Compute_ID0":{"x":445,"y":-590},"Compute_ID1":{"x":-445,"y":-590},"Compute_ID2":{"x":-225,"y":-590},"Compute_ID3":{"x":-5,"y":-590},"Compute_ID4":{"x":210,"y":-590},"Filter_Inside_Exclusion_Zone":{"x":-230,"y":-55},"Filter_Speeding_In_Marina":{"x":-5,"y":-55},"Geofence_Area_Check":{"x":-115,"y":-315},"Last_Exclusion_Violation":{"x":-230,"y":70},"Last_Speeding_Event":{"x":-5,"y":70},"Retention_30Min":{"x":-115,"y":-185},"Score_Boat":{"x":445,"y":-725},"Union_All_Boats":{"x":-115,"y":-440}}}</meta>
     <meta id="studioTags">Example</meta>
-    <meta id="studioUploadedBy">anonymous</meta>
-    <meta id="studioUploaded">1764343637630</meta>
-    <meta id="studioModifiedBy">anonymous</meta>
-    <meta id="studioModified">1764343649021</meta>
+    <meta id="studioUploadedBy">sasboot</meta>
+    <meta id="studioUploaded">1772537451290</meta>
+    <meta id="studioModifiedBy">sasboot</meta>
+    <meta id="studioModified">1772537496796</meta>
   </metadata>
   <properties>
     <property name="EventsPerSecond"><![CDATA[5]]></property>
   </properties>
+  <mcp>
+    <tools>
+      <tool name="PublishAreaOfInterest" type="publish">
+        <title><![CDATA[Publish new area of interest]]></title>
+        <description><![CDATA[Publishes a new area of interest]]></description>
+        <config>
+          <input window="Areas_Of_Interest"/>
+        </config>
+      </tool>
+      <tool name="ObtainSpeedingEvents" type="custom">
+        <title><![CDATA[Obtain speeding events in area]]></title>
+        <description><![CDATA[Obtains all speeding events in a given area]]></description>
+        <config>
+          <input>
+            <fields>
+              <field name="areaName" type="string"/>
+              <field name="speedLimit" type="number"/>
+            </fields>
+          </input>
+          <output array="boats">
+            <fields>
+              <field name="boatName" type="string"/>
+              <field name="occurrences" type="number"/>
+            </fields>
+          </output>
+          <functions>
+            <function name="call" code="obtainSpeedingEvents"/>
+          </functions>
+        </config>
+      </tool>
+      <tool name="CheckBoatInExclusionZone" type="score">
+        <title><![CDATA[Check boat is within exclusion zone]]></title>
+        <description><![CDATA[Checks whether a given boat is in the exclusion zone]]></description>
+        <config>
+          <input window="Score_Boat">
+            <fields>
+              <field name="dateTime" type="string"/>
+              <field name="heading" type="number"/>
+              <field name="speed" type="number"/>
+              <field name="lat" type="number"/>
+              <field name="long" type="number"/>
+            </fields>
+          </input>
+          <output window="Filter_Inside_Exclusion_Zone"/>
+          <functions>
+            <function name="events" code="processExclusionViolationCheck"/>
+          </functions>
+        </config>
+      </tool>
+      <tool name="QueryExclusionZoneViolations" type="query">
+        <title><![CDATA[Query exclusion zone violations]]></title>
+        <description><![CDATA[Query exclusion zone violations]]></description>
+        <config>
+          <output window="Filter_Inside_Exclusion_Zone"/>
+        </config>
+      </tool>
+    </tools>
+    <code snippet="MCP_snippets"/>
+  </mcp>
+  <python-snippets>
+    <python-snippet name="MCP_snippets">
+      <code><![CDATA[import esp
+from collections import Counter
+
+def init():
+    pass
+  
+def obtainSpeedingEvents(args):
+    #Get all boats
+    boatsInAllAoI = esp.query(window='Retention_30Min').get('events')
+    
+    #Filter boats by AoI name and count occurrences of boats
+    boatsInAoi = [boat for boat in boatsInAllAoI if boat.get('GeoDesc') == args.get('areaName') and boat.get('speed') >= args.get('speedLimit')]
+    speedingEvents = Counter(boat.get('BoatNumber') for boat in boatsInAoi)
+    
+    return [{"boatName": name, "occurrences": count} for name, count in speedingEvents.items()]
+
+def processExclusionViolationCheck(event):
+    if event:
+        return f"Boat entered {event['GeoDesc']}."
+    else:
+        return "Boat did not enter exclusion zone."]]></code>
+    </python-snippet>
+  </python-snippets>
   <contqueries>
     <contquery index="pi_EMPTY" name="cq1">
       <windows>
-        <window-source index="pi_EMPTY" insert-only="true" pubsub="true" name="Boat1">
+        <window-source index="pi_EMPTY" insert-only="true" name="Boat1" pubsub="true">
           <description><![CDATA[There are four Source windows that receive event streams from the four boats identified: Boat1, Boat2, Boat3, and Boat4]]></description>
           <schema>
             <fields>
@@ -102,7 +186,7 @@ end
             </connector>
           </connectors>
         </window-source>
-        <window-source index="pi_EMPTY" insert-only="true" pubsub="true" name="Boat2">
+        <window-source index="pi_EMPTY" insert-only="true" name="Boat2" pubsub="true">
           <schema>
             <fields>
               <field key="true" name="dateTime" type="string"/>
@@ -231,7 +315,7 @@ end
         <window-union index="pi_EMPTY" name="Union_All_Boats" pubsub="true" strict="false">
           <description><![CDATA[This is a Union window that unifies the boats’ event streams.]]></description>
         </window-union>
-        <window-source index="pi_EMPTY" insert-only="true" pubsub="true" name="Boat3">
+        <window-source index="pi_EMPTY" insert-only="true" name="Boat3" pubsub="true">
           <schema>
             <fields>
               <field key="true" name="dateTime" type="string"/>
@@ -333,7 +417,7 @@ end
             <field-expr><![CDATA[3]]></field-expr>
           </output>
         </window-compute>
-        <window-source index="pi_EMPTY" insert-only="true" pubsub="true" name="Boat4">
+        <window-source index="pi_EMPTY" insert-only="true" name="Boat4" pubsub="true">
           <schema>
             <fields>
               <field key="true" name="dateTime" type="string"/>
@@ -437,7 +521,7 @@ end
         </window-compute>
         <window-geofence name="Geofence_Area_Check" pubsub="true" pubsub-index="pi_HASH">
           <description><![CDATA[This is a Geofence window that defines the areas of interest.]]></description>
-          <geofence autosize-mesh="true" coordinate-type="geographic" log-invalid-geometry="true" max-meshcells-per-geometry="50"/>
+          <geofence autosize-mesh="true" coordinate-type="geographic" max-meshcells-per-geometry="50"/>
           <geometry data-fieldname="Poly_Data" data-separator=" " desc-fieldname="poly_desc" radius="1000" radius-fieldname="Poly_Radius"/>
           <position lookupdistance="0" x-fieldname="long" y-fieldname="lat"/>
           <output geodesc-fieldname="GeoDesc" geodistance-fieldname="GeoDist" geoid-fieldname="GeoID" geotype-fieldname="GeoType" include-geo-fields="Poly_Data,Poly_Radius"/>
@@ -468,7 +552,7 @@ end
     return data.GeoID == 1 and data.speed > 4
 end]]></code>
         </window-filter>
-        <window-filter index="pi_HASH" name="Filter_Inside_Exclusion_Zone" pubsub="true">
+        <window-filter func="filter" index="pi_HASH" name="Filter_Inside_Exclusion_Zone" pubsub="true">
           <description><![CDATA[There are two Filter windows that identify if any of the boats have entered the exclusion zone and speed restriction zone and if any of the boats were speeding: Filter_Inside_Exclusion_Zone and Last_Speeding_Event.]]></description>
           <use><![CDATA[GeoID]]></use>
           <code><![CDATA[function filter(data)
@@ -513,6 +597,36 @@ end
           <description><![CDATA[This is a Copy window that is used to transition the model from stateless to stateful.]]></description>
           <retention type="bytime_sliding"><![CDATA[30 minutes]]></retention>
         </window-copy>
+        <window-source index="pi_EMPTY" insert-only="true" name="Score_Boat" pubsub="true">
+          <schema>
+            <fields>
+              <field key="true" name="dateTime" type="string"/>
+              <field name="heading" type="double"/>
+              <field name="speed" type="double"/>
+              <field name="lat" type="double"/>
+              <field name="long" type="double"/>
+            </fields>
+          </schema>
+        </window-source>
+        <window-compute index="pi_EMPTY" name="Compute_ID0" pubsub="true">
+          <schema>
+            <fields>
+              <field key="true" name="dateTime" type="string"/>
+              <field name="heading" type="double"/>
+              <field name="speed" type="double"/>
+              <field name="lat" type="double"/>
+              <field name="long" type="double"/>
+              <field name="BoatNumber" type="int32"/>
+            </fields>
+          </schema>
+          <output>
+            <field-expr><![CDATA[heading]]></field-expr>
+            <field-expr><![CDATA[speed]]></field-expr>
+            <field-expr><![CDATA[lat]]></field-expr>
+            <field-expr><![CDATA[long]]></field-expr>
+            <field-expr><![CDATA[0]]></field-expr>
+          </output>
+        </window-compute>
       </windows>
       <edges>
         <edge source="Boat2" target="Compute_ID2"/>
@@ -530,6 +644,8 @@ end
         <edge source="Retention_30Min" target="Filter_Speeding_In_Marina"/>
         <edge source="Filter_Speeding_In_Marina" target="Last_Speeding_Event"/>
         <edge source="Filter_Inside_Exclusion_Zone" target="Last_Exclusion_Violation"/>
+        <edge source="Score_Boat" target="Compute_ID0"/>
+        <edge source="Compute_ID0" target="Union_All_Boats"/>
       </edges>
     </contquery>
   </contqueries>
