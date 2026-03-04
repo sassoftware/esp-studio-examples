@@ -63,7 +63,7 @@ When the project is run, an MCP server is exposed. It is available at the **/eve
 
 Major GenAI clients such as ChatGPT, Mistral Le Chat, Claude Desktop, and VS Code, support MCP tools. The process to connect them to the MCP server varies. Note that for web-based GenAI solutions, the ESP project must be run in an environment that is exposed to the internet and protected using a publicly trusted certificate authority.
 
-The following figures show the process for connecting Mistral Le Chat to the MCP server and invoking the QueryExclusionZoneViolations tool:
+The following figures show the process for connecting Mistral Le Chat to the MCP server and invoking the QueryExclusionZoneViolations tool:  
 ![Mistral MCP server setup](img/Mistral_MCP_Setup.png "Mistral MCP server setup")
 ![Mistral tool invocation](img/Mistral_Tool_Invocation.png "Mistral tool invocation")
 
