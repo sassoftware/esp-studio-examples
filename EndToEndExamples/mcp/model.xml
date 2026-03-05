@@ -6,9 +6,9 @@ boat1.csv, boat2.csv, boat3.csv, and boat4.csv are input files. These files cont
   <metadata>
     <meta id="layout">{"cq1":{"Areas_Of_Interest":{"x":-330,"y":-440},"Boat1":{"x":-445,"y":-725},"Boat2":{"x":-225,"y":-725},"Boat3":{"x":-5,"y":-725},"Boat4":{"x":220,"y":-725},"Compute_ID0":{"x":445,"y":-590},"Compute_ID1":{"x":-445,"y":-590},"Compute_ID2":{"x":-225,"y":-590},"Compute_ID3":{"x":-5,"y":-590},"Compute_ID4":{"x":210,"y":-590},"Filter_Inside_Exclusion_Zone":{"x":-230,"y":-55},"Filter_Speeding_In_Marina":{"x":-5,"y":-55},"Geofence_Area_Check":{"x":-115,"y":-315},"Last_Exclusion_Violation":{"x":-230,"y":70},"Last_Speeding_Event":{"x":-5,"y":70},"Retention_30Min":{"x":-115,"y":-185},"Score_Boat":{"x":445,"y":-725},"Union_All_Boats":{"x":-115,"y":-440}}}</meta>
     <meta id="studioTags">Example</meta>
-    <meta id="studioUploadedBy">sasboot</meta>
+    <meta id="studioUploadedBy">anonymousUser</meta>
     <meta id="studioUploaded">1772537451290</meta>
-    <meta id="studioModifiedBy">sasboot</meta>
+    <meta id="studioModifiedBy">anonymousUser</meta>
     <meta id="studioModified">1772537496796</meta>
   </metadata>
   <properties>
