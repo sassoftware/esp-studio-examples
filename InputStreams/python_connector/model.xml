@@ -2,10 +2,10 @@
   <description><![CDATA[This project contains a Source window with a Python connector that calls a REST API to obtain Star Wars data and publishes that data into the project.]]></description>
   <metadata>
     <meta id="layout">{"cq1":{"Source":{"x":-435,"y":-400}}}</meta>
-    <meta id="studioUploadedBy">fsduser</meta>
-    <meta id="studioUploaded">1714381722107</meta>
-    <meta id="studioModifiedBy">fsduser</meta>
-    <meta id="studioModified">1714384945542</meta>
+    <meta id="studioUploadedBy">anonymousUser</meta>
+    <meta id="studioUploaded">1774432525395</meta>
+    <meta id="studioModifiedBy">anonymousUser</meta>
+    <meta id="studioModified">1774434468698</meta>
     <meta id="studioTags">Example</meta>
   </metadata>
   <contqueries>
@@ -27,7 +27,8 @@
                 <property name="code"><![CDATA[import esp
 import json
 import urllib.request
-STARWARS_SPECIES_URL = 'https://starwars-databank-server.vercel.app/api/v1/species'  # Star Wars Species
+BASE_URL='https://starwars-databank-server.onrender.com' # Base URL
+STARWARS_SPECIES_URL = f"{BASE_URL}/api/v1/species"  # Star Wars Species
 next_page = f"{STARWARS_SPECIES_URL}?page=1"
 
 def publish():
@@ -38,7 +39,7 @@ def publish():
     response = urllib.request.urlopen(next_page)
     response = response.read().decode('utf-8')
     response = json.loads(response)
-    
+
     events = []
     # loop through species results
     for result in response['data']:
@@ -54,7 +55,7 @@ def publish():
                         message='Connector finished',
                         level="info")
     elif type(response['info']['next']) == str:
-        next_page = 'https://starwars-databank-server.vercel.app' + response['info']['next']
+        next_page = f"{BASE_URL}" + response['info']['next']
 
     return {
         "events": events,
