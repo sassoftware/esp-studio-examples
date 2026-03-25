@@ -15,7 +15,7 @@ Data is obtained by calling a JSON API. No input files are required for this exa
 
 ## Workflow
 
-The Python code in the connector reads information about Star Wars species. The connector makes a call to https://starwars-databank-server.vercel.app/api/v1/species/?page=1 to get the first 10 species, yielding 10 events. The `next` field in the received data provides information about the URL that the connector needs to call to get more events. After three seconds the connector makes a call to https://starwars-databank-server.vercel.app/api/v1/species/?page=2. This continues until the connector reaches https://starwars-databank-server.vercel.app/api/v1/species/?page=9, which contains the last results. The connector stops at page 9 because the `next` field does not contain another link. 
+The Python code in the connector reads information about Star Wars species. The connector makes a call to https://starwars-databank-server.onrender.com/api/v1/species/?page=1 to get the first 10 species, yielding 10 events. The `next` field in the received data provides information about the URL that the connector needs to call to get more events. After three seconds the connector makes a call to https://starwars-databank-server.onrender.com/api/v1/species/?page=2. This continues until the connector reaches https://starwars-databank-server.onrender.com/api/v1/species/?page=9, which contains the last results. The connector stops at page 9 because the `next` field does not contain another link. 
 
 The `interval` property of the connector is set to `3` so that the connector waits for three seconds between API calls. This means that the server will not be overloaded and data is streamed in rather than the entire data set being published at once. Reading data in this way is common when an API is used to fetch a large data set. In a real-life scenario, you might use a business API that also requires authentication.
 
@@ -44,7 +44,8 @@ import urllib.request
 
 
 ```
-STARWARS_SPECIES_URL = 'https://starwars-databank-server.vercel.app/api/v1/species'  # Star Wars Species
+BASE_URL='https://starwars-databank-server.onrender.com' # Base URL
+STARWARS_SPECIES_URL = f"{BASE_URL}/api/v1/species"  # Star Wars Species
 next_page = f"{STARWARS_SPECIES_URL}?page=1"
 ```
 
@@ -101,7 +102,7 @@ def publish():
                         message='Connector finished',
                         level="info")
     elif type(response['info']['next']) == str:
-        next_page = 'https://starwars-databank-server.vercel.app' + response['info']['next']
+        next_page = f"{BASE_URL}" + response['info']['next']
 ```
 
 
