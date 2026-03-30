@@ -299,7 +299,7 @@ The resulting annotated images are encoded back into blobs and output as `visIma
 
 The Scoring API enables you to score Input events and return Scored events on demand using a synchronous request-response communication pattern. When you send a scoring request, the system waits for the full pipeline to complete before returning a response. This contrasts from streaming and publish-subscribe patterns, where data flows continuously and asynchronously. This makes scoring API ideal for on-demand inspection and testing without needing live connectors or adapters.
 
-To interact with the Scoring API, without selecting any of the windows, navigate to the Project Properties by selecting <img src="img/project_properties_icon.png" alt="Project Properties icon" title="Project Properties Icon" width="20" /> on the right hand side. Notice the following Scoring API-related attributes by expanding the **Scoring API** Section - You will see the following image:
+To interact with the Scoring API, without selecting any of the windows, navigate to the Project Properties by selecting <img src="img/properties_icon.png" alt="Project Properties icon" title="Project Properties Icon" width="20" /> on the right hand side. Notice the following Scoring API-related attributes by expanding the **Scoring API** Section - You will see the following image:
 
 ![Scoring API Project Properties](img/scoring_api_project_properties.png "Scoring API Project Properties")
 
@@ -354,7 +354,7 @@ To preview a different stage, modify the `score-output-window` and `score-output
 | Overlaid label map onto raw frame       | `cv_cq/w_annotate`             | `overlayImage`       |
 
 For example, to retrieve the human-readable binary mask produced by the w_thresh_viz window, update the scoring windows before starting the project:
-To do this, while no window is selected navigate to the Project Properties by selecting <img src="img/project_properties_icon.png" alt="Project Properties icon" title="Project Properties Icon" width="20" /> on the right hand side. Select the **Scoring API** section and change the value of `score-output-window` to `cv_cq/w_thresh_viz` and the value of `score-output-field` to `viz_image`.
+To do this, while no window is selected navigate to the Project Properties by selecting <img src="img/properties_icon.png" alt="Project Properties icon" title="Project Properties Icon" width="20" /> on the right hand side. Select the **Scoring API** section and change the value of `score-output-window` to `cv_cq/w_thresh_viz` and the value of `score-output-field` to `viz_image`.
 
 Select <img src="img/xml_editor_icon.png" alt="XML Editor Icon" title="XML Editor Icon" width="20" /> to open the XML editor and verify that the changes are reflected in `model.xml`:
 ```xml
@@ -376,6 +376,7 @@ Instead of receiving an image, you can retrieve the structured bounding-box data
 Since all of the fields in w_fire_exit_filter are structured fields, the value of `score-output-field` should not be set. When no output field is specified, the response events are displayed directly in the **Output** table of the Scoring API tab rather than in the **Save Output File** window.
 
 To configure the project for structured output, update the Scoring API section in the Project Properties and remove the `score-output-field` attribute before starting the project:
+
 ![Empty score-output-field](img/empty_score_output_field.png "Empty score-output-field")
 
 1. Open the project in SAS Event Stream Processing Studio and select **Enter Test Mode**.
