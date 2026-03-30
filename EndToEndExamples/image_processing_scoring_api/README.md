@@ -50,7 +50,7 @@ Explore the settings for the w_source window:
 2. In the right pane, click ![Output Schema Icon](img/output_schema_icon.png, "Output Schema Icon"). The w_source window is a stateless, insert-only Source window that acts as the entry point for the project. Its schema contains two fields:
 - `index`: An auto-generated key that uniquely identifies each frame.
 - `image`: The raw JPEG image frame.
-3. Click![Properties Icon](img/properties_icon.png, "Project Properties Icon"), then expand **State and Event Type**. Notice that the window is stateless and the index type is set to **pi_EMPTY**.
+3. Click <img src="img/properties_icon.png" alt="Properties Icon" title="Project Properties Icon" width="20" />, then expand **State and Event Type**. Notice that the window is stateless and the index type is set to **pi_EMPTY**.
 
 ### w_background_subtract
 Explore the settings for the w_background_subtract window:
@@ -299,7 +299,7 @@ The resulting annotated images are encoded back into blobs and output as `visIma
 
 The Scoring API enables you to score Input events and return Scored events on demand using a synchronous request-response communication pattern. When you send a scoring request, the system waits for the full pipeline to complete before returning a response. This contrasts from streaming and publish-subscribe patterns, where data flows continuously and asynchronously. This makes scoring API ideal for on-demand inspection and testing without needing live connectors or adapters.
 
-To interact with the Scoring API, without selecting any of the windows, navigate to the Project Properties by selecting ![Project Properties icon](img/project_properties_icon.png, "Project Properties Icon") on the right hand side. Notice the following Scoring API-related attributes by expanding the **Scoring API** Section - You will see the following image:
+To interact with the Scoring API, without selecting any of the windows, navigate to the Project Properties by selecting <img src="img/project_properties_icon.png" alt="Project Properties icon" title="Project Properties Icon" width="20" /> on the right hand side. Notice the following Scoring API-related attributes by expanding the **Scoring API** Section - You will see the following image:
 
 ![Scoring API Project Properties](img/scoring_api_project_properties.png "Scoring API Project Properties")
 
@@ -354,7 +354,7 @@ To preview a different stage, modify the `score-output-window` and `score-output
 | Overlaid label map onto raw frame       | `cv_cq/w_annotate`             | `overlayImage`       |
 
 For example, to retrieve the human-readable binary mask produced by the w_thresh_viz window, update the scoring windows before starting the project:
-To do this, while no window is selected navigate to the Project Properties by selecting ![Project Properties icon](img/project_properties_icon.png, "Project Properties Icon") on the right hand side. Select the **Scoring API** section and change the value of `score-output-window` to `cv_cq/w_thresh_viz` and the value of `score-output-field` to `viz_image`.
+To do this, while no window is selected navigate to the Project Properties by selecting <img src="img/project_properties_icon.png" alt="Project Properties icon" title="Project Properties Icon" width="20" /> on the right hand side. Select the **Scoring API** section and change the value of `score-output-window` to `cv_cq/w_thresh_viz` and the value of `score-output-field` to `viz_image`.
 
 Select ![XML Editor icon](img/xml_editor_icon.png, "XML Editor Icon") to open the XML editor and verify that the changes are reflected in `model.xml`:
 ```xml
