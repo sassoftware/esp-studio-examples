@@ -47,7 +47,7 @@ The following figure shows the diagram of the project:
 
 Explore the settings for the w_source window:
 1. Open the project in SAS Event Stream Processing Studio and select the w_source window.
-2. In the right pane, click ![Output Schema Icon](img/output_schema_icon.png, "Output Schema Icon"). The w_source window is a stateless, insert-only Source window that acts as the entry point for the project. Its schema contains two fields:
+2. In the right pane, click <img src="img/output_schema_icon.png" alt="Output Schema Icon" title="Output Schema Icon" width="20" />. The w_source window is a stateless, insert-only Source window that acts as the entry point for the project. Its schema contains two fields:
 - `index`: An auto-generated key that uniquely identifies each frame.
 - `image`: The raw JPEG image frame.
 3. Click <img src="img/properties_icon.png" alt="Properties Icon" title="Project Properties Icon" width="20" />, then expand **State and Event Type**. Notice that the window is stateless and the index type is set to **pi_EMPTY**.
@@ -55,7 +55,7 @@ Explore the settings for the w_source window:
 ### w_background_subtract
 Explore the settings for the w_background_subtract window:
 1. Open the project in SAS Event Stream Processing Studio and select the w_background_subtract window.
-2. In the right pane, click ![XML Editor](img/xml_editor_icon.png, "XML Editor Icon"). Notice lines 30 through 31:
+2. In the right pane, click <img src="img/xml_editor_icon.png" alt="XML Editor Icon" title="XML Editor Icon" width="20" />. Notice lines 30 through 31:
     ```
     frame = esp_utils.image_conversion.blob_image_to_opencv_image(data["image"])
     bg    = _load_background()
@@ -138,7 +138,7 @@ Explore the settings for the w_thresh window:
 
 Explore the settings for the w_thresh_viz window:
 1. Open the project in SAS Event Stream Processing Studio and select the w_thresh_viz window.
-2. In the right pane, click ![XML Editor](img/xml_editor_icon.png, "XML Editor Icon"). Notice lines 19 through 21:
+2. In the right pane, click <img src="img/xml_editor_icon.png" alt="XML Editor Icon" title="XML Editor Icon" width="20" />. Notice lines 19 through 21:
     ```
     img = esp_utils.image_conversion.blob_image_to_opencv_image(
         data["binary_image"]
@@ -194,7 +194,7 @@ Explore the settings for the w_ccl window:
 
 Explore the settings for the w_fire_exit_filter window:
 1. Open the project in SAS Event Stream Processing Studio and select the w_fire_exit_filter window.
-2. In the right pane, click ![Output Schema icon](img/output_schema_icon.png, "Output Schema Icon"). For each object that intersects the region of interest, the window emits an event that contains the following fields:
+2. In the right pane, click <img src="img/output_schema_icon.png" alt="Output Schema icon" title="Output Schema Icon" width="20" />. For each object that intersects the region of interest, the window emits an event that contains the following fields:
 - `index`: The index of the event.
 - `object_id`: CCL object ID.
 - `xMinListOut`: The coordinate value of the left edge of each bounding box.
@@ -216,12 +216,12 @@ This window joins the original frame from w_source with the CCL output from w_cc
 
 Explore the settings for the w_annotate window:
 1. Open the project in SAS Event Stream Processing Studio and select the w_annotate window.
-2. In the right pane, click ![Output Schema Icon](img/output_schema_icon.png, "Output Schema Icon"). Notice the following output schema:
+2. In the right pane, click <img src="img/output_schema_icon.png" alt="Output Schema Icon" title="Output Schema Icon" width="20" />. Notice the following output schema:
 - `outputImage`: CCL label map passed through from w_ccl via w_join.
 - `visImage`: Colorized label map with filtered bounding boxes and region of interest boundary overlaid.
 - `rawImage`: Original input frame with filtered bounding boxes overlaid. It is the designated Score output field in the default project configuration.
 - `overlayImage`: Original input frame with the colorized label map overlaid for foreground objects.
-3. Click ![XML Editor](img/xml_editor_icon.png, "XML Editor Icon"). The w_annotate window produces the final visualizations. 
+3. Click <img src="img/xml_editor_icon.png" alt="XML Editor Icon" title="XML Editor Icon" width="20" />. The w_annotate window produces the final visualizations. 
 Its Python code performs the following operations: 
 4. The Region-of-Interest (ROI) (i.e. the fire exit area) and threshold (THRESH) for how much an object must overlap to be considered are defined on line 22-23:
    ```
@@ -323,7 +323,7 @@ The Scoring API is accessible directly from the **Scoring API** tab when the pro
 3. In the **Load and Start Project in Cluster** window, adjust the deployment settings by clicking **Edit deployment settings...**.
 4. Click **OK**.
 3. In the bottom pane, click the **Scoring API** tab.
-4. In the **Input** table, click ![Upload Input File Icon](img/upload_input_file_icon.png, "Upload Input File Icon"). The **Upload Input File** window appears.
+4. In the **Input** table, click <img src="img/upload_input_file_icon.png" alt="Upload Input File Icon" title="Upload Input File Icon" width="20" />. The **Upload Input File** window appears.
 5. In the test_files folder of the project package, select one of the test frames (for example, `frame_person.jpg`).
 6. Click **Send request**.
 7. Because `score-output-field` is set to `rawImage`, the **Save Output File** window appears. SAS Event Stream Processing Studio automatically detects the file type and displays a preview of the original image with the detected bounding boxes of the foreground objects.
@@ -356,7 +356,7 @@ To preview a different stage, modify the `score-output-window` and `score-output
 For example, to retrieve the human-readable binary mask produced by the w_thresh_viz window, update the scoring windows before starting the project:
 To do this, while no window is selected navigate to the Project Properties by selecting <img src="img/project_properties_icon.png" alt="Project Properties icon" title="Project Properties Icon" width="20" /> on the right hand side. Select the **Scoring API** section and change the value of `score-output-window` to `cv_cq/w_thresh_viz` and the value of `score-output-field` to `viz_image`.
 
-Select ![XML Editor icon](img/xml_editor_icon.png, "XML Editor Icon") to open the XML editor and verify that the changes are reflected in `model.xml`:
+Select <img src="img/xml_editor_icon.png" alt="XML Editor Icon" title="XML Editor Icon" width="20" /> to open the XML editor and verify that the changes are reflected in `model.xml`:
 ```xml
 <project ... score-output-window="cv_cq/w_thresh_viz" score-output-field="viz_image">
 ```
@@ -382,11 +382,11 @@ To configure the project for structured output, update the Scoring API section i
 2. From the **Run Test** drop down, select **Configure and Run Test**.
 3. In the **Load and Start Project in Cluster** window, adjust the deployment settings if necessary and click **OK**.
 4. In the bottom pane, click the **Scoring API** tab.
-5. In the **Input** table, click ![Upload Input File Icon](img/upload_input_file_icon.png, "Upload Input File Icon"). The **Upload Input File** window appears.
+5. In the **Input** table, click <img src="img/upload_input_file_icon.png" alt="Upload Input File Icon" title="Upload Input File Icon" width="20" />. The **Upload Input File** window appears.
 6. In the test_files folder of the project package, select a test file (for example, `frame_person.jpg`).
 7. Click **Send request**.
 8. Notice that the response events appear in the **Output** table of the Scoring API tab, with one row per detected object that intersects the fire exit region of interest.
-9. Click ![JSON](img/JSON_input.png, "JSON") to view the events as JSON code:
+9. Click <img src="img/JSON_input.png" alt="JSON Icon" title="JSON" width="20" /> to view the events as JSON code:
 
 ```json
 [
