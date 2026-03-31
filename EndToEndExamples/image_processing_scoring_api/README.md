@@ -1,6 +1,6 @@
 # Fire Exit Obstruction Detection Using Connected Component Labeling
 ## Overview
-This example demonstrates how to use the SAS Event Stream Processing Scoring API with raw binary image data. A JPEG frame is sent in a HTTP POST request directly to a running ESP project, which processes it through a multi-stage image processing pipeline and returns a result. The result is either an annotated image or a structured JSON in a single synchronous request-response call.
+This example demonstrates how to use the SAS Event Stream Processing Scoring API with raw binary image data. A JPEG frame is sent in an HTTP POST request directly to a running ESP project, which processes it through a multi-stage image processing pipeline and returns a result. The result is either an annotated image or a structured JSON in a single synchronous request-response call.
 
 The pipeline is built entirely from built-in SAS Event Stream Processing algorithms (for example, background subtraction, grayscale conversion, contrast enhancement, Gaussian blurring, adaptive binarization, and Connected Component Labeling) and requires no prior model training. This makes it a practical starting point for detecting unknown or unidentified objects in any fixed-camera scenario such as evacuation routes, ATMs, and restricted areas.
 
@@ -305,7 +305,7 @@ To interact with the Scoring API, do the following:
 
 ![Scoring API Project Properties](img/scoring_api_project_properties.png "Scoring API Project Properties")
 
-This project is pre-configured for Scoring API to have the above values set in the project properties which correpsond to the following project XML attributes:
+This project is pre-configured for Scoring API to have the above values set in the project properties which correspond to the following project XML attributes:
 
 | Project attribute     | Value              |
 |-----------------------|--------------------|
@@ -350,9 +350,9 @@ To preview different stages, change the values of **Output window** and **Output
 | After contrast stretching               | `w_contrast`             | `contrast_image`     |
 | After Gaussian blur                     | `w_blur`                 | `blur_image`         |
 | After binarization (mask)               | `w_thresh`               | `binary_image`       |
-| Binary mask (visualised, JPEG-friendly) | `w_thresh_viz`           | `viz_image`          |
+| Binary mask (visualized, JPEG-friendly) | `w_thresh_viz`           | `viz_image`          |
 | CCL label map (raw)                     | `w_ccl`                  | `outputImage`        |
-| Colorizedd label map                    | `w_annotate`             | `visImage`           |
+| Colorized label map                     | `w_annotate`             | `visImage`           |
 | Annotated raw frame                     | `w_annotate`             | `rawImage`           |
 | Overlaid label map onto raw frame       | `w_annotate`             | `overlayImage`       |
 
@@ -447,7 +447,7 @@ The following figure shows an example of the colorized label-map output, `visIma
 
 ## Image Restrictions
 
-The images provided in this example are to be used only with the project provided. Using or altering these images beyong the example for any other purpose is prohibited.
+The images provided in this example are to be used only with the project provided. Using or altering these images beyond the example for any other purpose is prohibited.
 
 ## Additional Resources
 - For more information about the Scoring API, see [SAS Help Center: Using the Scoring API](https://go.documentation.sas.com/doc/en/espcdc/default/esprestapi/n0gu06h4g3lisgn1y1i56p97o5x6.htm).
