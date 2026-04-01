@@ -2,9 +2,9 @@
   <description><![CDATA[This example uses the Event Stream Processing Scoring API to process image data via synchronous request-responses for a multi-stage pipeline utilising Connected Component Labeling (CCL) to detect objects obstructing a fire exit with no prior training.]]></description>
   <metadata>
     <meta id="layout">{"cv_cq":{"undefined":{"x":-285,"y":40},"w_annotate":{"x":50,"y":1035},"w_background_subtract":{"x":315,"y":175},"w_blur":{"x":315,"y":540},"w_ccl":{"x":195,"y":790},"w_contrast":{"x":315,"y":420},"w_fire_exit_filter":{"x":290,"y":910},"w_gray":{"x":315,"y":295},"w_join":{"x":50,"y":910},"w_source":{"x":55,"y":60},"w_thresh":{"x":315,"y":665},"w_thresh_viz":{"x":435,"y":790}}}</meta>
-    <meta id="studioUploadedBy">sasboot</meta>
+    <meta id="studioUploadedBy">anonymous_user</meta>
     <meta id="studioUploaded">1774603243699</meta>
-    <meta id="studioModifiedBy">sasboot</meta>
+    <meta id="studioModifiedBy">anonymous_user</meta>
     <meta id="studioModified">1774606034829</meta>
     <meta id="studioTags">Example</meta>
   </metadata>
