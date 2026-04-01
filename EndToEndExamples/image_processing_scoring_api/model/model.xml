@@ -1,0 +1,545 @@
+<project heartbeat-interval="1" index="pi_EMPTY" luaroot="@ESP_PROJECT_OUTPUT@/luaroot" name="ImageProcessingScoringAPI" pubsub="auto" score-input-field="image" score-input-window="cv_cq/w_source" score-output-field="rawImage" score-output-window="cv_cq/w_annotate" threads="1">
+  <description><![CDATA[This example uses the Event Stream Processing Scoring API to process image data via synchronous request-responses for a multi-stage pipeline utilising Connected Component Labeling (CCL) to detect objects obstructing a fire exit with no prior training.]]></description>
+  <metadata>
+    <meta id="layout">{"cv_cq":{"undefined":{"x":-285,"y":40},"w_annotate":{"x":50,"y":1035},"w_background_subtract":{"x":315,"y":175},"w_blur":{"x":315,"y":540},"w_ccl":{"x":195,"y":790},"w_contrast":{"x":315,"y":420},"w_fire_exit_filter":{"x":290,"y":910},"w_gray":{"x":315,"y":295},"w_join":{"x":50,"y":910},"w_source":{"x":55,"y":60},"w_thresh":{"x":315,"y":665},"w_thresh_viz":{"x":435,"y":790}}}</meta>
+    <meta id="studioUploadedBy">anonymous_user</meta>
+    <meta id="studioUploaded">1774603243699</meta>
+    <meta id="studioModifiedBy">anonymous_user</meta>
+    <meta id="studioModified">1774606034829</meta>
+    <meta id="studioTags">Example</meta>
+  </metadata>
+  <contqueries>
+    <contquery name="cv_cq">
+      <windows>
+        <window-source autogen-key="true" insert-only="true" name="w_source">
+          <schema>
+            <fields>
+              <field key="true" name="index" type="int64"/>
+              <field name="image" type="blob"/>
+            </fields>
+          </schema>
+        </window-source>
+        <window-python events="subtract_background" name="w_background_subtract" output-insert-only="true">
+          <description><![CDATA[Loads the static background image from disk and subtracts it from each
+incoming frame to suppress fixed-scene clutter before further processing.]]></description>
+          <schema>
+            <fields>
+              <field key="true" name="index" type="int64"/>
+              <field name="image" type="blob"/>
+              <field name="subtracted_image" type="blob"/>
+            </fields>
+          </schema>
+          <copy><![CDATA[index,image]]></copy>
+          <code><![CDATA[
+import os
+import cv2
+import numpy as np
+import esp_utils
+
+_BG = None
+
+def _load_background():
+    global _BG
+    if _BG is None:
+        path = os.path.join(os.environ.get("ESP_PROJECT_HOME", ""), "test_files", "static.jpg")
+        _BG = cv2.imread(path).astype(np.float32)
+    return _BG
+
+
+def subtract_background(data, context):
+
+    frame = esp_utils.image_conversion.blob_image_to_opencv_image(data["image"])
+    bg    = _load_background()
+
+    if frame.shape != bg.shape:
+        bg = cv2.resize(bg, (frame.shape[1], frame.shape[0]))
+
+    frame_hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV).astype(np.float32)
+    bg_hsv    = cv2.cvtColor(bg.astype(np.uint8), cv2.COLOR_BGR2HSV).astype(np.float32)
+
+    dH = np.abs(frame_hsv[:,:,0] - bg_hsv[:,:,0])
+    dS = np.abs(frame_hsv[:,:,1] - bg_hsv[:,:,1])
+    dV = np.abs(frame_hsv[:,:,2] - bg_hsv[:,:,2])
+
+    diff = (dH * 1.5 + dS * 1.2 + dV * 0.3)
+    diff = np.clip(diff, 0, 255).astype(np.uint8)
+
+    # Helps remove JPEG noise
+    diff[diff < 25] = 0
+
+    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (9, 9))
+    diff   = cv2.morphologyEx(diff, cv2.MORPH_OPEN, kernel)
+    
+    diff = cv2.cvtColor(diff, cv2.COLOR_GRAY2BGR)
+
+    event = {}
+    event["subtracted_image"] = esp_utils.image_conversion.opencv_image_to_blob_image(diff)
+
+    return event
+  ]]></code>
+        </window-python>
+        <window-calculate algorithm="HighDimensionalDSP" name="w_contrast">
+          <description><![CDATA[This window uses contrast stretching to expand the range of pixel intensities in the grayscale iamges. The goal is to make objects stand out from the background.]]></description>
+          <schema>
+            <fields>
+              <field key="true" name="index" type="int64"/>
+              <field name="gray_image" type="blob"/>
+              <field name="contrast_image" type="blob"/>
+            </fields>
+          </schema>
+          <parameters>
+            <properties>
+              <property name="transformationType"><![CDATA[CONTRAST]]></property>
+              <property name="function"><![CDATA[GAMMA]]></property>
+              <property name="outputEncoding"><![CDATA[jpg]]></property>
+              <property name="windowSize"><![CDATA[15]]></property>
+              <property name="k"><![CDATA[0.2]]></property>
+              <property name="t"><![CDATA[0.9]]></property>
+              <property name="binLength"><![CDATA[256]]></property>
+              <property name="stretch"><![CDATA[1]]></property>
+              <property name="lowIn"><![CDATA[0.08]]></property>
+              <property name="highIn"><![CDATA[0.92]]></property>
+              <property name="lowOut"><![CDATA[0]]></property>
+              <property name="highOut"><![CDATA[1]]></property>
+              <property name="gamma"><![CDATA[1]]></property>
+              <property name="gain"><![CDATA[1]]></property>
+              <property name="cutoff"><![CDATA[0.5]]></property>
+            </properties>
+          </parameters>
+          <input-map>
+            <properties>
+              <property name="imageInput"><![CDATA[gray_image]]></property>
+            </properties>
+          </input-map>
+          <output-map>
+            <properties>
+              <property name="imageOutput"><![CDATA[contrast_image]]></property>
+            </properties>
+          </output-map>
+        </window-calculate>
+        <window-calculate algorithm="TwoDimensionalConvolution" name="w_blur">
+          <description><![CDATA[This window runs Gaussian convolution over the contrast images to smooth the gradients out so that we don't over-segment objects in the foreground.]]></description>
+          <schema>
+            <fields>
+              <field key="true" name="index" type="int64"/>
+              <field name="contrast_image" type="blob"/>
+              <field name="blur_image" type="blob"/>
+            </fields>
+          </schema>
+          <parameters>
+            <properties>
+              <property name="kernel"><![CDATA[0.27,0.45,0.27]]></property>
+              <property name="kernelCol"><![CDATA[0.27,0.45,0.27]]></property>
+              <property name="kernelRowSize"><![CDATA[3]]></property>
+              <property name="kernelColumnSize"><![CDATA[9]]></property>
+              <property name="outputEncoding"><![CDATA[jpg]]></property>
+            </properties>
+          </parameters>
+          <input-map>
+            <properties>
+              <property name="imageInput"><![CDATA[contrast_image]]></property>
+            </properties>
+          </input-map>
+          <output-map>
+            <properties>
+              <property name="imageOutput"><![CDATA[blur_image]]></property>
+            </properties>
+          </output-map>
+        </window-calculate>
+        <window-calculate algorithm="HighDimensionalDSP" name="w_thresh">
+          <description><![CDATA[This window turns the constrast maps into binary masks, essentially deciding which pixels will be included in the CCL segmentation.
+i.e. imagine a text document, thresholding will determine which pixels are text (1s) and which are not (0s)]]></description>
+          <schema>
+            <fields>
+              <field key="true" name="index" type="int64"/>
+              <field name="blur_image" type="blob"/>
+              <field name="binary_image" type="blob"/>
+            </fields>
+          </schema>
+          <parameters>
+            <properties>
+              <property name="transformationType"><![CDATA[BINARIZATION]]></property>
+              <property name="function"><![CDATA[SAUVOLA]]></property>
+              <property name="outputEncoding"><![CDATA[jpg]]></property>
+              <property name="windowSize"><![CDATA[151]]></property>
+              <property name="k"><![CDATA[0.4]]></property>
+              <property name="t"><![CDATA[0.9]]></property>
+              <property name="binLength"><![CDATA[256]]></property>
+              <property name="stretch"><![CDATA[1]]></property>
+              <property name="lowIn"><![CDATA[0]]></property>
+              <property name="highIn"><![CDATA[1]]></property>
+              <property name="lowOut"><![CDATA[0]]></property>
+              <property name="highOut"><![CDATA[1]]></property>
+              <property name="gamma"><![CDATA[1]]></property>
+              <property name="gain"><![CDATA[1]]></property>
+              <property name="cutoff"><![CDATA[0.5]]></property>
+            </properties>
+          </parameters>
+          <input-map>
+            <properties>
+              <property name="imageInput"><![CDATA[blur_image]]></property>
+            </properties>
+          </input-map>
+          <output-map>
+            <properties>
+              <property name="imageOutput"><![CDATA[binary_image]]></property>
+            </properties>
+          </output-map>
+        </window-calculate>
+        <window-python events="colorize_event" output-insert-only="true" name="w_annotate">
+          <description><![CDATA[Converts the CCL label map so each object ID has a unique colour in the
+  visualisation image, and also draws the same bounding boxes onto the original input frame.
+  Objects mostly outside the fire exit ROI are filtered out.]]></description>
+          <schema>
+            <fields>
+              <field key="true" name="index" type="int64"/>
+              <field name="outputImage" type="blob"/>
+              <field name="visImage" type="blob"/>
+              <field name="rawImage" type="blob"/>
+              <field name="overlayImage" type="blob"/>
+            </fields>
+          </schema>
+          <copy/>
+          <code><![CDATA[
+import numpy as np
+import cv2
+import esp_utils
+
+np.random.seed(42)
+
+ROI = (730, 10, 1230, 1050)
+THRESH = 0.3
+
+
+def _parse_list(val):
+    if val is None or val == "":
+        return []
+    if isinstance(val, (list, tuple, np.ndarray)):
+        return [float(x) for x in val]
+    return [float(x) for x in val.split(",")]
+
+
+def _bbox_inside_ratio(x1, y1, x2, y2, roi):
+    rx1, ry1, rx2, ry2 = roi
+    ix1 = max(x1, rx1)
+    iy1 = max(y1, ry1)
+    ix2 = min(x2, rx2)
+    iy2 = min(y2, ry2)
+    inter_area = max(0, ix2 - ix1) * max(0, iy2 - iy1)
+    box_area = max(1, (x2 - x1) * (y2 - y1))
+    return inter_area / box_area
+
+
+def _draw_boxes(canvas, xmins, xmaxs, ymins, ymaxs, ids):
+    num_boxes = min(len(xmins), len(xmaxs), len(ymins), len(ymaxs))
+    for i in range(num_boxes):
+        x1 = int(xmins[i])
+        x2 = int(xmaxs[i])
+        y1 = int(ymins[i])
+        y2 = int(ymaxs[i])
+        color = tuple(np.random.randint(0, 255, 3).tolist())
+        cv2.rectangle(canvas, (x1, y1), (x2, y2), color, 2)
+        if i < len(ids):
+            cv2.putText(canvas, f"ID: {int(ids[i])}",
+                        (x1, max(y1 - 5, 0)),
+                        cv2.FONT_HERSHEY_SIMPLEX,
+                        0.5, color, 1, cv2.LINE_AA)
+
+
+def colorize_event(data, context):
+
+    event = {}
+
+    label_map = esp_utils.image_conversion.blob_image_to_opencv_image(data["outputImage"])
+
+    if len(label_map.shape) == 3:
+        label_map = cv2.cvtColor(label_map, cv2.COLOR_BGR2GRAY)
+
+    raw = esp_utils.image_conversion.blob_image_to_opencv_image(data["image"])
+    raw = raw.copy()
+
+    xmins_all = _parse_list(data["xMinListOut"])
+    xmaxs_all = _parse_list(data["xMaxListOut"])
+    ymins_all = _parse_list(data["yMinListOut"])
+    ymaxs_all = _parse_list(data["yMaxListOut"])
+    ids_all   = _parse_list(data["idListOut"])
+
+    xmins, xmaxs, ymins, ymaxs, ids = [], [], [], [], []
+
+    for i in range(min(len(xmins_all), len(xmaxs_all), len(ymins_all), len(ymaxs_all))):
+        x1 = int(xmins_all[i])
+        x2 = int(xmaxs_all[i])
+        y1 = int(ymins_all[i])
+        y2 = int(ymaxs_all[i])
+
+        if _bbox_inside_ratio(x1, y1, x2, y2, ROI) >= THRESH:
+            xmins.append(x1)
+            xmaxs.append(x2)
+            ymins.append(y1)
+            ymaxs.append(y2)
+            if i < len(ids_all):
+                ids.append(int(ids_all[i]))
+
+    valid_ids = set(ids)
+    filtered_label_map = np.zeros_like(label_map)
+
+    for obj_id in valid_ids:
+        filtered_label_map[label_map == obj_id] = obj_id
+
+    label_map = filtered_label_map
+
+    label_map_norm = cv2.normalize(label_map, None, 0, 255, cv2.NORM_MINMAX).astype(np.uint8)
+    vis = cv2.applyColorMap(label_map_norm, cv2.COLORMAP_TURBO)
+
+    _draw_boxes(vis, xmins, xmaxs, ymins, ymaxs, ids)
+
+    _draw_boxes(raw, xmins, xmaxs, ymins, ymaxs, ids)
+
+    rx1, ry1, rx2, ry2 = ROI
+    cv2.rectangle(vis, (rx1, ry1), (rx2, ry2), (0, 255, 0), 2)
+
+    fg_mask = (label_map > 0).astype(np.uint8)
+    fg_mask_3 = np.stack([fg_mask]*3, axis=-1)
+
+    overlay = raw.copy()
+    blended = cv2.addWeighted(raw, 0.6, vis, 0.4, 0)
+    overlay[fg_mask_3 == 1] = blended[fg_mask_3 == 1]
+
+    event["visImage"] = esp_utils.image_conversion.opencv_image_to_blob_image(vis)
+    event["rawImage"] = esp_utils.image_conversion.opencv_image_to_blob_image(raw)
+    event["overlayImage"] = esp_utils.image_conversion.opencv_image_to_blob_image(overlay)
+
+    return event
+  ]]></code>
+        </window-python>
+        <window-calculate algorithm="ConnectedComponentLabeling" pubsub="true" name="w_ccl">
+          <description><![CDATA[This window takes the binary image and groups connected foreground pixels into distinct labeled objects. It outputs a label map image along with metadata such as object counts and bounding box coordinates for each detected object.]]></description>
+          <schema>
+            <fields>
+              <field key="true" name="index" type="int64"/>
+              <field name="outputImage" type="blob"/>
+              <field name="objCountOut" type="int64"/>
+              <field name="idListOut" type="array(i64)"/>
+              <field name="xMinListOut" type="array(dbl)"/>
+              <field name="xMaxListOut" type="array(dbl)"/>
+              <field name="yMinListOut" type="array(dbl)"/>
+              <field name="yMaxListOut" type="array(dbl)"/>
+            </fields>
+          </schema>
+          <parameters>
+            <properties>
+              <property name="method"><![CDATA[BBDT]]></property>
+              <property name="connectivity"><![CDATA[8]]></property>
+              <property name="outputEncoding"><![CDATA[jpg]]></property>
+              <property name="coordType"><![CDATA[coco]]></property>
+              <property name="sizeThreshold"><![CDATA[7500]]></property>
+              <property name="sort"><![CDATA[1]]></property>
+            </properties>
+          </parameters>
+          <input-map>
+            <properties>
+              <property name="imageInput"><![CDATA[binary_image]]></property>
+            </properties>
+          </input-map>
+          <output-map>
+            <properties>
+              <property name="imageOutput"><![CDATA[outputImage]]></property>
+              <property name="objCountOut"><![CDATA[objCountOut]]></property>
+              <property name="idListOut"><![CDATA[idListOut[1-20]]]></property>
+              <property name="xMinListOut"><![CDATA[xMinListOut[1-20]]]></property>
+              <property name="xMaxListOut"><![CDATA[xMaxListOut[1-20]]]></property>
+              <property name="yMinListOut"><![CDATA[yMinListOut[1-20]]]></property>
+              <property name="yMaxListOut"><![CDATA[yMaxListOut[1-20]]]></property>
+            </properties>
+          </output-map>
+        </window-calculate>
+        <window-calculate algorithm="HighDimensionalDSP" name="w_gray">
+          <description><![CDATA[Takes input images and converts them into single channel grayscale images.]]></description>
+          <schema>
+            <fields>
+              <field key="true" name="index" type="int64"/>
+              <field name="subtracted_image" type="blob"/>
+              <field name="gray_image" type="blob"/>
+            </fields>
+          </schema>
+          <parameters>
+            <properties>
+              <property name="transformationType"><![CDATA[COLORSPACE]]></property>
+              <property name="function"><![CDATA[RGB2GRAY]]></property>
+              <property name="outputEncoding"><![CDATA[jpg]]></property>
+              <property name="windowSize"><![CDATA[15]]></property>
+              <property name="k"><![CDATA[0.2]]></property>
+              <property name="t"><![CDATA[0.9]]></property>
+              <property name="binLength"><![CDATA[256]]></property>
+              <property name="stretch"><![CDATA[1]]></property>
+              <property name="lowIn"><![CDATA[0]]></property>
+              <property name="highIn"><![CDATA[1]]></property>
+              <property name="lowOut"><![CDATA[0]]></property>
+              <property name="highOut"><![CDATA[1]]></property>
+              <property name="gamma"><![CDATA[1]]></property>
+              <property name="gain"><![CDATA[1]]></property>
+              <property name="cutoff"><![CDATA[0.5]]></property>
+            </properties>
+          </parameters>
+          <input-map>
+            <properties>
+              <property name="imageInput"><![CDATA[subtracted_image]]></property>
+            </properties>
+          </input-map>
+          <output-map>
+            <properties>
+              <property name="imageOutput"><![CDATA[gray_image]]></property>
+            </properties>
+          </output-map>
+        </window-calculate>
+        <window-python events="process" name="w_fire_exit_filter" output-insert-only="true">
+          <description><![CDATA[Filters CCL detections to only objects intersecting the fire exit region,
+  emits one event per object, and saves each cropped region to scoring_outputs/.]]></description>
+          <schema>
+            <fields>
+              <field key="true" name="index" type="int64"/>
+              <field key="true" name="object_id" type="int64"/>
+              <field name="x_min" type="int64"/>
+              <field name="x_max" type="int64"/>
+              <field name="y_min" type="int64"/>
+              <field name="y_max" type="int64"/>
+            </fields>
+          </schema>
+          <code><![CDATA[
+import os
+import cv2
+import numpy as np
+import esp_utils
+
+def _parse_list(val):
+    if val is None or val == "":
+        return []
+    if isinstance(val, (list, tuple)):
+        return [float(x) for x in val]
+    return [float(x) for x in val.split(",")]
+
+
+def intersects(box, roi):
+    bx1, bx2, by1, by2 = box
+    rx1, rx2, ry1, ry2 = roi
+    return not (
+        bx2 < rx1 or
+        bx1 > rx2 or
+        by2 < ry1 or
+        by1 > ry2
+    )
+
+
+def process(data, context):
+
+    events = []
+
+    ROI = (733, 1250, 10, 1050)
+
+    xmins = _parse_list(data["xMinListOut"])
+    xmaxs = _parse_list(data["xMaxListOut"])
+    ymins = _parse_list(data["yMinListOut"])
+    ymaxs = _parse_list(data["yMaxListOut"])
+    ids   = _parse_list(data["idListOut"])
+
+    n = min(len(xmins), len(xmaxs), len(ymins), len(ymaxs))
+
+    frame = None
+
+    for i in range(n):
+
+        box = (
+            int(xmins[i]),
+            int(xmaxs[i]),
+            int(ymins[i]),
+            int(ymaxs[i])
+        )
+
+        if not intersects(box, ROI):
+            continue
+
+        object_id = int(ids[i]) if i < len(ids) else i
+
+        event = {
+            "index":     data["index"],
+            "object_id": object_id,
+            "x_min":     box[0],
+            "x_max":     box[1],
+            "y_min":     box[2],
+            "y_max":     box[3],
+        }
+        events.append(event)
+
+    return events
+  ]]></code>
+        </window-python>
+        <window-join index="pi_EMPTY" name="w_join">
+          <join type="leftouter" no-regenerates="true">
+            <conditions>
+              <fields left="index" right="index"/>
+            </conditions>
+          </join>
+          <output>
+            <field-selection name="outputImage" source="l_outputImage"/>
+            <field-selection name="objCountOut" source="l_objCountOut"/>
+            <field-selection name="idListOut" source="l_idListOut"/>
+            <field-selection name="xMinListOut" source="l_xMinListOut"/>
+            <field-selection name="xMaxListOut" source="l_xMaxListOut"/>
+            <field-selection name="yMinListOut" source="l_yMinListOut"/>
+            <field-selection name="yMaxListOut" source="l_yMaxListOut"/>
+            <field-selection name="image" source="r_image"/>
+          </output>
+        </window-join>
+        <window-python events="visualize" name="w_thresh_viz" output-insert-only="true">
+          <description><![CDATA[Stretches the binary mask to full 0-255 range for visualisation,
+  making foreground pixels white and background pixels black.]]></description>
+          <schema>
+            <fields>
+              <field key="true" name="index" type="int64"/>
+              <field name="binary_image" type="blob"/>
+              <field name="viz_image" type="blob"/>
+            </fields>
+          </schema>
+          <copy><![CDATA[index,binary_image]]></copy>
+          <code><![CDATA[
+import numpy as np
+import cv2
+import esp_utils
+
+def visualize(data, context):
+
+    img = esp_utils.image_conversion.blob_image_to_opencv_image(
+        data["binary_image"]
+    )
+
+    if len(img.shape) == 3:
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    # Any non-zero pixel becomes 255 for preview
+    _, stretched = cv2.threshold(img, 0, 255, cv2.THRESH_BINARY)
+
+    stretched_bgr = cv2.cvtColor(stretched, cv2.COLOR_GRAY2BGR)
+
+    event = {}
+    event["viz_image"] = esp_utils.image_conversion.opencv_image_to_blob_image(stretched_bgr)
+
+    return event
+  ]]></code>
+        </window-python>
+      </windows>
+      <edges>
+        <edge role="data" source="w_thresh" target="w_ccl"/>
+        <edge role="data" source="w_contrast" target="w_blur"/>
+        <edge role="data" source="w_blur" target="w_thresh"/>
+        <edge source="w_ccl" target="w_fire_exit_filter"/>
+        <edge role="data" source="w_gray" target="w_contrast"/>
+        <edge role="data" source="w_source" target="w_background_subtract"/>
+        <edge role="data" source="w_background_subtract" target="w_gray"/>
+        <edge role="left" source="w_ccl" target="w_join"/>
+        <edge role="right" source="w_source" target="w_join"/>
+        <edge source="w_thresh" target="w_thresh_viz"/>
+        <edge source="w_join" target="w_annotate"/>
+      </edges>
+    </contquery>
+  </contqueries>
+</project>
