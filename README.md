@@ -62,6 +62,7 @@ The [End-to-end Examples](/EndToEndExamples) directory contains projects that de
 | [sailing](/EndToEndExamples/sailing) | Visualize data obtained from a set of boats.<br>This example identifies two geographical areas of interest. One area is an exclusion zone that the boats identified are not permitted to enter. The other is an area where a speed restriction has been applied.|
 | [trades](/EndToEndExamples/trades) | Identify large trades in stock market transactions.<br>This project identifies large securities transactions and the traders who were involved in those trades.|
 | [mcp](/EndToEndExamples/mcp) | Interact with data obtained from a set of boats.<br>This example processes data gathered from sailing boats, and includes configured Model Context Protocol (MCP) tools that a Large Language Model (LLM) can use to interact with the project when it runs.|
+| [image_processing_scoring_api](/EndToEndExamples/image_processing_scoring_api) | Use the Scoring API to interact with a worker safety image processing pipeline. This pipeline uses Connected Component Labeling (CCL) to detect obsstructions in front of fire exits with no prior training. |
 
 ### Input Streams
 
