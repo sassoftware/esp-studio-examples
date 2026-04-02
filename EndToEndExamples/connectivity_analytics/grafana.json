@@ -112,9 +112,9 @@
             "type": "sasesp-plugin",
             "uid": "P8052081D5634A876"
           },
-          "externalServerUrl": "wss://iot.viya-azure-gpu.unx.sas.com/SASEventStreamProcessingServer/esps-connectivity-5fanalytics",
+          "externalServerUrl": "wss://%DOMAIN%:443/SASEventStreamProcessingServer/esps-connectivity-5fanalytics/eventStreamProcessing/v2",
           "fields": [],
-          "internalServerUrl": "wss://esps-connectivity-5fanalytics.sas-viya:443",
+          "internalServerUrl": "wss://esps-connectivity-5fanalytics.%NAMESPACE%:443/eventStreamProcessing/v2",
           "projectName": "connectivity_analytics",
           "refId": "A",
           "windowName": "w_cmp_stream"
@@ -195,9 +195,9 @@
             "type": "sasesp-plugin",
             "uid": "P8052081D5634A876"
           },
-          "externalServerUrl": "wss://iot.viya-azure-gpu.unx.sas.com/SASEventStreamProcessingServer/esps-connectivity-5fanalytics",
+          "externalServerUrl": "wss://%DOMAIN%:443/SASEventStreamProcessingServer/esps-connectivity-5fanalytics/eventStreamProcessing/v2",
           "fields": [],
-          "internalServerUrl": "wss://esps-connectivity-5fanalytics.sas-viya:443",
+          "internalServerUrl": "wss://esps-connectivity-5fanalytics.%NAMESPACE%:443/eventStreamProcessing/v2",
           "projectName": "connectivity_analytics",
           "refId": "A",
           "windowName": "w_rate"
@@ -320,9 +320,9 @@
             "type": "sasesp-plugin",
             "uid": "P8052081D5634A876"
           },
-          "externalServerUrl": "wss://iot.viya-azure-gpu.unx.sas.com/SASEventStreamProcessingServer/esps-connectivity-5fanalytics",
+          "externalServerUrl": "wss://%DOMAIN%:443/SASEventStreamProcessingServer/esps-connectivity-5fanalytics/eventStreamProcessing/v2",
           "fields": [],
-          "internalServerUrl": "wss://esps-connectivity-5fanalytics.sas-viya:443",
+          "internalServerUrl": "wss://esps-connectivity-5fanalytics.%NAMESPACE%:443/eventStreamProcessing/v2",
           "projectName": "connectivity_analytics",
           "refId": "A",
           "windowName": "w_aggr_stats"
@@ -393,9 +393,9 @@
             "type": "sasesp-plugin",
             "uid": "P8052081D5634A876"
           },
-          "externalServerUrl": "wss://iot.viya-azure-gpu.unx.sas.com/SASEventStreamProcessingServer/esps-connectivity-5fanalytics",
+          "externalServerUrl": "wss://%DOMAIN%:443/SASEventStreamProcessingServer/esps-connectivity-5fanalytics/eventStreamProcessing/v2",
           "fields": [],
-          "internalServerUrl": "wss://esps-connectivity-5fanalytics.sas-viya:443",
+          "internalServerUrl": "wss://esps-connectivity-5fanalytics.%NAMESPACE%:443/eventStreamProcessing/v2",
           "projectName": "connectivity_analytics",
           "refId": "A",
           "windowName": "w_change_latency"
@@ -535,9 +535,9 @@
             "type": "sasesp-plugin",
             "uid": "P8052081D5634A876"
           },
-          "externalServerUrl": "wss://iot.viya-azure-gpu.unx.sas.com/SASEventStreamProcessingServer/esps-connectivity-5fanalytics",
+          "externalServerUrl": "wss://%DOMAIN%:443/SASEventStreamProcessingServer/esps-connectivity-5fanalytics/eventStreamProcessing/v2",
           "fields": [],
-          "internalServerUrl": "wss://esps-connectivity-5fanalytics.sas-viya:443",
+          "internalServerUrl": "wss://esps-connectivity-5fanalytics.%NAMESPACE%:443/eventStreamProcessing/v2",
           "projectName": "connectivity_analytics",
           "refId": "A",
           "windowName": "w_rules"
@@ -718,9 +718,9 @@
             "type": "sasesp-plugin",
             "uid": "P8052081D5634A876"
           },
-          "externalServerUrl": "wss://iot.viya-azure-gpu.unx.sas.com/SASEventStreamProcessingServer/esps-connectivity-5fanalytics",
+          "externalServerUrl": "wss://%DOMAIN%:443/SASEventStreamProcessingServer/esps-connectivity-5fanalytics/eventStreamProcessing/v2",
           "fields": [],
-          "internalServerUrl": "wss://esps-connectivity-5fanalytics.sas-viya:443",
+          "internalServerUrl": "wss://esps-connectivity-5fanalytics.%NAMESPACE%:443/eventStreamProcessing/v2",
           "projectName": "connectivity_analytics",
           "refId": "A",
           "windowName": "w_rules"
@@ -877,9 +877,9 @@
             "type": "sasesp-plugin",
             "uid": "P8052081D5634A876"
           },
-          "externalServerUrl": "wss://iot.viya-azure-gpu.unx.sas.com/SASEventStreamProcessingServer/esps-connectivity-5fanalytics",
+          "externalServerUrl": "wss://%DOMAIN%:443/SASEventStreamProcessingServer/esps-connectivity-5fanalytics/eventStreamProcessing/v2",
           "fields": [],
-          "internalServerUrl": "wss://esps-connectivity-5fanalytics.sas-viya:443",
+          "internalServerUrl": "wss://esps-connectivity-5fanalytics.%NAMESPACE%:443/eventStreamProcessing/v2",
           "projectName": "connectivity_analytics",
           "refId": "A",
           "windowName": "w_rules"
@@ -968,9 +968,9 @@
             "type": "sasesp-plugin",
             "uid": "P8052081D5634A876"
           },
-          "externalServerUrl": "wss://iot.viya-azure-gpu.unx.sas.com/SASEventStreamProcessingServer/esps-connectivity-5fanalytics",
+          "externalServerUrl": "wss://%DOMAIN%:443/SASEventStreamProcessingServer/esps-connectivity-5fanalytics/eventStreamProcessing/v2",
           "fields": [],
-          "internalServerUrl": "wss://esps-connectivity-5fanalytics.sas-viya:443",
+          "internalServerUrl": "wss://esps-connectivity-5fanalytics.%NAMESPACE%:443/eventStreamProcessing/v2",
           "projectName": "connectivity_analytics",
           "refId": "A",
           "windowName": "w_rules"
@@ -1113,9 +1113,9 @@
             "type": "sasesp-plugin",
             "uid": "P8052081D5634A876"
           },
-          "externalServerUrl": "wss://iot.viya-azure-gpu.unx.sas.com/SASEventStreamProcessingServer/esps-connectivity-5fanalytics",
+          "externalServerUrl": "wss://%DOMAIN%:443/SASEventStreamProcessingServer/esps-connectivity-5fanalytics/eventStreamProcessing/v2",
           "fields": [],
-          "internalServerUrl": "wss://esps-connectivity-5fanalytics.sas-viya:443",
+          "internalServerUrl": "wss://esps-connectivity-5fanalytics.%NAMESPACE%:443/eventStreamProcessing/v2",
           "projectName": "connectivity_analytics",
           "refId": "A",
           "windowName": "w_rules"

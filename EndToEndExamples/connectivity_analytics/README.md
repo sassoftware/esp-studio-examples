@@ -290,12 +290,8 @@ When you test the project, the results appear on separate tabs. The following fi
 ![w_rules tab](img/w_rules.png "w_rules tab")
 
 ## Next Steps
-Alerts, model performance, and streaming data can be visualized using the [SAS Event Stream Processing Data Source Plug-in for Grafana](https://github.com/sassoftware/grafana-esp-plugin). Do the following steps to import [grafana.json](grafana.json) to Grafana:
-1. From the navigation bar, click **Dashboards**.
-2. Click **New**.
-3. From the drop down list, select **Import**.
-4. Click **Upload dashboard JSON file** and select `grajana.json` using the file selector.
-5. Click **Import**.
+Alerts, model performance, and streaming data can be visualized using the [SAS Event Stream Processing Data Source Plug-in for Grafana](https://github.com/sassoftware/grafana-esp-plugin).
+Follow the instructions in [DASHBOARD.md](../DASHBOARD.md) to import the dashboard into Grafana.
 
 The following figures show an example of a Grafana dashboard:
 ![streaming data and distribution](img/grafana-1.png "streaming data and distribution")

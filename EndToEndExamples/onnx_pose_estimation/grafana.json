@@ -101,10 +101,10 @@
             "uid": "${DS_SAS_EVENT STREAM PROCESSING DATASOURCE}"
           },
           "fields": [],
-          "internalServerUrl": "ws://esps-pose-5festimation-5fwith-5fonnx:80",
+          "internalServerUrl": "wss://esps-pose-5festimation-5fwith-5fonnx.%NAMESPACE%:443/eventStreamProcessing/v2",
           "projectName": "pose_estimation_with_onnx",
           "refId": "A",
-          "serverUrl": "ws://esps-pose-5festimation-5fwith-5fonnx:80",
+          "externalServerUrl": "wss://%DOMAIN%:443/SASEventStreamProcessingServer/esps-pose-5festimation-5fwith-5fonnx/eventStreamProcessing/v2",
           "windowName": "w_annotate"
         }
       ],
