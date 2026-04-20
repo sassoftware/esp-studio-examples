@@ -46,17 +46,14 @@ The following figure shows the results for the Last_Exclusion_Violation tab. It 
 Note: If any table remains empty, check that the publisher connectors for all five Source windows are set correctly to point to the CSV files.
 
 ## Visualizing Objects in Grafana
-The sailing boats and areas of interest can be visualized using the [SAS Event Stream Processing Data Source Plug-in for Grafana](https://github.com/sassoftware/grafana-esp-plugin). Import the [grafana.json](grafana.json) dashboard file to Grafana. The `grafana.json` file references the [sailing-areas-of-interest.geojson](sailing-areas-of-interest.geojson) file, which defines the areas of interest.
+The sailing boats and areas of interest are visualized using the [SAS Event Stream Processing Data Source Plug-in for Grafana](https://github.com/sassoftware/grafana-esp-plugin). The [dashboard.json](grafana.json) file references the [sailing-areas-of-interest.geojson](sailing-areas-of-interest.geojson) file, which defines the areas of interest.
 
----
-**NOTE:**
-This dashboard was created using standalone SAS Event Stream Processing, running in the same namespace as Grafana. If you are using a different environment, such as the SAS Viya platform, you must recreate the queries because the connection URLs will differ.
+To import the dashboard into Grafana, see [DASHBOARD.md](../DASHBOARD.md).
 
----
 
 <img alt="Sailing dashboard" src="img/sailing-dashboard.png"  width="75%" height="75%">
 
 ## Additional Resources
 
-- The [Using a Geofence to Find Wanted Vehicles](https://github.com/sassoftware/esp-studio-examples/tree/main/Advanced/geofence) example provides a more detailed discussion of the settings for a Geofence window and for connector orchestration. 
+- The [Using a Geofence to Find Wanted Vehicles](https://github.com/sassoftware/esp-studio-examples/tree/main/Utilities/geofence) example provides a more detailed discussion of the settings for a Geofence window and for connector orchestration. 
 - For more information about the Geofence window, see [SAS Help Center: Using Geofence Windows](https://documentation.sas.com/?cdcId=espcdc&cdcVersion=default&docsetId=espcreatewindows&docsetTarget=p0xru6q01dkxknn1t8gqo2q4zfu6).

@@ -102,10 +102,10 @@
           },
           "fields": [],
           "hide": false,
-          "internalServerUrl": "ws://esps-computer-5fvision-5fwith-5fonnx:80",
+          "internalServerUrl": "wss://esps-computer-5fvision-5fwith-5fonnx.%NAMESPACE%:443/eventStreamProcessing/v2",
           "projectName": "computer_vision_with_onnx",
           "refId": "A",
-          "serverUrl": "ws://esps-computer-5fvision-5fwith-5fonnx:80",
+          "externalServerUrl": "wss://%DOMAIN%:443/SASEventStreamProcessingServer/esps-computer-5fvision-5fwith-5fonnx/eventStreamProcessing/v2",
           "windowName": "w_annotate"
         }
       ],

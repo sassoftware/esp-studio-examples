@@ -177,10 +177,10 @@
             "uid": "${DS_SAS_EVENT STREAM PROCESSING DATASOURCE}"
           },
           "fields": [],
-          "internalServerUrl": "ws://esps-sailing:80",
+          "internalServerUrl": "wss://esps-sailing.%NAMESPACE%:443/eventStreamProcessing/v2",
           "projectName": "sailing",
           "refId": "A",
-          "serverUrl": "ws://esps-sailing:80",
+          "externalServerUrl": "wss://%DOMAIN%:443/SASEventStreamProcessingServer/esps-sailing/eventStreamProcessing/v2",
           "windowName": "Boat1"
         }
       ],
@@ -410,7 +410,7 @@
           {
             "config": {
               "rules": [],
-              "src": "https://raw.githubusercontent.com/sassoftware/esp-studio-examples/main/Advanced/sailing/sailing-areas-of-interest.geojson",
+              "src": "https://raw.githubusercontent.com/sassoftware/esp-studio-examples/main/EndToEndExamples/sailing/sailing-areas-of-interest.geojson",
               "style": {
                 "color": {
                   "fixed": "#C4162A"
@@ -467,10 +467,10 @@
             "uid": "${DS_SAS_EVENT STREAM PROCESSING DATASOURCE}"
           },
           "fields": [],
-          "internalServerUrl": "ws://esps-sailing:80",
+          "internalServerUrl": "wss://esps-sailing.%NAMESPACE%:443/eventStreamProcessing/v2",
           "projectName": "sailing",
           "refId": "A",
-          "serverUrl": "ws://esps-sailing:80",
+          "externalServerUrl": "wss://%DOMAIN%:443/SASEventStreamProcessingServer/esps-sailing/eventStreamProcessing/v2",
           "windowName": "Geofence_Area_Check"
         }
       ],
@@ -596,10 +596,10 @@
           },
           "fieldName": "speed",
           "fields": [],
-          "internalServerUrl": "ws://esps-sailing:80",
+          "internalServerUrl": "wss://esps-sailing.%NAMESPACE%:443/eventStreamProcessing/v2",
           "projectName": "sailing",
           "refId": "A",
-          "serverUrl": "ws://esps-sailing:80",
+          "externalServerUrl": "wss://%DOMAIN%:443/SASEventStreamProcessingServer/esps-sailing/eventStreamProcessing/v2",
           "windowName": "Boat2"
         }
       ],
@@ -805,10 +805,10 @@
           },
           "fieldName": "speed",
           "fields": [],
-          "internalServerUrl": "ws://esps-sailing:80",
+          "internalServerUrl": "wss://esps-sailing.%NAMESPACE%:443/eventStreamProcessing/v2",
           "projectName": "sailing",
           "refId": "A",
-          "serverUrl": "ws://esps-sailing:80",
+          "externalServerUrl": "wss://%DOMAIN%:443/SASEventStreamProcessingServer/esps-sailing/eventStreamProcessing/v2",
           "windowName": "Boat3"
         }
       ],
@@ -1011,10 +1011,10 @@
           },
           "fieldName": "speed",
           "fields": [],
-          "internalServerUrl": "ws://esps-sailing:80",
+          "internalServerUrl": "wss://esps-sailing.%NAMESPACE%:443/eventStreamProcessing/v2",
           "projectName": "sailing",
           "refId": "A",
-          "serverUrl": "ws://esps-sailing:80",
+          "externalServerUrl": "wss://%DOMAIN%:443/SASEventStreamProcessingServer/esps-sailing/eventStreamProcessing/v2",
           "windowName": "Boat4"
         }
       ],
@@ -1212,10 +1212,10 @@
           },
           "fieldName": "BoatNumber",
           "fields": [],
-          "internalServerUrl": "ws://esps-sailing:80",
+          "internalServerUrl": "wss://esps-sailing.%NAMESPACE%:443/eventStreamProcessing/v2",
           "projectName": "sailing",
           "refId": "A",
-          "serverUrl": "ws://esps-sailing:80",
+          "externalServerUrl": "wss://%DOMAIN%:443/SASEventStreamProcessingServer/esps-sailing/eventStreamProcessing/v2",
           "windowName": "Last_Speeding_Event"
         }
       ],
@@ -1395,10 +1395,10 @@
           },
           "fieldName": "BoatNumber",
           "fields": [],
-          "internalServerUrl": "ws://esps-sailing:80",
+          "internalServerUrl": "wss://esps-sailing.%NAMESPACE%:443/eventStreamProcessing/v2",
           "projectName": "sailing",
           "refId": "A",
-          "serverUrl": "ws://esps-sailing:80",
+          "externalServerUrl": "wss://%DOMAIN%:443/SASEventStreamProcessingServer/esps-sailing/eventStreamProcessing/v2",
           "windowName": "Last_Exclusion_Violation"
         }
       ],

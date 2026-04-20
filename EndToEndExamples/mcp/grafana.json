@@ -177,10 +177,10 @@
             "uid": "${DS_SAS_EVENT STREAM PROCESSING DATASOURCE}"
           },
           "fields": [],
-          "internalServerUrl": "ws://esps-sailing-5fwith-5fmcp:80",
+          "internalServerUrl": "wss://esps-sailing-5fwith-5fmcp.%NAMESPACE%:443/eventStreamProcessing/v2",
           "projectName": "sailing_with_mcp",
           "refId": "A",
-          "serverUrl": "ws://esps-sailing-5fwith-5fmcp:80",
+          "externalServerUrl": "wss://%DOMAIN%:443/SASEventStreamProcessingServer/esps-sailing-5fwith-5fmcp/eventStreamProcessing/v2",
           "windowName": "Boat1"
         }
       ],
@@ -467,10 +467,10 @@
             "uid": "${DS_SAS_EVENT STREAM PROCESSING DATASOURCE}"
           },
           "fields": [],
-          "internalServerUrl": "ws://esps-sailing-5fwith-5fmcp:80",
+          "internalServerUrl": "wss://esps-sailing-5fwith-5fmcp.%NAMESPACE%:443/eventStreamProcessing/v2",
           "projectName": "sailing_with_mcp",
           "refId": "A",
-          "serverUrl": "ws://esps-sailing-5fwith-5fmcp:80",
+          "externalServerUrl": "wss://%DOMAIN%:443/SASEventStreamProcessingServer/esps-sailing-5fwith-5fmcp/eventStreamProcessing/v2",
           "windowName": "Geofence_Area_Check"
         }
       ],
@@ -596,10 +596,10 @@
           },
           "fieldName": "speed",
           "fields": [],
-          "internalServerUrl": "ws://esps-sailing-5fwith-5fmcp:80",
+          "internalServerUrl": "wss://esps-sailing-5fwith-5fmcp.%NAMESPACE%:443/eventStreamProcessing/v2",
           "projectName": "sailing_with_mcp",
           "refId": "A",
-          "serverUrl": "ws://esps-sailing-5fwith-5fmcp:80",
+          "externalServerUrl": "wss://%DOMAIN%:443/SASEventStreamProcessingServer/esps-sailing-5fwith-5fmcp/eventStreamProcessing/v2",
           "windowName": "Boat2"
         }
       ],
@@ -805,10 +805,10 @@
           },
           "fieldName": "speed",
           "fields": [],
-          "internalServerUrl": "ws://esps-sailing-5fwith-5fmcp:80",
+          "internalServerUrl": "wss://esps-sailing-5fwith-5fmcp.%NAMESPACE%:443/eventStreamProcessing/v2",
           "projectName": "sailing_with_mcp",
           "refId": "A",
-          "serverUrl": "ws://esps-sailing-5fwith-5fmcp:80",
+          "externalServerUrl": "wss://%DOMAIN%:443/SASEventStreamProcessingServer/esps-sailing-5fwith-5fmcp/eventStreamProcessing/v2",
           "windowName": "Boat3"
         }
       ],
@@ -1011,10 +1011,10 @@
           },
           "fieldName": "speed",
           "fields": [],
-          "internalServerUrl": "ws://esps-sailing-5fwith-5fmcp:80",
+          "internalServerUrl": "wss://esps-sailing-5fwith-5fmcp.%NAMESPACE%:443/eventStreamProcessing/v2",
           "projectName": "sailing_with_mcp",
           "refId": "A",
-          "serverUrl": "ws://esps-sailing-5fwith-5fmcp:80",
+          "externalServerUrl": "wss://%DOMAIN%:443/SASEventStreamProcessingServer/esps-sailing-5fwith-5fmcp/eventStreamProcessing/v2",
           "windowName": "Boat4"
         }
       ],
@@ -1212,10 +1212,10 @@
           },
           "fieldName": "BoatNumber",
           "fields": [],
-          "internalServerUrl": "ws://esps-sailing-5fwith-5fmcp:80",
+          "internalServerUrl": "wss://esps-sailing-5fwith-5fmcp.%NAMESPACE%:443/eventStreamProcessing/v2",
           "projectName": "sailing_with_mcp",
           "refId": "A",
-          "serverUrl": "ws://esps-sailing-5fwith-5fmcp:80",
+          "externalServerUrl": "wss://%DOMAIN%:443/SASEventStreamProcessingServer/esps-sailing-5fwith-5fmcp/eventStreamProcessing/v2",
           "windowName": "Last_Speeding_Event"
         }
       ],
@@ -1395,10 +1395,10 @@
           },
           "fieldName": "BoatNumber",
           "fields": [],
-          "internalServerUrl": "ws://esps-sailing-5fwith-5fmcp:80",
+          "internalServerUrl": "wss://esps-sailing-5fwith-5fmcp.%NAMESPACE%:443/eventStreamProcessing/v2",
           "projectName": "sailing_with_mcp",
           "refId": "A",
-          "serverUrl": "ws://esps-sailing-5fwith-5fmcp:80",
+          "externalServerUrl": "wss://%DOMAIN%:443/SASEventStreamProcessingServer/esps-sailing-5fwith-5fmcp/eventStreamProcessing/v2",
           "windowName": "Last_Exclusion_Violation"
         }
       ],
