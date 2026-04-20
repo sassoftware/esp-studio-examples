@@ -164,7 +164,7 @@ If it takes a long time for events to appear in test mode, contact your system a
 Geofences are virtual perimeters and can be used, for example, to trigger alerts when persons are detected in prohibited areas or when cars are parked in the wrong spot. For more information, see [Using Geofence Windows](https://go.documentation.sas.com/doc/en/espcdc/v_037/espcreatewindows/p0xru6q01dkxknn1t8gqo2q4zfu6.htm).
 
 ### Visualizing Objects in Grafana (recommended)
-The detected objects can be visualized using the [SAS Event Stream Processing Data Source Plug-in for Grafana](https://github.com/sassoftware/grafana-esp-plugin). Follow the instructions in [DASHBOARD.md](../DASHBOARD.md) to import the dashboard into Grafana. 
+The detected objects are visualized using the [SAS Event Stream Processing Data Source Plug-in for Grafana](https://github.com/sassoftware/grafana-esp-plugin). To import the dashboard into Grafana, see [DASHBOARD.md](../DASHBOARD.md). 
 
 ---
 **NOTE:**

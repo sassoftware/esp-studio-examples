@@ -290,8 +290,8 @@ When you test the project, the results appear on separate tabs. The following fi
 ![w_rules tab](img/w_rules.png "w_rules tab")
 
 ## Next Steps
-Alerts, model performance, and streaming data can be visualized using the [SAS Event Stream Processing Data Source Plug-in for Grafana](https://github.com/sassoftware/grafana-esp-plugin).
-Follow the instructions in [DASHBOARD.md](../DASHBOARD.md) to import the dashboard into Grafana.
+Alerts, model performance, and streaming data is visualized using the [SAS Event Stream Processing Data Source Plug-in for Grafana](https://github.com/sassoftware/grafana-esp-plugin).
+To import the dashboard into Grafana, see [DASHBOARD.md](../DASHBOARD.md).
 
 The following figures show an example of a Grafana dashboard:
 ![streaming data and distribution](img/grafana-1.png "streaming data and distribution")

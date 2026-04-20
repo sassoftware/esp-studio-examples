@@ -46,9 +46,9 @@ The following figure shows the results for the Last_Exclusion_Violation tab. It 
 Note: If any table remains empty, check that the publisher connectors for all five Source windows are set correctly to point to the CSV files.
 
 ## Visualizing Objects in Grafana
-The sailing boats and areas of interest can be visualized using the [SAS Event Stream Processing Data Source Plug-in for Grafana](https://github.com/sassoftware/grafana-esp-plugin). The [dashboard.json](grafana.json) file references the [sailing-areas-of-interest.geojson](sailing-areas-of-interest.geojson) file, which defines the areas of interest.
+The sailing boats and areas of interest are visualized using the [SAS Event Stream Processing Data Source Plug-in for Grafana](https://github.com/sassoftware/grafana-esp-plugin). The [dashboard.json](grafana.json) file references the [sailing-areas-of-interest.geojson](sailing-areas-of-interest.geojson) file, which defines the areas of interest.
 
-Follow the instructions in [DASHBOARD.md](../DASHBOARD.md) to import the dashboard into Grafana.
+To import the dashboard into Grafana, see [DASHBOARD.md](../DASHBOARD.md).
 
 
 <img alt="Sailing dashboard" src="img/sailing-dashboard.png"  width="75%" height="75%">

@@ -105,7 +105,7 @@ If it takes a long time for events to appear in test mode, contact your system a
 From the detected keypoints, you could predict the activity of a person. For example, you could check whether someone is picking up an object ergonomically or detect whether someone performs a certain yoga pose. These findings can be combined with a [Geofence window](https://go.documentation.sas.com/doc/en/espcdc/default/espcreatewindows/p0xru6q01dkxknn1t8gqo2q4zfu6.htm) to determine whether the activity takes place in a certain region of the frame. 
 
 ### Visualizing Objects in Grafana (recommended)
-The detected objects can be visualized using the [SAS Event Stream Processing Data Source Plug-in for Grafana](https://github.com/sassoftware/grafana-esp-plugin). Follow the instructions in [DASHBOARD.md](../DASHBOARD.md) to import the dashboard into Grafana. 
+The detected objects are visualized using the [SAS Event Stream Processing Data Source Plug-in for Grafana](https://github.com/sassoftware/grafana-esp-plugin). To import the dashboard into Grafana, see [DASHBOARD.md](../DASHBOARD.md). 
 
 ---
 **NOTE:**
