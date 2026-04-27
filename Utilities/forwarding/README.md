@@ -35,19 +35,23 @@ Each row contains the following data:
 ## Workflow
 The workflow contains two Continuous Queries:
 
-### Continuous Query 1
-![Contquery 1 Windows](img/cq1Forwarding.png "Contquery 1 Windows")  
+### Internal Continuous Query
+![Internal Contquery Windows](img/internalForwarding.png "Internal Contquery Windows")  
 
-### Continuous Query 2
-![Contquery 2 Windows](img/cq2Forwarding.png "Contquery 2 Window")
+### External Continuous Query
+![External Contquery Windows](img/externalForwarding.png "External Contquery Windows")  
 
 - The weatherReadings window is a Source window that reads the input file.
 - The convertTemp window is a Python window that performs the transformation.
-- The readingsFahrenheit window is a Source window that receives the forwarded events and writes them to an output file.
+- The readingsFahrenheitInternal window is a Source window that receives the forwarded events and writes them to an output file.
+- The tempMinMax window is an aggregate window that collates the highest and lowest temperatures recorded at each weather station.
+- The readingsFahrenheitExternal window is a Source window that receives the forwarded events and writes them to an output file.
 
-**NOTE:** In SAS Event Stream Processing Studio, you can toggle between the two continuous queries to see all of the windows. At the top of your screen, select **cq2** from the drop down list.  
+**NOTE:** In SAS Event Stream Processing Studio, you can toggle between the two continuous queries to see all of the windows. At the top of your screen, select **external** from the drop down list.  
 
-### weatherReadings
+## Internal Windows
+
+### internal/weatherReadings
 
 Explore the settings for the weatherReadings window:
 1. Open the project in SAS Event Stream Processing Studio and select the weatherReadings window. 
@@ -57,7 +61,7 @@ Explore the settings for the weatherReadings window:
   - `year`  
   - `temperatures` 
 
-### convertTemp
+### internal/convertTemp
 
 Explore the settings for the convertTemp window:
 1. Open the project in SAS Event Stream Processing Studio and select the convertTemp window. 
@@ -67,20 +71,44 @@ Explore the settings for the convertTemp window:
          f = int(c * 1.8 + 32)  # Celsius → Fahrenheit
     ```
 
-4. Expand **Event Forwarding**. Notice that the continuous query is `cq2`, the window is `readingsFahrenheit`, and the block size is `1`. 
+4. Expand **Event Forwarding**. Notice that the continuous query is `external`, the window is `readingsFahrenheit`, and the block size is `1`. 
 
-### readingsFahrenheit
+### internal/readingsFahrenheitInternal
 
-Explore the settings for the readingsFahrenheit window:
+Explore the settings for the readingsFahrenheitInternal window:
 1. Open the project in SAS Event Stream Processing Studio and select the readingsFahrenheit window. 
 2. In the right pane, expand **Properties**.
-3. Expand **Event Forwarding**. Notice the text that says, **Incoming connection for event forwarding**. It points to the `convertTemp` window in the `cq` continuous query, and the block size is `1`. 
+3. Expand **Event Forwarding**. Notice the text that says, **Incoming connection for event forwarding**. It points to the `convertTemp` window in the `internal` continuous query, and the block size is `1`. 
+
+### internal/tempMinMax
+The tempMinMax aggregates the highest and lowest temperatures at each weather station using an aggregate window.
+
+## External Window
+
+### external/readingsFahrenheitExternal
+
+Explore the settings for the readingsFahrenheitExternal window:
+1. Open the project in SAS Event Stream Processing Studio and select the readingsFahrenheit window. 
+2. In the right pane, expand **Properties**.
+3. Expand **Event Forwarding**. Notice the text that says, **Incoming connection for event forwarding**. It points to the `convertTemp` window in the `internal` continuous query, and the block size is `1`. 
+
+## Event Forwarding Connection Active State
+Event Forwarding Connections can be made inactive by setting their active attribute to false, this can via the following steps:
+1. Select an event forwarding window 
+2. Expand **Event Forwarding**. Notice the checkboxes in the grid.
+3. Toggling the active state will update the corresponding event forwarding connection in the diagram.
+
+![Event Forwarding Grid](img/EFGrid.png "Event Forwarding Grid")
+
+![Inactive Event Forwarding Connection](img/inactiveEFConnection.png "Inactive Event Forwarding Connection")
+
+An inactive event forwarding connection will not send events to the destination window.
 
 ## Test the Project and View the Results
 
-As this test passes data between continuous queries, you need to manually enable the window in the **cq2** continous query. To enable the window, do the following steps:
+As this test passes data between continuous queries, you need to manually enable the window in the **external** continous query. To enable the window, do the following steps:
 1. Click **Enter Test Mode**.
-2. From the **Continuous query** drop down, select **cq2**.
+2. From the **Continuous query** drop down, select **external**.
 3. Select **readingsFahrenheit**.
 4. Run the project.
 
@@ -89,10 +117,10 @@ This is what the settings should look like once the window is enabled:
 
 When you test the project in ESP Studio, you will see results on the following tabs:
 
- - The cq/weatherReadings tab lists the incoming data:  
+ - The internal/weatherReadings tab lists the incoming data:  
 <img src="img/weatherReadings.png" alt="Weather readings from weather stations" style="width:75%; height:auto;"/>  
 
- - The cq/convertTemp and cq2/readingsFahrenheit tab list the same results. This makes sense because the convertTemp window produces the event and then forwards them to the readingsFahrenheit window, which produces the `result.out` file:  
+ - The internal/convertTemp and external/readingsFahrenheit tab list the same results. This makes sense because the convertTemp window produces the event and then forwards them to the readingsFahrenheit window, which produces the `result.out` file:  
 <img src="img/convertTemp.png" alt="Extrapolated events generated by Python window" style="width:75%; height:auto;"/>  
 <img src="img/outputsForwarding.png" alt="Example Output" style="width:75%; height:auto;"/>
 
