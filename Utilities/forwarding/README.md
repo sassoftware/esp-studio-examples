@@ -44,12 +44,14 @@ The workflow contains two Continuous Queries:
 - The weatherReadings window is a Source window that reads the input file.
 - The convertTemp window is a Python window that performs the transformation.
 - The readingsFahrenheitInternal window is a Source window that receives the forwarded events and writes them to an output file.
+- The readingsFahrenheitExternal window is a Source window that receives the forwarded events and passes them downstream for aggregation.
 - The tempMinMax window is an aggregate window that collates the highest and lowest temperatures recorded at each weather station.
-- The readingsFahrenheitExternal window is a Source window that receives the forwarded events and writes them to an output file.
 
 **NOTE:** In SAS Event Stream Processing Studio, you can toggle between the two continuous queries to see all of the windows. At the top of your screen, select **external** from the drop down list.  
 
 ## Internal Windows
+
+The internal contquery runs the temperature conversion and uses event forwarding to pass these events to a source window that saves the ouput to a file.
 
 ### internal/weatherReadings
 
@@ -80,10 +82,10 @@ Explore the settings for the readingsFahrenheitInternal window:
 2. In the right pane, expand **Properties**.
 3. Expand **Event Forwarding**. Notice the text that says, **Incoming connection for event forwarding**. It points to the `convertTemp` window in the `internal` continuous query, and the block size is `1`. 
 
-### internal/tempMinMax
-The tempMinMax aggregates the highest and lowest temperatures at each weather station using an aggregate window.
 
-## External Window
+## External Windows
+
+The external contquery receives events from the internal contquery and runs basic aggregation functions to find the minimum and maximum weather readings at each station.
 
 ### external/readingsFahrenheitExternal
 
@@ -91,6 +93,9 @@ Explore the settings for the readingsFahrenheitExternal window:
 1. Open the project in SAS Event Stream Processing Studio and select the readingsFahrenheit window. 
 2. In the right pane, expand **Properties**.
 3. Expand **Event Forwarding**. Notice the text that says, **Incoming connection for event forwarding**. It points to the `convertTemp` window in the `internal` continuous query, and the block size is `1`. 
+
+### external/tempMinMax
+The tempMinMax aggregates the highest and lowest temperatures at each weather station using an aggregate window.
 
 ## Event Forwarding Connection Active State
 Event Forwarding Connections can be made inactive by setting their active attribute to false, this can via the following steps:
@@ -128,7 +133,7 @@ When you test the project in ESP Studio, you will see results on the following t
 
 Event forwarding enables Source windows to act as destinations for transformed event streams. This allows continuous queries to be chained without external connectors. After creating the readingsFahrenheit stream, there are several extension options:
 
- - Add further processing by applying aggregations, threshold checks, anomaly detection, or rolling statistics in downstream continuous queries.
+ - Add further processing in the external contquery by applying aggregations, threshold checks, anomaly detection, or rolling statistics in downstream continuous queries.
  - Output to external systems by forwarding the transformed events to databases, message queues, or files for integration with other applications.
  - Extend Python logic by enriching events, adding validation, or incorporating lightweight analytics or model inference after forwarding.
  - Create branching pipelines by forwarding events to multiple destination windows or additional continuous queries to build modular, multi-stage event stream pipelines.
