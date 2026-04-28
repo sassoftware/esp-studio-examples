@@ -23,8 +23,8 @@ sudo docker run --name test-redis -p 6379:6379 -d redis
 For more information, see: [**Redis Docker**](https://hub.docker.com/_/redis). 
 
 After the Redis setup is finished and running, two variables must be configured in SAS Event Stream Processing Studio. Do the following steps to configure the variables:
-1. Click <img src="/img/project-icon.png" alt="project icon" width=3% height=auto/> to navigate to the project.
-2. Click <img src="/img/properties-icon.png" alt="properties icon" width=3% height=auto/> and expand **User-Defined Properties**. You should see a similar table:
+1. Click <img src="img/project-icon.png" alt="project icon" width=3% height=auto/> to navigate to the project.
+2. On the left toolbar click <img src="img/properties-icon.png" alt="properties icon" width=3% height=auto/>. You should see a similar table:
 ![Properties for Redis connection](img/properties.png "Properties for Redis connection")
 
 - `REDIS_HOST`: Set the value to the Redis database server IP or host name. You must specify the IP address of the Redis host that can be resolved from the SAS Event Stream Processing container. The default value is **127.0.0.1**.
@@ -71,8 +71,8 @@ Explore the settings for the getMaxByGroup window:
    - `Redis prefix`: Enables you to set a unique prefix for the Redis hash table. The prefix must be the same as the prefix that you set in the saveToRedis window so that it can perform a lookup. The default value is **stream**.
    - `Query`: This table sets the query condition. This is the condition used to query data from the Redis hash table before performing aggregation. In this example, all records are selected from the Redis table where the `sensor_group` from the Input event matches the `SENSOR_GROUP` field in the Redis hash table. Then, the aggregation function is applied in the output mapping. 
    - `Time field`: Defines the time reference used for retention counting. The default value is **(use system clock)**, but you can change it and specify a timestamp field from the Input event.
-3. Click  <img src="/img/output-schema-icon.png" alt="output schema icon" width=3% height=auto/>. 
-4. Click  <img src="/img/edit-icon.png" alt="edit icon" width=3% height=auto/>. The following fields are listed:
+3. Click  <img src="img/output-schema-icon.png" alt="output schema icon" width=3% height=auto/>. 
+4. Click  <img src="img/edit-icon.png" alt="edit icon" width=3% height=auto/>. The following fields are listed:
     - `sensor_id`: This field is mapped to **Input, so it is received from the Input event.
     - `sensor_group`: This field is mapped to **Input, so it is received from the Input event.
     - `sensor_stmp`: This field is mapped to **Input, so it is received from the Input event.
@@ -88,8 +88,8 @@ Explore the settings for the getSavedStamp window:
    - `Redis prefix`: Enables you to set a unique prefix for the Redis hash table. The default value is **stream**.
    - `Query`: This table sets the query condition. In this example, the Redis hash table is searched for a record where the input field, `sensor_id`, is equivalent to the field `SENSOR_ID`.
     - `Time field`: Defines the time reference used for retention counting. The default value is **(use system clock)**, but you can change it and specify a timestamp field from the Input event.
-3. Click <img src="/img/output-schema-icon.png" alt="output schema icon" width=3% height=auto/>. 
-4. Click <img src="/img/edit-icon.png" alt="edit icon" width=3% height=auto/>. The following fields are listed:
+3. Click <img src="img/output-schema-icon.png" alt="output schema icon" width=3% height=auto/>. 
+4. Click <img src="img/edit-icon.png" alt="edit icon" width=3% height=auto/>. The following fields are listed:
     - `sensor_id`: This field is mapped to **Input, so it is received from the Input event.
     - `sensor_group`: This field is mapped to **Input, so it is received from the Input event.
     - `sensor_stmp`: This field is mapped to **Input, so it is received from the Input event.

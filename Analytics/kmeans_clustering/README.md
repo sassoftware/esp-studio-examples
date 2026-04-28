@@ -48,7 +48,7 @@ Explore the settings for the w_source window:
 3. Expand **Input Data (Publisher) Connectors**. Notice the file and socket connector called **events_Connector**.
 4. Select the connector and click ![edit icon](img/edit-icon.png). Notice that the value of **Fsname** is a path that points to `events.csv`.
 5. Click **OK**.
-6. Click <img src="/Analytics/analytics_kmeans/img/output-schema-icon.png" alt="Description" width="3%" height=auto>. See the following fields:
+6. Click <img src="img/output-schema-icon.png" alt="Description" width="3%" height=auto>. See the following fields:
    - `id`: Primary key 
    - `x_c`: An x coordinate of data
    - `y_c`: A y coordinate of data

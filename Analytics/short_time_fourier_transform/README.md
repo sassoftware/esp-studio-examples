@@ -38,10 +38,10 @@ Here is a diagram of the project:
 Explore the settings for the w_source window by doing the following steps:
 1. Open the project in SAS Event Stream Processing Studio and select the w_source window.
 2. Expand **Input Data (Publisher) Connectors**. Notice the file and socket connector called **input_Connector**.
-3. Click <img src="/Analytics/analytics_STFT/img/edit-icon.png" alt="edit icon" width=3% height=auto/>. Notice that the **Fsname** points to `input.csv`.
+3. Click <img src="img/edit-icon.png" alt="edit icon" width=3% height=auto/>. Notice that the **Fsname** points to `input.csv`.
 4. Click **OK**.
 5. Expand **State and Event Type**. Notice that the project accepts only Insert events.
-6. Click <img src="/Analytics/analytics_STFT/img/output-schema-icon.png" alt="output schema icon" width=3% height=auto/>. Fields include:
+6. Click <img src="img/output-schema-icon.png" alt="output schema icon" width=3% height=auto/>. Fields include:
    - `ID`: Primary key or time identifier
    - `y`: Signal value
 
