@@ -33,9 +33,11 @@ Each row contains the following data:
 The workflow contains two continuous queries called internal and external continuous query.
 
 Here is the internal continuous query:
+
 ![Internal Contquery Windows](img/internalForwarding.png "Internal Contquery Windows")
 
 Here is the external continuous query:
+
 ![External Contquery Windows](img/externalForwarding.png "External Contquery Windows")
 
 - The weatherReadings window is a Source window that reads the input file.
@@ -70,7 +72,7 @@ Explore the settings for the convertTemp window:
          f = int(c * 1.8 + 32)  # Celsius → Fahrenheit
     ```
 
-4. Expand **Event Forwarding**. Notice that the continuous query is `external`, the window is `readingsFahrenheit`, and the block size is `1`.
+4. Expand **Event Forwarding**. Notice that the continuous query is **external**, the window is **readingsFahrenheit**, and the block size is `1`.
 
 ### readingsFahrenheitInternal
 
@@ -89,7 +91,7 @@ The external continuous query receives events from the internal continuous query
 Explore the settings for the readingsFahrenheitExternal window:
 1. Open the project in SAS Event Stream Processing Studio and select the readingsFahrenheit window.
 2. In the right pane, expand **Properties**.
-3. Expand **Event Forwarding**. Notice the text that says, **Incoming connection for event forwarding**. It points to the `convertTemp` window in the `internal` continuous query, and the block size is `1`.
+3. Expand **Event Forwarding**. Notice the text that says, **Incoming connection for event forwarding**. It points to the **convertTemp** window in the **internal** continuous query, and the block size is `1`.
 
 ### tempMinMax
 
@@ -101,7 +103,7 @@ Event forwarding connections can be made inactive by setting the active attribut
 1. Select an event forwarding window
 2. Expand **Event Forwarding**. You should see a table similar to the figure below:  
    ![Event Forwarding Grid](img/EFGrid.png "Event Forwarding Grid")
-3. Deselect the continuous query that you want to deactivate event forwarding for. When you turn off event forwarding, the corresponding connection has a <img src="img/pauseIcon.png" alt="Pause Icon" style="height:auto;"/> next to it. An inactive event forwarding connection does not send events to the destination window.
+3. Deselect the continuous query that you want to deactivate event forwarding for. When you turn off event forwarding, the corresponding connection has a ![Pause Icon](img/pauseIcon.png) next to it. An inactive event forwarding connection does not send events to the destination window.
 
 ![Inactive Event Forwarding Connection](img/inactiveEFConnection.png "Inactive Event Forwarding Connection")
 
