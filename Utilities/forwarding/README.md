@@ -1,117 +1,113 @@
-# Introduction to Python-Based Event Forwarding: Weather Station Temperature Conversion  
+# Introduction to Python-Based Event Forwarding: Weather Station Temperature Conversion
 
 ## Overview
-This SAS Event Stream Processing (ESP) project demonstrates how to use a Python window to transform and forward streaming events between continuous queries. The example shows how to ingest batched temperature readings from weather stations, split them into individual events, and convert temperatures from Celsius to Fahrenheit. 
+This SAS Event Stream Processing (ESP) project demonstrates how to use a Python window to transform and forward streaming events between continuous queries. The example shows how to ingest batched temperature readings from weather stations, split them into individual events, and convert temperatures from Celsius to Fahrenheit.
 
-In this project, the Python window is configured to emit multiple events per input row and forward them to another source window using the event forwarding feature available on Python and Lua windows.
+In this project, the Python window is configured to emit multiple events per input row and forward them to another Source window using the event forwarding feature available for Python and Lua windows.
 
 For more information about how to install and use example projects, see [Using the Examples](https://github.com/sassoftware/esp-studio-examples#using-the-examples).
 
 ## Use Case
 
-Here are a few scenarios when event forwarding is useful:
-- Inbound events contain arrays or batched values that benefit from being extrapolated and processed as individual events.
-- Different continuous queries need to be connected through forwarding.
-
-This example illustrates these patterns through weather sensor data processing.
+Event forwarding is useful when inbound events contain arrays or batched values that benefit from being extrapolated and processed as individual events. It is also useful when different continuous queries need to be connected through forwarding. This example illustrates these patterns through weather sensor data processing.
 
 ## Source Data
 
-The `weather_input.csv` file contains sample weather station data.  
+The `weather_input.csv` file contains sample weather station data.
 
 Each row contains the following data:
-- Station identifier  
-- Station name  
-- Year  
-- An array of temperatures measured in Celsius  
+- Station identifier
+- Station name
+- Year
+- An array of temperatures measured in Celsius
 
 ### Example Data:
 
-| id    | station_id        | year      | readings    |
+| ID    | station_id        | Year      | Readings    |
 | ---   | ---               |---        | ---         |
 |1      | WeatherStationA   | 2024      | [9;19;12;5] |
 |2      | WeatherStationB   | 2025      | [8;21;11;5] |
 
 ## Workflow
-The workflow contains two Continuous Queries:
 
-### Internal Continuous Query
-![Internal Contquery Windows](img/internalForwarding.png "Internal Contquery Windows")  
+The workflow contains two continuous queries called internal and external continuous query.
 
-### External Continuous Query
-![External Contquery Windows](img/externalForwarding.png "External Contquery Windows")  
+Here is the internal continuous query:
+![Internal Contquery Windows](img/internalForwarding.png "Internal Contquery Windows")
+
+Here is the external continuous query:
+![External Contquery Windows](img/externalForwarding.png "External Contquery Windows")
 
 - The weatherReadings window is a Source window that reads the input file.
 - The convertTemp window is a Python window that performs the transformation.
 - The readingsFahrenheitInternal window is a Source window that receives the forwarded events and writes them to an output file.
 - The readingsFahrenheitExternal window is a Source window that receives the forwarded events and passes them downstream for aggregation.
-- The tempMinMax window is an aggregate window that collates the highest and lowest temperatures recorded at each weather station.
+- The tempMinMax window is an Aggregate window that collects the highest and lowest temperatures recorded at each weather station.
 
-**NOTE:** In SAS Event Stream Processing Studio, you can toggle between the two continuous queries to see all of the windows. At the top of your screen, select **external** from the drop down list.  
+**NOTE:** In SAS Event Stream Processing Studio, you can toggle between the two continuous queries to see all of the windows. At the top of your screen, select a different continuous query from the drop-down list.
 
-## Internal Windows
+## Internal Continuous Query Windows
 
-The internal contquery runs the temperature conversion and uses event forwarding to pass these events to a source window that saves the ouput to a file.
+The internal continuous query runs the temperature conversion and uses event forwarding to pass the events to a Source window that saves the output to a file.
 
-### internal/weatherReadings
+### weatherReadings
 
 Explore the settings for the weatherReadings window:
-1. Open the project in SAS Event Stream Processing Studio and select the weatherReadings window. 
+1. Open the project in SAS Event Stream Processing Studio and select the weatherReadings window.
 2. Click <img src="img/outputSchema.png" alt="output schema icon" style="width:3%; height:auto;"/>. The window produces events that contain the following fields:
-  - `station_id`  
-  - `station_name`  
-  - `year`  
-  - `temperatures` 
+- `station_id`
+- `station_name`
+- `year`
+- `temperatures`
 
-### internal/convertTemp
+### convertTemp
 
 Explore the settings for the convertTemp window:
-1. Open the project in SAS Event Stream Processing Studio and select the convertTemp window. 
+1. Open the project in SAS Event Stream Processing Studio and select the convertTemp window.
 2. In the right pane, expand **Properties**.
-3. Expand **Python Settings**. In the **Code source** window, notice the function that converts Fahrenheit to Celcius:     
+3. Expand **Python Settings**. In the **Code source** window, notice the function that converts Fahrenheit to Celsius:
     ```
          f = int(c * 1.8 + 32)  # Celsius → Fahrenheit
     ```
 
-4. Expand **Event Forwarding**. Notice that the continuous query is `external`, the window is `readingsFahrenheit`, and the block size is `1`. 
+4. Expand **Event Forwarding**. Notice that the continuous query is `external`, the window is `readingsFahrenheit`, and the block size is `1`.
 
-### internal/readingsFahrenheitInternal
+### readingsFahrenheitInternal
 
 Explore the settings for the readingsFahrenheitInternal window:
-1. Open the project in SAS Event Stream Processing Studio and select the readingsFahrenheit window. 
+1. Open the project in SAS Event Stream Processing Studio and select the readingsFahrenheit window.
 2. In the right pane, expand **Properties**.
-3. Expand **Event Forwarding**. Notice the text that says, **Incoming connection for event forwarding**. It points to the `convertTemp` window in the `internal` continuous query, and the block size is `1`. 
+3. Expand **Event Forwarding**. Notice the text that says, **Incoming connection for event forwarding**. It points to the **convertTemp** window in the **internal** continuous query, and the block size is **1**.
 
 
-## External Windows
+## External Continuous Query Windows
 
-The external contquery receives events from the internal contquery and runs basic aggregation functions to find the minimum and maximum weather readings at each station.
+The external continuous query receives events from the internal continuous query and runs basic aggregation functions to find the minimum and maximum weather readings at each station.
 
-### external/readingsFahrenheitExternal
+### readingsFahrenheitExternal
 
 Explore the settings for the readingsFahrenheitExternal window:
-1. Open the project in SAS Event Stream Processing Studio and select the readingsFahrenheit window. 
+1. Open the project in SAS Event Stream Processing Studio and select the readingsFahrenheit window.
 2. In the right pane, expand **Properties**.
-3. Expand **Event Forwarding**. Notice the text that says, **Incoming connection for event forwarding**. It points to the `convertTemp` window in the `internal` continuous query, and the block size is `1`. 
+3. Expand **Event Forwarding**. Notice the text that says, **Incoming connection for event forwarding**. It points to the `convertTemp` window in the `internal` continuous query, and the block size is `1`.
 
-### external/tempMinMax
+### tempMinMax
+
 The tempMinMax aggregates the highest and lowest temperatures at each weather station using an aggregate window.
 
 ## Event Forwarding Connection Active State
-Event Forwarding Connections can be made inactive by setting their active attribute to false, this can via the following steps:
-1. Select an event forwarding window 
-2. Expand **Event Forwarding**. Notice the checkboxes in the grid.
-3. Toggling the active state will update the corresponding event forwarding connection in the diagram.
 
-![Event Forwarding Grid](img/EFGrid.png "Event Forwarding Grid")
+Event forwarding connections can be made inactive by setting the active attribute to false. To do this, complete the following steps:
+1. Select an event forwarding window
+2. Expand **Event Forwarding**. You should see a table similar to the figure below:  
+   ![Event Forwarding Grid](img/EFGrid.png "Event Forwarding Grid")
+3. Deselect the continuous query that you want to deactivate event forwarding for. When you turn off event forwarding, the corresponding connection has a <img src="img/pauseIcon.png" alt="Pause Icon" style="height:auto;"/> next to it. An inactive event forwarding connection does not send events to the destination window.
 
 ![Inactive Event Forwarding Connection](img/inactiveEFConnection.png "Inactive Event Forwarding Connection")
 
-An inactive event forwarding connection will not send events to the destination window.
-
 ## Test the Project and View the Results
 
-As this test passes data between continuous queries, you need to manually enable the window in the **external** continous query. To enable the window, do the following steps:
+As this test passes data between continuous queries, you need to manually enable the window in the **external** continuous query. To enable the window, do the following steps:
 1. Click **Enter Test Mode**.
 2. From the **Continuous query** drop down, select **external**.
 3. Select **readingsFahrenheit**.
@@ -120,26 +116,24 @@ As this test passes data between continuous queries, you need to manually enable
 This is what the settings should look like once the window is enabled:  
 ![Enabling Output Window](img/testModeForwarding.png "Enabling Output Window")
 
-When you test the project in ESP Studio, you will see results on the following tabs:
+When you test the project in ESP Studio, the results for each window appear on separate tabs:
+- The **internal/weatherReadings** tab lists the incoming data:  
+  <img src="img/weatherReadings.png" alt="Weather readings from weather stations" style="width:75%; height:auto;"/>
 
- - The internal/weatherReadings tab lists the incoming data:  
-<img src="img/weatherReadings.png" alt="Weather readings from weather stations" style="width:75%; height:auto;"/>  
-
- - The internal/convertTemp and external/readingsFahrenheit tab list the same results. This makes sense because the convertTemp window produces the event and then forwards them to the readingsFahrenheit window, which produces the `result.out` file:  
-<img src="img/convertTemp.png" alt="Extrapolated events generated by Python window" style="width:75%; height:auto;"/>  
-<img src="img/outputsForwarding.png" alt="Example Output" style="width:75%; height:auto;"/>
+- The **internal/convertTemp** and **external/readingsFahrenheit** tabs list the same results. This makes sense because the convertTemp window produces the event and forwards them to the readingsFahrenheit window, which produces the `result.out` file:  
+  <img src="img/convertTemp.png" alt="Extrapolated events generated by Python window" style="width:75%; height:auto;"/>  
+  <img src="img/outputsForwarding.png" alt="Example Output" style="width:75%; height:auto;"/>
 
 ## Next Steps
 
-Event forwarding enables Source windows to act as destinations for transformed event streams. This allows continuous queries to be chained without external connectors. After creating the readingsFahrenheit stream, there are several extension options:
+Event forwarding enables Source windows to act as destinations for transformed event streams. This enables continuous queries to be chained without external connectors. After you create the readingsFahrenheit stream, there are several extension options:
 
- - Add further processing in the external contquery by applying aggregations, threshold checks, anomaly detection, or rolling statistics in downstream continuous queries.
- - Output to external systems by forwarding the transformed events to databases, message queues, or files for integration with other applications.
- - Extend Python logic by enriching events, adding validation, or incorporating lightweight analytics or model inference after forwarding.
- - Create branching pipelines by forwarding events to multiple destination windows or additional continuous queries to build modular, multi-stage event stream pipelines.
- - Apply the pattern to other data types by using the same expansion-and-forwarding approach for any batched or nested sensor, financial, or multimedia data.
+- Add further processing in the external continuous query by applying aggregations, threshold checks, anomaly detection, or rolling statistics to downstream continuous queries.
+- Output to external systems by forwarding the transformed events to databases, message queues, or files for integration with other applications.
+- Extend Python logic by enriching events, adding validation, or incorporating lightweight analytics or model inference after forwarding.
+- Create branching pipelines by forwarding events to multiple destination windows or additional continuous queries to build modular, multi-stage event stream pipelines.
+- Apply the pattern to other data types by using the same expansion-and-forwarding approach for any batched or nested sensor, financial, or multimedia data.
 
 ## Additional Resources
-
 
 For more information, see [SAS Help Center Working with Python Windows](https://go.documentation.sas.com/doc/bo/espcdc/default/espstudio/n07ceo2bin2787n1s1askvbca871.htm).
