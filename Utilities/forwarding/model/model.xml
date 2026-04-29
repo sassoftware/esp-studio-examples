@@ -1,15 +1,15 @@
 <project heartbeat-interval="1" name="forwarding" pubsub="auto" threads="4">
   <description><![CDATA[This project provides a minimal working example of Python-based event forwarding within a simple ESP project, converting weather station temperature readings from Celsius to Fahrenheit.]]></description>
   <metadata>
-    <meta id="layout">{"cq":{"convertTemp":{"x":50,"y":175},"python":{"x":50,"y":175},"source":{"x":50,"y":50},"weatherReadings":{"x":50,"y":50}},"cq2":{"readingsFahrenheit":{"x":50,"y":50}}}</meta>
-    <meta id="studioUploadedBy">anonymousUser</meta>
-    <meta id="studioUploaded">1764946380418</meta>
-    <meta id="studioModifiedBy">anonymousUser</meta>
-    <meta id="studioModified">1764946532193</meta>
+    <meta id="layout">{"cq2":{"readingsFahrenheitExternal":{"x":50,"y":50}},"external":{"readingsFahrenheitExternal":{"x":50,"y":50},"tempMinMax":{"x":50,"y":175}},"internal":{"convertTemp":{"x":50,"y":175},"python":{"x":50,"y":175},"readingsFahrenheitInternal":{"x":50,"y":295},"source":{"x":50,"y":50},"tempMinMax":{"x":-5,"y":440},"weatherReadings":{"x":50,"y":50}}}</meta>
+    <meta id="studioUploadedBy">anonymous_user</meta>
+    <meta id="studioUploaded">1777290729143</meta>
+    <meta id="studioModifiedBy">anonymous_user</meta>
+    <meta id="studioModified">1777290734483</meta>
     <meta id="studioTags">Example</meta>
   </metadata>
   <contqueries>
-    <contquery name="cq" trace="weatherReadings convertTemp">
+    <contquery name="internal" trace="weatherReadings convertTemp">
       <windows>
         <window-source index="pi_EMPTY" insert-only="true" name="weatherReadings">
           <schema>
@@ -62,7 +62,8 @@ def create(data, context):
     return events]]></code>
           <forwarding>
             <destinations>
-              <destination window="readingsFahrenheit" contquery="cq2" blocksize="1"/>
+              <destination active="true" blocksize="1" contquery="external" window="readingsFahrenheitExternal"/>
+              <destination active="true" blocksize="1" contquery="internal" window="readingsFahrenheitInternal"/>
             </destinations>
           </forwarding>
           <connectors>
@@ -76,14 +77,7 @@ def create(data, context):
             </connector>
           </connectors>
         </window-python>
-      </windows>
-      <edges>
-        <edge source="weatherReadings" target="convertTemp"/>
-      </edges>
-    </contquery>
-    <contquery name="cq2" trace="readingsFahrenheit">
-      <windows>
-        <window-source index="pi_EMPTY" insert-only="true" name="readingsFahrenheit">
+        <window-source index="pi_HASH" name="readingsFahrenheitInternal">
           <schema>
             <fields>
               <field key="true" name="id" type="string"/>
@@ -92,19 +86,42 @@ def create(data, context):
               <field name="temperature_f" type="int32"/>
             </fields>
           </schema>
-          <connectors>
-            <connector class="fs" name="final_readings_Connector_1">
-              <properties>
-                <property name="type"><![CDATA[sub]]></property>
-                <property name="fstype"><![CDATA[csv]]></property>
-                <property name="fsname"><![CDATA[@ESP_PROJECT_OUTPUT@/final_readings.csv]]></property>
-                <property name="snapshot"><![CDATA[true]]></property>
-                <property name="dateformat"><![CDATA[%Y-%m-%d %H:%M:%S]]></property>
-              </properties>
-            </connector>
-          </connectors>
         </window-source>
       </windows>
+      <edges>
+        <edge source="weatherReadings" target="convertTemp"/>
+      </edges>
+    </contquery>
+    <contquery name="external" trace="readingsFahrenheitExternal">
+      <windows>
+        <window-source index="pi_HASH" name="readingsFahrenheitExternal">
+          <schema>
+            <fields>
+              <field key="true" name="id" type="string"/>
+              <field name="station_name" type="string"/>
+              <field name="year" type="int32"/>
+              <field name="temperature_f" type="int32"/>
+            </fields>
+          </schema>
+        </window-source>
+        <window-aggregate index="pi_HASH" name="tempMinMax">
+          <schema>
+            <fields>
+              <field key="true" name="station_name" type="string"/>
+              <field key="true" name="year" type="int32"/>
+              <field name="max_temp_f" type="int32"/>
+              <field name="min_temp_f" type="int32"/>
+            </fields>
+          </schema>
+          <output>
+            <field-expr><![CDATA[ESP_aMax(temperature_f)]]></field-expr>
+            <field-expr><![CDATA[ESP_aMin(temperature_f)]]></field-expr>
+          </output>
+        </window-aggregate>
+      </windows>
+      <edges>
+        <edge source="readingsFahrenheitExternal" target="tempMinMax"/>
+      </edges>
     </contquery>
   </contqueries>
 </project>
