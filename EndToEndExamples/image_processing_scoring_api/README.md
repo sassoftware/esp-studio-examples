@@ -13,7 +13,7 @@ A fixed camera monitors a fire exit corridor. When a person, bag, bin, or any ot
 
 ## Source Data and Other Files
 - `model.xml` is the project associated with this example.
-- `test_files/static.jpg` is a reference image of the empty corridor with no obstructions. It is used as the static background for background subtraction.
+- `files/static.jpg` is a reference image of the empty corridor with no obstructions. It is used as the static background for background subtraction.
 - `test_files/frame_bin.jpg` is a sample input frame showing a bin placed in front of the fire exit.
 - `test_files/frame_bag.jpg` is a sample input frame showing a bag placed in front of the fire exit.
 - `test_files/frame_person.jpg` is a sample input frame showing a person standing in front of the fire exit.
