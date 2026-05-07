@@ -3,9 +3,9 @@
   <metadata>
     <meta id="layout">{"cv_cq":{"undefined":{"x":-285,"y":40},"w_annotate":{"x":50,"y":1035},"w_background_subtract":{"x":315,"y":175},"w_blur":{"x":315,"y":540},"w_ccl":{"x":195,"y":790},"w_contrast":{"x":315,"y":420},"w_fire_exit_filter":{"x":290,"y":910},"w_gray":{"x":315,"y":295},"w_join":{"x":50,"y":910},"w_source":{"x":55,"y":60},"w_thresh":{"x":315,"y":665},"w_thresh_viz":{"x":435,"y":790}}}</meta>
     <meta id="studioUploadedBy">anonymous_user</meta>
-    <meta id="studioUploaded">1774603243699</meta>
+    <meta id="studioUploaded">1778059690253</meta>
     <meta id="studioModifiedBy">anonymous_user</meta>
-    <meta id="studioModified">1774606034829</meta>
+    <meta id="studioModified">1778059814733</meta>
     <meta id="studioTags">Example</meta>
   </metadata>
   <contqueries>
@@ -41,7 +41,7 @@ _BG = None
 def _load_background():
     global _BG
     if _BG is None:
-        path = os.path.join(os.environ.get("ESP_PROJECT_HOME", ""), "test_files", "static.jpg")
+        path = os.path.join(os.environ.get("ESP_PROJECT_HOME", ""), "files", "static.jpg")
         _BG = cv2.imread(path).astype(np.float32)
     return _BG
 
@@ -162,7 +162,7 @@ i.e. imagine a text document, thresholding will determine which pixels are text 
               <property name="function"><![CDATA[SAUVOLA]]></property>
               <property name="outputEncoding"><![CDATA[jpg]]></property>
               <property name="windowSize"><![CDATA[151]]></property>
-              <property name="k"><![CDATA[0.4]]></property>
+              <property name="k"><![CDATA[0.8]]></property>
               <property name="t"><![CDATA[0.9]]></property>
               <property name="binLength"><![CDATA[256]]></property>
               <property name="stretch"><![CDATA[1]]></property>
