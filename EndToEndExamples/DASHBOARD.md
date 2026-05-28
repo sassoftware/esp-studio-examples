@@ -14,7 +14,7 @@ Before you import the dashboard, you must update `grafana.json` for your environ
 
 1. Download the `grafana.json` file to your system.
 2. Find the Kubernetes namespace where SAS Event Stream Processing and Grafana are running. You can do this in SAS Event Stream Processing Studio or your command line interface (CLI).
-   1. To find the namespace in SAS Event Stream Processing Studio do the following:
+   1. To find the namespace in SAS Event Stream Processing Studio, do the following:
       1. In SAS Event Stream Processing Studio, open a project.
       2. In the toolbar, select the **ESP server** drop-down list. The namespace is displayed next to ![Kubernetes Cluster icon](KubernetesClusterIcon.png)
    2. To find the namespace using the command line interface, use the following command:
