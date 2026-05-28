@@ -8,15 +8,15 @@ Before you begin the process of importing the Grafana dashboard, make sure you h
 - A data source that is configured in Grafana for the SAS Event Stream Processing Studio application. For more information, see [Add the SAS Event Stream Processing Data Source](https://github.com/sassoftware/grafana-esp-plugin/blob/main/README.md#add-the-sas-event-stream-processing-data-source).
 - The example project is installed on the SAS Event Stream Processing Studio application and is running in test mode. For more information, see [Using the Examples](../README.md#using-the-examples).
 
-## Update grafana.json file
+## Update the grafana.json file
 
 Before you import the dashboard, you must update `grafana.json` for your environment because the ESP Server connection URL is different in each cluster.
 
 1. Download the `grafana.json` file to your system.
 2. Find the Kubernetes namespace where SAS Event Stream Processing and Grafana are running. You can do this in SAS Event Stream Processing Studio or your command line interface (CLI).
-   1. To find the namespace in SAS Event Stream Processing Studio:
+   1. To find the namespace in SAS Event Stream Processing Studio do the following:
       1. In SAS Event Stream Processing Studio, open a project.
-      2. In the toolbar, select the **ESP server** drop-down list. The namespace is displayed next to <img alt="Kubernetes Cluster icon" height="7" src="KubernetesClusterIcon.png" width="7"/>
+      2. In the toolbar, select the **ESP server** drop-down list. The namespace is displayed next to ![Kubernetes Cluster icon](KubernetesClusterIcon.png)
    2. To find the namespace using the command line interface, use the following command:
       ```bash
       kubectl get deployment sas-event-stream-processing-studio-app -o jsonpath="{.metadata.namespace}"
