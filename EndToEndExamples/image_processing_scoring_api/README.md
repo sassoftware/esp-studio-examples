@@ -450,7 +450,7 @@ The following figure shows an example of the colorized label-map output, `visIma
 The images provided in this example are to be used only with the project provided. Using or altering these images beyond the example for any other purpose is prohibited.
 
 ## Additional Resources
-- For more information about the Scoring API, see [SAS Help Center: Using the Scoring API](https://go.documentation.sas.com/doc/en/espcdc/default/esprestapi/n0gu06h4g3lisgn1y1i56p97o5x6.htm).
+- For more information about the Scoring API, see [SAS Help Center: Using the Scoring API](https://documentation.sas.com/?cdcId=espcdc&cdcVersion=v_077&docsetId=espcreatewindows&docsetTarget=p0k6ghxdrqnbasn1nn9mv9dn4fmq.htm).
 - For more information about the Connected Component Labeling algorithm in SAS Event Stream Processing, see [SAS Help Center: ConnectedComponentLabeling Algorithm](https://go.documentation.sas.com/doc/en/espcdc/default/espan/n0tippzgzce4uzn1kin6j79h732v.htm).
 - For more information about the HighDimensionalDSP algorithm, see [SAS Help Center: HighDimensionalDSP Algorithm](https://go.documentation.sas.com/doc/en/espcdc/default/espan/n0tippzgzce4uzn1kin6j79h732v.htm).
 - For more information about using Python windows in SAS Event Stream Processing, see [SAS Help Center: Using Python Windows](https://go.documentation.sas.com/doc/en/espcdc/default/espcreatewindows/p0jsgd7e0fa40ln16wxod1qpj9d2.htm).
