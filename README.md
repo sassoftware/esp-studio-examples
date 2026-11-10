@@ -72,7 +72,6 @@ The [Input Streams](/InputStreams) directory contains projects that demonstrate 
 | [connector_orchestration](/InputStreams/connector_orchestration) | Use connector orchestration to manage multiple connectors in a project.<br>This example demonstrates connector orchestration. This is a feature that controls the sequence and state of connector execution. |
 | [lua_connector](/InputStreams/lua_connector) | Use a Lua connector.<br>This example contains a Source window with a Lua connector that reads RSS feeds from scientific sites and publishes them into the project. <br>**Note:** Use this example with SAS Event Stream Processing 2023.04 and later.|
 | [python_connector](/InputStreams/python_connector) | Use a Python connector.<br>This example contains a Source window with a Python connector that calls a JSON API to read Star Wars data and publish that data into the project every five seconds. <br>**Note:** Use this example with SAS Event Stream Processing 2023.12 and later.|
-| [source](/InputStreams/source) | Using connectors in Source windows.<br>This example demonstrates how you can use connectors to feed data from a variety of data sources into Source windows. |
 
 ### Transformations
 
