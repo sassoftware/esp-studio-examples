@@ -1,90 +1,213 @@
-# Using MCP Tools to Process Data from Sailing Boats
-## Overview
-This example processes data gathered from sailing boats, and includes configured Model Context Protocol (MCP) tools that a Large Language Model (LLM) can use to interact with the project when it runs.
+# Using ESP MCP to Expose Real-Time Analytics as AI Tools
 
-This example is based on the ["Processing Data from Sailing Boats" example](https://github.com/sassoftware/esp-studio-examples/tree/main/EndToEndExamples/sailing).
+## Why use ESP MCP with LLMs?
 
-For more information about how to install and use example projects, see [Using the Examples](https://github.com/sassoftware/esp-studio-examples#using-the-examples).
+SAS Event Stream Processing (ESP) is designed to process streaming data in real time. This value can be enhanced when business users, analysts, and AI assistants can ask for live operational insights without needing to understand the underlying event stream, data model, or project logic.
+
+Model Context Protocol (MCP) bridges that gap by allowing an ESP project expose project logic and operations as structured, discoverable capabilities:
+
+- Tools for actions such as publishing data, querying state, or scoring models
+- Prompts that package common tasks and expected inputs
+- Apps that provide chatbots with a rich user interface
+
+Through these primitives, ESP MCP enables an MCP client (such as an LLM) to combine:
+
+- real-time streaming analytics,
+- project logic that already exists in ESP,
+- operational tools exposed in a consistent way,
+- and a governed set of actions that can be invoked by an MCP client.
+
+That is the value of ESP MCP: it allows AI systems to work with live data pipelines and decision logic, rather than substituting a generic chat interface for a real-time analytics engine.
+
+This example uses the sailing use case to demonstrate that pattern in a practical way. It shows how a boat telemetry stream can be translated into MCP tools that an LLM can use to answer questions or trigger actions against the project.
 
 ## Use Case
 
-This example identifies two geographical areas of interest. One area is a dockyard exclusion zone that boats are not permitted to enter. The other area is a marina where a speed restriction is applied.
+This example is based on the sailing example, which identifies two geographic areas of interest:
 
-This example includes several preconfigured MCP tools that interact with the project to publish and query data in specific windows. It also processes data by using an included Python snippet and scores data by using the Scoring API. These MCP tools are used by an LLM to perform the MCP tool's function.
+- a dockyard exclusion zone that boats are not permitted to enter
+- a marina where a speed restriction is applied
 
-This project uses CSV files that contain historical data. When a similar model is deployed in a live environment, real-time data sources might be used instead.
+The project reads boat telemetry from CSV files and processes it through a sequence of windows that:
 
-## Source Data
+- ingest boat positions,
+- unify and enrich events,
+- evaluate whether a boat is inside the exclusion zone,
+- detect speeding events,
+- retain recent state and aggregate important outcomes.
 
-- The [geoArea.csv](geoArea.csv) file contains events that relate to the two geographical areas of interest.
+The MCP layer adds an AI-friendly interface on top of that project. It exposes reusable operations for an MCP client such as Claude, ChatGPT, VS Code, or SAS Retrieval Agent Manager.
 
-- The [boat1.csv](boat1.csv), [boat2.csv](boat2.csv), [boat3.csv](boat3.csv), and [boat4.csv](boat4.csv) files contain geographical coordinates of the boats' movements.
+The project contains several preconfigured MCP tools:
 
-## Workflow
+- PublishAreaOfInterest: publishes a new area-of-interest event into the Areas_Of_Interest stream
+- QueryExclusionZoneViolations: queries recent exclusion-zone data from the relevant window
+- ObtainSpeedingEvents: filters retained boat data using area name and speed threshold and returns the results
+- CheckBoatInExclusionZone: submits a boat position to a scoring flow and returns whether that point is inside the exclusion zone
 
-The following figure shows the diagram of the project:
+The ESP project also includes Python snippet logic for these operations. The logic is not the focus here; the main point is that the same business logic that runs in the streaming model can also be surfaced to AI clients through MCP.
 
-![Diagram of the project](img/sailing.png "Diagram of the project")
+For a more detailed description of the underlying sailing workflow, see the [sailing example](../sailing/README.md).
 
-- The Boat1, Boat2, Boat3, and Boat 4 windows are Source windows. They receive event streams from the four boats identified.
-- The Areas_Of_Interest window is a Source window. It receives an event stream defining the two areas of interest that the boats are not permitted to enter.
-- The Compute_ID1, Compute_ID2, Compute_ID3, and Compute_ID4 windows are Source windows. They assign a boat number to each of the four boats. This allows SAS Event Stream Processing to differentiate the boats before joining the streams together for processing.
-- The Union_All_Boats window is a Union window. It unifies the boats’ event streams.
-- The Geofence_Area_Check window is a Geofence window. It defines the areas of interest, specifically the Rosyth Dockyard and Port Edgar Marina.
-- The Retention_30Min window is a Copy window. It is used to transition the model from stateless to stateful.
-- The Filter_Inside_Exclusion_Zone and Filter_Speeding_In_Marina windows are Filter windows. They identify whether any of the boats have entered the exclusion zone or speed restriction zone and if any of the boats were speeding.
-- The Last_Exclusion_Violation and Last_Speeding_Event windows are Aggregate windows. They aggregate the last exclusion violation and the last speeding event.
+## MCP concepts in ESP Studio
 
-The following MCP tools are configured within the project:
-- PublishAreaOfInterest: Publishes an event into the Areas_Of_Interest window.
-- QueryExclusionZoneViolations: Queries the data in the Filter_Inside_Exclusion_Zone window.
-- ObtainSpeedingEvents: Accepts the `areaName` and `speedLimit` parameters and passes them through the obtainSpeedingEvents function within the MCP_snippets python snippet. The obtainSpeedingEvents function filters retained boat data by the area name and speed limit arguments provided to return an array for each boat and the number of speeding violations that the boat incurred within the specified area. It also writes the array returned by the obtainSpeedingEvents function.
-- CheckBoatInExclusionZone: Accepts the `dateTime`, `heading`, `speed`, `lat`, and `long` parameters. The Scoring API is used to publish the data provided through the LLM into the Score_Boat window, and the Filter_Inside_Exclusion_Zone window is used to "score" the data. If the Filter_Inside_Exclusion_Zone produces an event as a result of the scoring action, the boat described by the data falls within the exclusion zone, otherwise the boat is outside the exclusion zone.
-The processExclusionViolationCheck function accepts the output of the scoring action and returns a string that indicates whether the specified parameters represent a boat within the exclusion zone.
+At a high level, ESP supports three common MCP primitives:
 
-## Test the Project and View the Results
+- Tools: actions that the MCP client can call to perform work in the ESP project
+- Prompts: predefined instructions or task templates that package common user tasks
+- Apps: reusable user interfaces or task flows surfaced to the MCP client
 
-If you do not use the **Install example** button in SAS Event Stream Processing Studio, it is recommended that you do not use the **Publish** button in SAS Event Stream Processing Studio. This is because the project includes connector orchestration. Instead, edit the file paths in the publisher connectors in the Boat1, Boat2, Boat3, Boat4, and Areas_Of_Interest windows so that they refer to the location in your system where you placed the CSV files. For more information, see [SAS Help Center: Configure a File and Socket Connector](https://go.documentation.sas.com/doc/en/espcdc/default/espstudio/n0esv2n0cbbpgcn1r281krr1iv6q.htm#n0y87cwr7q5vo6n1qlfcey182vt6).
+In this example, the primary focus is on tools. However, the same project can also be used as a foundation for prompts and apps in real deployments.
 
-When you test the project, the results for each window appear on separate tabs.
+The key idea is that an LLM does not need to know how to operate the ESP project directly. The LLM only needs to know which MCP tools are available, what they do, and what inputs they expect.
 
-The following figure shows the results for the Last_Speeding_Event tab:
+### ESP Studio: adding MCP tools and apps
 
-![Last_Speeding_Event tab](img/Last_Speeding_Event.png "Last_Speeding_Event tab")
+In ESP Studio, MCP settings are configured as part of the project definition, alongside the streaming model. The typical flow is:
 
-The following figure shows the results for the Last_Exclusion_Violation tab. It might take several minutes before events appear in this tab because speeding violations in the marina take place soon after the data stream starts, but dockyard exclusion zone violations take place later:
+1. Design the ESP project and define its windows and logic.
+2. Configure one or more MCP tools to expose the project actions.
+3. Optionally define MCP apps and prompts for common use cases.
+4. Run the project so the ESP server's MCP endpoint is exposed.
+5. Connect an MCP client to that endpoint.
 
-![Last_Exclusion_Violation tab](img/Last_Exclusion_Violation.png "Last_Exclusion_Violation tab")
+The following placeholders indicate where screenshots should be added to help users understand this flow.
 
-**NOTE:** If any table remains empty, ensure that the publisher connectors for all five Source windows are set correctly to point to the CSV files.
+![Image placeholder: ESP Studio project with the MCP configuration panel open](img/placeholder_mcp_project_config.png)
 
-### Invoking MCP Tools
-When the project is run, an MCP server is exposed. It is available at the **/eventStreamProcessing/v2/mcp** endpoint. This server advertises the MCP tools configured within the project. An LLM can be configured to connect to this MCP server, discover the project's MCP tools, and invoke them when required.
+Caption: ESP Studio showing the project-level MCP configuration. The image should highlight where tools and other MCP capabilities are configured.
 
-Major GenAI clients such as ChatGPT, Mistral Le Chat, Claude Desktop, and VS Code, support MCP tools. The process to connect them to the MCP server varies. Note that for web-based GenAI solutions, the ESP project must be run in an environment that is exposed to the internet and protected using a publicly trusted certificate authority.
+![Image placeholder: ESP Studio MCP tools list with PublishAreaOfInterest, ObtainSpeedingEvents, CheckBoatInExclusionZone, and QueryExclusionZoneViolations](img/placeholder_mcp_tools.png)
 
-The following figures show the process for connecting Mistral Le Chat to the MCP server and invoking the QueryExclusionZoneViolations tool:  
-![Mistral MCP server setup](img/Mistral_MCP_Setup.png "Mistral MCP server setup")
-![Mistral tool invocation](img/Mistral_Tool_Invocation.png "Mistral tool invocation")
+Caption: The MCP tools list for the sailing example. The screenshot should show the tool names, their types, and the input or output mapping they use.
 
-When you use a local GenAI client such as Claude Desktop or VS Code, create a project container instead. Run the container locally and connect the GenAI client to the MCP server that the container exposes.
+![Image placeholder: ESP Studio MCP app or prompt configuration](img/placeholder_mcp_apps_prompts.png)
 
-SAS Retrieval Agent Manager can also use MCP tools, including ESP projects with configured MCP functionality. SAS Retrieval Agent Manager enables you to create complex agentic workflows using Retrieval‑Augmented Generation (RAG) and MCP tools, including ESP MCP tools.
+Caption: Example of how apps or prompts are added to an ESP project. The screenshot should emphasize that tools are only one part of the MCP surface; apps and prompts are also supported.
 
-The following figures show SAS Retrieval Agent Manager accessing the MCP tools exposed by the example project and invoking the ObtainSpeedingEvents tool:
-![SAS RAM MCP tools discovery](img/RAM_MCP_Tool_Discovery.png "SAS RAM MCP tools discovery")
-![SAS RAM MCP tools invocation](img/RAM_MCP_Tool_Invocation.png "SAS RAM MCP tools invocation")
-![SAS RAM MCP query details](img/RAM_MCP_Query_Details.png "SAS RAM MCP query details")
+## Where the MCP endpoint is exposed
 
-## Visualizing Objects in Grafana
-The sailing boats and areas of interest are visualized using the [SAS Event Stream Processing Data Source Plug-in for Grafana](https://github.com/sassoftware/grafana-esp-plugin). The [dashboard.json](grafana.json) file references the [sailing-areas-of-interest.geojson](sailing-areas-of-interest.geojson) file, which defines the areas of interest.
+When the project is running, the ESP server exposes an MCP endpoint at:
 
-To import the dashboard into Grafana, see [DASHBOARD.md](../DASHBOARD.md).
+- /eventStreamProcessing/v2/mcp
 
-<img alt="Sailing dashboard" src="img/sailing-dashboard.png"  width="75%" height="75%">
+The exact URL depends on how and where the project is deployed. In a local developer setup it can be a local machine endpoint. In a Kubernetes deployment it can be a cluster-exposed endpoint behind the SAS Event Stream Processing service route or an ingress path. In a production deployment, the full address typically looks like this:
 
-## Additional Resources
+- https://<host>/SASEventStreamProcessingServer/<server-prefix>/eventStreamProcessing/v2/mcp
 
-- The [Using a Geofence to Find Wanted Vehicles](https://github.com/sassoftware/esp-studio-examples/tree/main/Advanced/geofence) example provides a more detailed discussion of the settings for a Geofence window and for connector orchestration. 
-- For more information about the Geofence window, see [SAS Help Center: Using Geofence Windows](https://documentation.sas.com/?cdcId=espcdc&cdcVersion=default&docsetId=espcreatewindows&docsetTarget=p0xru6q01dkxknn1t8gqo2q4zfu6).
-- For more information about MCP support in SAS Retrieval Agent Manager, see [SAS Help Center: Working with MCP Tools](https://go.documentation.sas.com/doc/en/ragntmgrcdc/default/ragntmgrug/n1l22bifonn2hjn1lquqow5vmxp2.htm?fromDefault=).
+For example:
+
+- https://<host</SASEventStreamProcessingServer/sailing_with_mcp/eventStreamProcessing/v2/mcp
+
+## Deployment strategies
+
+The same ESP project can be exposed through different deployment patterns. The main distinction is whether the project is running on a local machine or in a Kubernetes-based environment.
+
+### Option 1: ESP Project Container
+
+This is the simplest way to test MCP locally. An ESP Project Container built around this MCP example project must be available.
+
+Typical setup steps:
+
+1. Start the ESP Project Container containing the MCP example project from the command line. As part of the start command, the 31415 port should be published to the host machine.
+2. The ESP Project Container exposes the MCP endpoint at a local URL, i.e. http://localhost:31415/eventStreamProcessing/v2/mcp.
+3. Point your MCP-capable client to the local MCP endpoint. The MCP client must be able to reach local URLs.
+
+This setup works well for local development because:
+
+- there is no port forwarding requirement,
+- the client and server are on the same machine or the same secure local network
+
+The ESP Project Container can also used in SAS Retrieval Agent Manager as part of a container tool template. Typical setup steps:
+
+1. Create a new container tool template.
+2. Supply the URL relating to the ESP Project Container.
+3. Set the Port to 31415.
+3. Set the Base Path to `eventStreamProcessing/v2/mcp`.
+4. Add your ESP license file.
+5. Set the ESPENV_LICENSE environment variable to the path of the license file.
+
+### Option 2: Kubernetes deployment using Test Mode
+
+For a Kubernetes deployment, the project typically runs in SAS Event Stream Processing in a cluster or a project container environment.
+
+Typical setup steps:
+
+1. Open SAS Event Stream Processing Studio and import or install the example project.
+2. Use Studio or ESM to run the project in Test Mode.
+3. Confirm the service route is available in the cluster's internal or external network.
+4. Connect the MCP client to the service endpoint at /eventStreamProcessing/v2/mcp.
+
+This deployment model is useful when the project is intended to be accessed by multiple clients.
+
+Important: there is no requirement to use port forwarding for the MCP client to connect. However, if the cluster is protected by SSL, the MCP client must be able to trust the cluster's certificate authority or have the appropriate CA certificates installed.
+
+## How to connect clients to the MCP endpoint
+
+The process to connect to the MCP endpoint differs between clients, but in general the MCP client must point to the ESP MCP endpoint and authenticate as required by the deployment.
+
+### Claude Desktop
+
+Claude Desktop steps here
+
+### ChatGPT
+
+ChatGPT steps here
+
+### SAS Retrieval Agent Manager (RAM)
+
+SAS Retrieval Agent Manager is particularly relevant because it is designed for orchestrated, workflow-style agent use cases that can combine retrieval and tool execution.
+
+Typical steps:
+
+1. Ensure the ESP server has the `SAS_ESP_SERVER_BASE_URL` environment variable set to the correct base URL for the ESP server.
+2. In SAS Retrieval Agent Manager, create a new MCP Tool Server and select the Remote MCP Server template.
+3. Provide the URL to the ESP server's MCP endpoint, e.g. https://<host>/SASEventStreamProcessingServer/<server-prefix>/eventStreamProcessing/v2/mcp.
+4. Set Transport to HTTP.
+5. Let SAS Retrieval Agent Manager discover the tools exposed by the ESP project.
+
+![Image placeholder: RAM tool discovery screen showing the ESP MCP server and discovered tools](img/placeholder_ram_discovery.png)
+
+Caption: SAS Retrieval Agent Manager discovering the sailing example tools from the ESP MCP server.
+
+![Image placeholder: RAM workflow with an action invoking ObtainSpeedingEvents or QueryExclusionZoneViolations](img/placeholder_ram_workflow.png)
+
+Caption: RAM workflow example showing a prompt or tool call that invokes an ESP MCP tool as part of an agent process.
+
+### VS Code
+
+VSCode steps here
+
+## Testing the connection
+
+The easiest way to validate the MCP endpoint before connecting an LLM client is to use the MCP Inspector.
+
+The Model Context Protocol documentation provides a useful inspector for testing server connections and tool exposure:
+
+- https://modelcontextprotocol.io/docs/2026-07-28/tools/inspector
+
+This is valuable because it lets you validate:
+
+- the endpoint is reachable,
+- the server exposes the expected tools,
+- the input and output schema are correct,
+- and the MCP client can call the tools successfully.
+
+The inspector also supports apps as well as tools in current MCP implementations, so it is a good practical validation utility for both.
+
+## Project files
+
+The project contains the following files:
+
+- [model.xml](model.xml): the ESP project definition, including the configured MCP tools
+- [boat1.csv](boat1.csv), [boat2.csv](boat2.csv), [boat3.csv](boat3.csv), [boat4.csv](boat4.csv): boat telemetry input streams
+- [geoArea.csv](geoArea.csv): geographic areas-of-interest input
+- [README.md](README.md): project documentation
+
+## Additional resources
+
+- [SAS Event Stream Processing Studio Examples](https://github.com/sassoftware/esp-studio-examples)
+- [Model Context Protocol documentation](https://modelcontextprotocol.io/)
+- [MCP Inspector](https://modelcontextprotocol.io/docs/2026-07-28/tools/inspector)
+- [SAS Event Stream Processing documentation](https://documentation.sas.com/doc/en/espcdc/default/home.htm)
+- [The sailing example](../sailing/README.md)
