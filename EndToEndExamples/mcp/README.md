@@ -1,10 +1,10 @@
-# Using ESP MCP to Expose Real-Time Analytics as AI Tools
+# Power AI Agents with Real-time Analytics & AI using Model Context Protocol (MCP)
 
 ## Why use ESP MCP with LLMs?
 
-SAS Event Stream Processing (ESP) is designed to process streaming data in real time. This value can be enhanced when business users, analysts, and AI assistants can ask for live operational insights without needing to understand the underlying event stream, data model, or project logic.
+SAS Event Stream Processing (ESP) processes streaming data in real time. With MCP, business users and analysts can ask an AI agent for live operational insights in natural language, without needing to understand the underlying event streams, data model, or project logic. Because the agent works through ESP, its answers are grounded in trusted, up-to-date data and AI. This reduces hallucinations and outdated answers. ESP projects are governed and versioned, and the results they return are (usually) deterministic.
 
-Model Context Protocol (MCP) bridges that gap by allowing an ESP project expose project logic and operations as structured, discoverable capabilities:
+Model Context Protocol (MCP) closes the gap between language models and live operational systems by allowing an ESP project to expose its project logic and operations as structured, discoverable capabilities:
 
 - Tools for actions such as publishing data, querying state, or scoring models
 - Prompts that package common tasks and expected inputs
@@ -12,10 +12,10 @@ Model Context Protocol (MCP) bridges that gap by allowing an ESP project expose 
 
 Through these primitives, ESP MCP enables an MCP client (such as an LLM) to combine:
 
-- real-time streaming analytics,
-- project logic that already exists in ESP,
-- operational tools exposed in a consistent way,
-- and a governed set of actions that can be invoked by an MCP client.
+- real-time streaming analytics that reflect what is happening right now,
+- the project logic and AI models that already exist in ESP, without rebuilding them for GenAI use,
+- tools that are exposed in a consistent, discoverable way and described in business terms,
+- and a governed set of actions, where the MCP client can only invoke what the project explicitly exposes.
 
 That is the value of ESP MCP: it allows AI systems to work with live data pipelines and decision logic, rather than substituting a generic chat interface for a real-time analytics engine.
 
@@ -59,11 +59,11 @@ At a high level, ESP supports three common MCP primitives:
 
 In this example, the primary focus is on tools. However, the same project can also be used as a foundation for prompts and apps in real deployments.
 
-The key idea is that an LLM does not need to know how to operate the ESP project directly. The LLM only needs to know which MCP tools are available, what they do, and what inputs they expect.
+The key idea is that an LLM does not need to know how to operate the ESP project directly. The LLM only needs to know which MCP tools are available, what they do, and what inputs they expect. By adding semantic descriptions of the operational context, people can ask questions the way they think: not "Which events are in my_window?" but "Which boats are speeding?" The agent interprets the intent, picks the right tool, calls it, interprets the result, and continues the workflow.
 
 ### ESP Studio: adding MCP tools and apps
 
-In ESP Studio, MCP settings are configured as part of the project definition, alongside the streaming model. The typical flow is:
+In ESP Studio, MCP settings are configured in the Model Context Protocol section within the project pane. The typical flow is:
 
 1. Design the ESP project and define its windows and logic.
 2. Configure one or more MCP tools to expose the project actions.
@@ -71,33 +71,34 @@ In ESP Studio, MCP settings are configured as part of the project definition, al
 4. Run the project so the ESP server's MCP endpoint is exposed.
 5. Connect an MCP client to that endpoint.
 
-The following placeholders indicate where screenshots should be added to help users understand this flow.
+MCP tools, along with apps and prompts, are visible and configurable in the Model Context Protocol section within the project pane:
+![ESP Studio MCP tools](img/MCP_Tools_List.png "ESP Studio MCP tools")
 
-![Image placeholder: ESP Studio project with the MCP configuration panel open](img/placeholder_mcp_project_config.png)
+An MCP tool is configured through a dialog which allows you to specify the name, description, type, and other aspects of the tool as appropriate:
+![Configuration of an MCP tool](img/MCP_Tool_Configuration.png "Configuration of an MCP tool")
 
-Caption: ESP Studio showing the project-level MCP configuration. The image should highlight where tools and other MCP capabilities are configured.
-
-![Image placeholder: ESP Studio MCP tools list with PublishAreaOfInterest, ObtainSpeedingEvents, CheckBoatInExclusionZone, and QueryExclusionZoneViolations](img/placeholder_mcp_tools.png)
-
-Caption: The MCP tools list for the sailing example. The screenshot should show the tool names, their types, and the input or output mapping they use.
-
-![Image placeholder: ESP Studio MCP app or prompt configuration](img/placeholder_mcp_apps_prompts.png)
-
-Caption: Example of how apps or prompts are added to an ESP project. The screenshot should emphasize that tools are only one part of the MCP surface; apps and prompts are also supported.
 
 ## Where the MCP endpoint is exposed
 
 When the project is running, the ESP server exposes an MCP endpoint at:
 
-- /eventStreamProcessing/v2/mcp
+- `/eventStreamProcessing/v2/mcp`
 
-The exact URL depends on how and where the project is deployed. In a local developer setup it can be a local machine endpoint. In a Kubernetes deployment it can be a cluster-exposed endpoint behind the SAS Event Stream Processing service route or an ingress path. In a production deployment, the full address typically looks like this:
+The exact URL depends on how and where the project is deployed. In a local developer setup it can be a local machine endpoint. For example, in an ESP Project Container:
 
-- https://<host>/SASEventStreamProcessingServer/<server-prefix>/eventStreamProcessing/v2/mcp
+- `http://localhost:31415/eventStreamProcessing/v2/mcp`
+
+In a Kubernetes deployment, it can be a cluster-exposed endpoint behind the SAS Event Stream Processing service route or an ingress path. In a production deployment, the full address typically looks like this:
+
+- `https://<host>/SASEventStreamProcessingServer/<server-prefix>/eventStreamProcessing/v2/mcp`
+
+The server prefix can be found depending on how the project is started:
+- For projects started in ESP Studio test mode, the host value of the project in the ESP Servers tab
+- For projects started in ESM, the Source value found in the expanded project when viewing the ESP server
 
 For example:
 
-- https://<host</SASEventStreamProcessingServer/sailing_with_mcp/eventStreamProcessing/v2/mcp
+- `https://<host>/SASEventStreamProcessingServer/sailing_with_mcp/eventStreamProcessing/v2/mcp`
 
 ## Deployment strategies
 
@@ -105,12 +106,20 @@ The same ESP project can be exposed through different deployment patterns. The m
 
 ### Option 1: ESP Project Container
 
-This is the simplest way to test MCP locally. An ESP Project Container built around this MCP example project must be available.
+This is the simplest way to test MCP with a local MCP client such as VS Code. An ESP Project Container built around this MCP example project must be available. See [SAS Help Center: Creating Project Containers](https://helpcenter.unx.sas.com/test/doc/en/espcdc/v_078/esmuse/p1lpbl7fvj9ivln1mjixi4hdrnu7.htm) for more details.
 
 Typical setup steps:
 
-1. Start the ESP Project Container containing the MCP example project from the command line. As part of the start command, the 31415 port should be published to the host machine.
-2. The ESP Project Container exposes the MCP endpoint at a local URL, i.e. http://localhost:31415/eventStreamProcessing/v2/mcp.
+1. Start the ESP Project Container containing the MCP example project from the command line. As part of the start command, the 31415 port should be published to the host machine. For example:
+   ```
+   docker run \
+     -p 31415:31415 \
+     -e ESPENV_LICENSE="$ESPENV_LICENSE" \
+     -h localhost \
+     --env=SAS_ESP_SERVER_BASE_URL=http://localhost:31415 \
+     <your-project-container-image>
+   ```
+2. The ESP Project Container exposes the MCP endpoint at a local URL, i.e. `http://localhost:31415/eventStreamProcessing/v2/mcp`.
 3. Point your MCP-capable client to the local MCP endpoint. The MCP client must be able to reach local URLs.
 
 This setup works well for local development because:
@@ -118,41 +127,56 @@ This setup works well for local development because:
 - there is no port forwarding requirement,
 - the client and server are on the same machine or the same secure local network
 
-The ESP Project Container can also used in SAS Retrieval Agent Manager as part of a container tool template. Typical setup steps:
+The ESP Project Container can also be used in SAS Retrieval Agent Manager as part of a container tool template. Typical setup steps:
 
 1. Create a new container tool template.
 2. Supply the URL relating to the ESP Project Container.
 3. Set the Port to 31415.
-3. Set the Base Path to `eventStreamProcessing/v2/mcp`.
-4. Add your ESP license file.
-5. Set the ESPENV_LICENSE environment variable to the path of the license file.
+4. Set the Base Path to `eventStreamProcessing/v2/mcp`.
+5. Add your ESP JWT license file in the Files tab:
+   ![Adding the ESP JWT license file](img/RAM_License_File.png "Adding the ESP JWT license file")
+6. Set the ESPENV_LICENSE environment variable to the path of the license file in the Environment Variables tab:
+   ![Setting the ESPENV_LICENSE environment variable](img/RAM_ESPENV_LICENSE.png "Setting the ESPENV_LICENSE environment variable")
 
-### Option 2: Kubernetes deployment using Test Mode
+### Option 2: Kubernetes deployment using ESP Studio or Event Stream Manager
 
-For a Kubernetes deployment, the project typically runs in SAS Event Stream Processing in a cluster or a project container environment.
+For a Kubernetes deployment, the project typically runs in SAS Event Stream Processing in a cluster or a project container environment. ESP Studio Test mode is a useful method of running the project for testing purposes; persistent deployment suitable for production can be achieved through Event Stream Manager (ESM) or other deployment methods.
 
 Typical setup steps:
 
 1. Open SAS Event Stream Processing Studio and import or install the example project.
-2. Use Studio or ESM to run the project in Test Mode.
-3. Confirm the service route is available in the cluster's internal or external network.
-4. Connect the MCP client to the service endpoint at /eventStreamProcessing/v2/mcp.
+2. Use ESP Studio or Event Stream Manager to run the project.
+3. Confirm the ESP server's route is available in the cluster's internal or external network.
+   - For an MCP client to access the ESP server, the ESP server must be exposed through the cluster's external HTTP routing. Configure the cluster's ingress or equivalent routing mechanism to route requests from the external cluster hostname to the Kubernetes Service for the ESP server.
+   - Identify the service name for the running ESP project. In Kubernetes deployments, this is derived from the project name and may be encoded. The service/host name can be obtained from ESP Studio or Event Stream Manager.
+   - Use this service name to construct the external MCP endpoint: `https://<host>/SASEventStreamProcessingServer/<service-name>/eventStreamProcessing/v2/mcp`
+   - Verify that this URL is reachable from outside the Kubernetes cluster before configuring the MCP client. A production deployment should use this externally routed endpoint rather than Kubernetes port forwarding.
+4. Connect the MCP client to the MCP server endpoint.
 
 This deployment model is useful when the project is intended to be accessed by multiple clients.
 
-Important: there is no requirement to use port forwarding for the MCP client to connect. However, if the cluster is protected by SSL, the MCP client must be able to trust the cluster's certificate authority or have the appropriate CA certificates installed.
+Important: If the cluster is protected by SSL, the MCP client must be able to trust the cluster's certificate authority or have the appropriate CA certificates installed.
 
 ## How to connect clients to the MCP endpoint
 
-The process to connect to the MCP endpoint differs between clients, but in general the MCP client must point to the ESP MCP endpoint and authenticate as required by the deployment.
+The process to connect to the MCP endpoint differs depending on both the nature of the deployment, and the chosen MCP client.
 
-### Claude Desktop
+### Public remote MCP
+Claude Desktop, ChatGPT, and other common MCP clients can connect to the MCP endpoint if it is exposed to the public internet and available over HTTPS with a publicly-trusted certificate. ESP authentication is still required; this is provided by an automated OAuth2 flow which is supported by major MCP clients.
 
-Claude Desktop steps here
+Details of how to configure the MCP client to connect to the MCP server are provided by the client vendor:
+- For ChatGPT, see [OpenAI: Connecting custom MCP servers in ChatGPT](https://help.openai.com/en/articles/12584461-connecting-custom-mcp-servers-in-chatgpt)
+- For Claude Desktop, see [Claude Support: Get started with custom connectors using remote MCP](https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp)
 
-### ChatGPT
+### Private remote MCP and locally-hosted MCP
+In cases where the MCP endpoint is not publicly accessible, such as where:
+- the environment in which the ESP project is running is in a private network or behind a firewall
+- the environment is protected with a self-signed certificate or a private CA
+- the ESP project is running as a project container or on a local machine,
 
-ChatGPT steps here
+MCP clients such as Claude Desktop and ChatGPT are unable to reach the MCP endpoint in these instances, as MCP calls made by these clients are routed through the vendor's cloud infrastructure. Both vendors offer solutions for connecting to a private/locally-hosted remote MCP server:
+- For ChatGPT, OpenAI offers a "Secure MCP Tunnel" solution, which enables ChatGPT and other OpenAI products to communicate with the MCP server through your local machine. See [OpenAI Developers: Secure MCP Tunnel](https://developers.openai.com/api/docs/guides/secure-mcp-tunnels) for details.
+- Anthropic currently does not provide an official solution for Claude Desktop. Third party solutions that aim to proxy remote MCP calls as local stdio for Claude Desktop are available, but these are not officially supported by Anthropic. See [GitHub: MCP Bridge](https://github.com/skroutz/mcp-bridge) for details.
 
 ### SAS Retrieval Agent Manager (RAM)
 
@@ -162,21 +186,24 @@ Typical steps:
 
 1. Ensure the ESP server has the `SAS_ESP_SERVER_BASE_URL` environment variable set to the correct base URL for the ESP server.
 2. In SAS Retrieval Agent Manager, create a new MCP Tool Server and select the Remote MCP Server template.
-3. Provide the URL to the ESP server's MCP endpoint, e.g. https://<host>/SASEventStreamProcessingServer/<server-prefix>/eventStreamProcessing/v2/mcp.
+3. Provide the URL to the ESP server's MCP endpoint, e.g. `https://<host>/SASEventStreamProcessingServer/<server-prefix>/eventStreamProcessing/v2/mcp`.
 4. Set Transport to HTTP.
 5. Let SAS Retrieval Agent Manager discover the tools exposed by the ESP project.
 
-![Image placeholder: RAM tool discovery screen showing the ESP MCP server and discovered tools](img/placeholder_ram_discovery.png)
-
-Caption: SAS Retrieval Agent Manager discovering the sailing example tools from the ESP MCP server.
-
-![Image placeholder: RAM workflow with an action invoking ObtainSpeedingEvents or QueryExclusionZoneViolations](img/placeholder_ram_workflow.png)
-
-Caption: RAM workflow example showing a prompt or tool call that invokes an ESP MCP tool as part of an agent process.
+For more information on configuring MCP servers in SAS Retrieval Agent Manager, see [SAS Retrieval Agent Manager: Adding an MCP Tool Server](https://helpcenter.unx.sas.com/test/doc/en/ragntmgrcdc/v_014/ragntmgrug/n05qjlu6s349yhn1sfa0nbvo31ad.htm).
 
 ### VS Code
 
-VSCode steps here
+Remote MCP connections can be configured in VS Code and made available to the integrated GitHub Copilot chat feature. MCP calls originate directly from the VS Code environment, allowing any reachable MCP server to be used even if it is not publicly accessible.
+
+Typical steps:
+
+1. In VS Code, open the Copilot chat pane, and click the "Open Customizations" button. Alternatively, run **Chat: Open Customizations** from the command palette.
+2. In the Customizations dialog, navigate to the **MCP Servers** section.
+3. Click the "Add Server" button in the **User** group.
+4. Choose **HTTP (HTTP or Server-Sent Events)** and enter the MCP server endpoint.
+5. Enter a name for the MCP connection.
+6. Select **Global**, then **Copilot Global**.
 
 ## Testing the connection
 
