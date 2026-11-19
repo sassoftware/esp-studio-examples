@@ -556,7 +556,7 @@ end
           <description><![CDATA[There are two Aggregate windows that aggregate the last exclusion violation and the last speeding event : Last_Exclusion_Violation and Last_Speeding_Event]]></description>
           <schema>
             <fields>
-              <field key="true" name="boatName" type="int32"/>
+              <field key="true" name="boatName" type="string"/>
               <field name="Minimum_Distance" type="double"/>
               <field name="Location_Name" type="string"/>
               <field name="First_dateTime" type="string"/>
@@ -573,7 +573,7 @@ end
         <window-aggregate index="pi_HASH" name="Last_Speeding_Event" pubsub="true">
           <schema>
             <fields>
-              <field key="true" name="boatName" type="int32"/>
+              <field key="true" name="boatName" type="string"/>
               <field name="Max_speed" type="double"/>
               <field name="Location_Name" type="string"/>
               <field name="dateTime" type="string"/>
