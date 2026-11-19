@@ -4,7 +4,7 @@ The XML file (sailing.xml) is the project used in the example.
 geoArea.csv is an input file. This file contains events relating to the defined areas of interest.
 boat1.csv, boat2.csv, boat3.csv, and boat4.csv are input files. These files contains event streams for four boats. The event streams contain geographical coordinates of the boats' movements.]]></description>
   <metadata>
-    <meta id="layout">{"cq1":{"Areas_Of_Interest":{"x":-330,"y":-440},"Boat1":{"x":-445,"y":-725},"Boat2":{"x":-225,"y":-725},"Boat3":{"x":-5,"y":-725},"Boat4":{"x":220,"y":-725},"Compute_ID0":{"x":445,"y":-590},"Compute_ID1":{"x":-445,"y":-590},"Compute_ID2":{"x":-225,"y":-590},"Compute_ID3":{"x":-5,"y":-590},"Compute_ID4":{"x":210,"y":-590},"Filter_Inside_Exclusion_Zone":{"x":-230,"y":-55},"Filter_Speeding_In_Marina":{"x":-5,"y":-55},"Geofence_Area_Check":{"x":-115,"y":-315},"Last_Exclusion_Violation":{"x":-230,"y":70},"Last_Speeding_Event":{"x":-5,"y":70},"Retention_30Min":{"x":-115,"y":-185},"Score_Boat":{"x":445,"y":-725},"Union_All_Boats":{"x":-115,"y":-440}}}</meta>
+    <meta id="layout">{"cq1":{"Areas_Of_Interest":{"x":290,"y":175},"Boat_Current":{"x":290,"y":540},"Boat1":{"x":1010,"y":50},"Boat2":{"x":770,"y":50},"Boat3":{"x":530,"y":50},"Boat4":{"x":290,"y":50},"Filter_Inside_Exclusion_Zone":{"x":50,"y":540},"Filter_Speeding_In_Marina":{"x":530,"y":540},"Geofence_Area_Check":{"x":290,"y":295},"Last_Exclusion_Violation":{"x":50,"y":665},"Last_Speeding_Event":{"x":530,"y":665},"Retention_30Min":{"x":290,"y":420},"Score_Boat":{"x":50,"y":50},"Union_All_Boats":{"x":530,"y":175}}}</meta>
     <meta id="studioTags">Example</meta>
     <meta id="studioUploadedBy">anonymousUser</meta>
     <meta id="studioUploaded">1772537451290</meta>
@@ -55,6 +55,7 @@ boat1.csv, boat2.csv, boat3.csv, and boat4.csv are input files. These files cont
               <field name="speed" type="number"/>
               <field name="lat" type="number"/>
               <field name="long" type="number"/>
+              <field name="boatName" type="string"/>
             </fields>
           </input>
           <output window="Filter_Inside_Exclusion_Zone"/>
@@ -72,6 +73,69 @@ boat1.csv, boat2.csv, boat3.csv, and boat4.csv are input files. These files cont
       </tool>
     </tools>
     <code snippet="MCP_snippets"/>
+    <apps>
+      <app name="Ships_SpeedBarChart" type="visual">
+        <title><![CDATA[Ship Speed Bar Chart]]></title>
+        <description><![CDATA[This app shows the current speed of each ship in a horizontal bar chart.]]></description>
+        <config>
+          <event-sources>
+            <event-source name="shipdata" type="collection" window="Boat_Current" interval="500"/>
+          </event-sources>
+          <component type="bar" source="shipdata">
+            <properties>
+              <property name="title"><![CDATA[Current Speed]]></property>
+              <property name="y"><![CDATA[speed]]></property>
+              <property name="orientation"><![CDATA[horizontal]]></property>
+              <property name="range"><![CDATA[0,8]]></property>
+            </properties>
+          </component>
+        </config>
+      </app>
+      <app name="Boat_Position_Map" type="visual">
+        <title><![CDATA[Boat_Position_Map]]></title>
+        <description><![CDATA[An app which shows a map with the positions of boats]]></description>
+        <config>
+          <event-sources>
+            <event-source name="New_Event_Source_1" type="collection" window="cq1/Boat_Current" interval="500"/>
+          </event-sources>
+          <component name="New_Component_1" type="map" text="declanmap" source="New_Event_Source_1">
+            <properties>
+              <property name="title"><![CDATA[Boat position map]]></property>
+              <property name="lat"><![CDATA[lat]]></property>
+              <property name="lon"><![CDATA[long]]></property>
+              <property name="center"><![CDATA[lat:56.01439667,lon:-3.347022533]]></property>
+            </properties>
+          </component>
+        </config>
+      </app>
+      <app name="Santa_Maria_Compass" type="visual">
+        <title><![CDATA[Santa Maria Compass]]></title>
+        <description><![CDATA[An app displaying a compass for the Santa Maria Boat]]></description>
+        <config>
+          <event-sources>
+            <event-source name="boatCurrentSource" type="collection" window="cq1/Boat_Current"/>
+          </event-sources>
+          <component name="compassComponent" type="compass" source="boatCurrentSource">
+            <properties>
+              <property name="title"><![CDATA[Current boat headings]]></property>
+              <property name="value"><![CDATA[heading]]></property>
+            </properties>
+            <click>
+              <options>
+                <option>
+                  <label>Nautical History for the $data</label>
+                  <message>Show me the nautical history of the ship $data from internet resources</message>
+                </option>
+                <option>
+                  <label>Read about the ship called The $data</label>
+                  <url>https://en.wikipedia.org/wiki/$data</url>
+                </option>
+              </options>
+            </click>
+          </component>
+        </config>
+      </app>
+    </apps>
   </mcp>
   <python-snippets>
     <python-snippet name="MCP_snippets">
@@ -87,7 +151,7 @@ def obtainSpeedingEvents(args):
     
     #Filter boats by AoI name and count occurrences of boats
     boatsInAoi = [boat for boat in boatsInAllAoI if boat.get('GeoDesc') == args.get('areaName') and boat.get('speed') >= args.get('speedLimit')]
-    speedingEvents = Counter(boat.get('BoatNumber') for boat in boatsInAoi)
+    speedingEvents = Counter(boat.get('boatName') for boat in boatsInAoi)
     
     return [{"boatName": name, "occurrences": count} for name, count in speedingEvents.items()]
 
@@ -110,6 +174,7 @@ def processExclusionViolationCheck(event):
               <field name="speed" type="double"/>
               <field name="lat" type="double"/>
               <field name="long" type="double"/>
+              <field name="boatName" type="string"/>
             </fields>
           </schema>
           <connectors>
@@ -162,7 +227,8 @@ function onInterval()
             heading   = tonumber(fields[2]),      -- numeric
             speed     = tonumber(fields[3]),      -- numeric
             lat  = tonumber(fields[4]),
-            long = tonumber(fields[5])
+            long = tonumber(fields[5]),
+            boatName = fields[6]
         }
            
         table.insert(events, event)
@@ -194,6 +260,7 @@ end
               <field name="speed" type="double"/>
               <field name="lat" type="double"/>
               <field name="long" type="double"/>
+              <field name="boatName" type="string"/>
             </fields>
           </schema>
           <connectors>
@@ -245,7 +312,8 @@ function onInterval()
             heading   = tonumber(fields[2]),      -- numeric
             speed     = tonumber(fields[3]),      -- numeric
             lat  = tonumber(fields[4]),
-            long = tonumber(fields[5])
+            long = tonumber(fields[5]),
+            boatName = fields[6]
         }
         
            
@@ -270,48 +338,6 @@ end
             </connector>
           </connectors>
         </window-source>
-        <window-compute index="pi_EMPTY" name="Compute_ID2" pubsub="true">
-          <schema>
-            <fields>
-              <field key="true" name="dateTime" type="string"/>
-              <field name="heading" type="double"/>
-              <field name="speed" type="double"/>
-              <field name="lat" type="double"/>
-              <field name="long" type="double"/>
-              <field name="BoatNumber" type="int32"/>
-            </fields>
-          </schema>
-          <output>
-            <field-expr><![CDATA[heading]]></field-expr>
-            <field-expr><![CDATA[speed]]></field-expr>
-            <field-expr><![CDATA[lat]]></field-expr>
-            <field-expr><![CDATA[long]]></field-expr>
-            <field-expr><![CDATA[2]]></field-expr>
-          </output>
-        </window-compute>
-        <window-compute index="pi_EMPTY" name="Compute_ID1" pubsub="true">
-          <description><![CDATA[There are four Compute windows that assign a boat number to each of the four boats identified: Compute_ID1, Compute_ID2, Compute_ID3, and Compute_ID4. This allows SAS Event Stream Processing to differentiate the boats before joining the streams together for processing.]]></description>
-          <expr-initialize>
-            <initializer type="string"/>
-          </expr-initialize>
-          <schema>
-            <fields>
-              <field key="true" name="dateTime" type="string"/>
-              <field name="heading" type="double"/>
-              <field name="speed" type="double"/>
-              <field name="lat" type="double"/>
-              <field name="long" type="double"/>
-              <field name="BoatNumber" type="int32"/>
-            </fields>
-          </schema>
-          <output>
-            <field-expr><![CDATA[heading]]></field-expr>
-            <field-expr><![CDATA[speed]]></field-expr>
-            <field-expr><![CDATA[lat]]></field-expr>
-            <field-expr><![CDATA[long]]></field-expr>
-            <field-expr><![CDATA[1]]></field-expr>
-          </output>
-        </window-compute>
         <window-union index="pi_EMPTY" name="Union_All_Boats" pubsub="true" strict="false">
           <description><![CDATA[This is a Union window that unifies the boats’ event streams.]]></description>
         </window-union>
@@ -323,6 +349,7 @@ end
               <field name="speed" type="double"/>
               <field name="lat" type="double"/>
               <field name="long" type="double"/>
+              <field name="boatName" type="string"/>
             </fields>
           </schema>
           <connectors>
@@ -374,7 +401,8 @@ function onInterval()
             heading   = tonumber(fields[2]),      -- numeric
             speed     = tonumber(fields[3]),      -- numeric
             lat  = tonumber(fields[4]),
-            long = tonumber(fields[5])
+            long = tonumber(fields[5]),
+            boatName = fields[6]
         }
            
         table.insert(events, event)
@@ -398,25 +426,6 @@ end
             </connector>
           </connectors>
         </window-source>
-        <window-compute index="pi_EMPTY" name="Compute_ID3" pubsub="true">
-          <schema>
-            <fields>
-              <field key="true" name="dateTime" type="string"/>
-              <field name="heading" type="double"/>
-              <field name="speed" type="double"/>
-              <field name="lat" type="double"/>
-              <field name="long" type="double"/>
-              <field name="BoatNumber" type="int32"/>
-            </fields>
-          </schema>
-          <output>
-            <field-expr><![CDATA[heading]]></field-expr>
-            <field-expr><![CDATA[speed]]></field-expr>
-            <field-expr><![CDATA[lat]]></field-expr>
-            <field-expr><![CDATA[long]]></field-expr>
-            <field-expr><![CDATA[3]]></field-expr>
-          </output>
-        </window-compute>
         <window-source index="pi_EMPTY" insert-only="true" name="Boat4" pubsub="true">
           <schema>
             <fields>
@@ -425,6 +434,7 @@ end
               <field name="speed" type="double"/>
               <field name="lat" type="double"/>
               <field name="long" type="double"/>
+              <field name="boatName" type="string"/>
             </fields>
           </schema>
           <connectors>
@@ -476,7 +486,8 @@ function onInterval()
             heading   = tonumber(fields[2]),      -- numeric
             speed     = tonumber(fields[3]),      -- numeric
             lat  = tonumber(fields[4]),
-            long = tonumber(fields[5])
+            long = tonumber(fields[5]),
+            boatName = fields[6]
         }
            
         table.insert(events, event)
@@ -500,25 +511,6 @@ end
             </connector>
           </connectors>
         </window-source>
-        <window-compute index="pi_EMPTY" name="Compute_ID4" pubsub="true">
-          <schema>
-            <fields>
-              <field key="true" name="dateTime" type="string"/>
-              <field name="heading" type="double"/>
-              <field name="speed" type="double"/>
-              <field name="lat" type="double"/>
-              <field name="long" type="double"/>
-              <field name="BoatNumber" type="int32"/>
-            </fields>
-          </schema>
-          <output>
-            <field-expr><![CDATA[heading]]></field-expr>
-            <field-expr><![CDATA[speed]]></field-expr>
-            <field-expr><![CDATA[lat]]></field-expr>
-            <field-expr><![CDATA[long]]></field-expr>
-            <field-expr><![CDATA[4]]></field-expr>
-          </output>
-        </window-compute>
         <window-geofence name="Geofence_Area_Check" pubsub="true" pubsub-index="pi_HASH">
           <description><![CDATA[This is a Geofence window that defines the areas of interest.]]></description>
           <geofence autosize-mesh="true" coordinate-type="geographic" max-meshcells-per-geometry="50"/>
@@ -564,7 +556,7 @@ end
           <description><![CDATA[There are two Aggregate windows that aggregate the last exclusion violation and the last speeding event : Last_Exclusion_Violation and Last_Speeding_Event]]></description>
           <schema>
             <fields>
-              <field key="true" name="BoatNumber" type="int32"/>
+              <field key="true" name="boatName" type="int32"/>
               <field name="Minimum_Distance" type="double"/>
               <field name="Location_Name" type="string"/>
               <field name="First_dateTime" type="string"/>
@@ -581,7 +573,7 @@ end
         <window-aggregate index="pi_HASH" name="Last_Speeding_Event" pubsub="true">
           <schema>
             <fields>
-              <field key="true" name="BoatNumber" type="int32"/>
+              <field key="true" name="boatName" type="int32"/>
               <field name="Max_speed" type="double"/>
               <field name="Location_Name" type="string"/>
               <field name="dateTime" type="string"/>
@@ -605,38 +597,31 @@ end
               <field name="speed" type="double"/>
               <field name="lat" type="double"/>
               <field name="long" type="double"/>
+              <field name="boatName" type="string"/>
             </fields>
           </schema>
         </window-source>
-        <window-compute index="pi_EMPTY" name="Compute_ID0" pubsub="true">
+        <window-aggregate index="pi_HASH" name="Boat_Current">
           <schema>
             <fields>
-              <field key="true" name="dateTime" type="string"/>
+              <field name="dateTime" type="string"/>
               <field name="heading" type="double"/>
               <field name="speed" type="double"/>
               <field name="lat" type="double"/>
               <field name="long" type="double"/>
-              <field name="BoatNumber" type="int32"/>
+              <field name="boatName" type="string" key="true"/>
             </fields>
           </schema>
           <output>
-            <field-expr><![CDATA[heading]]></field-expr>
-            <field-expr><![CDATA[speed]]></field-expr>
-            <field-expr><![CDATA[lat]]></field-expr>
-            <field-expr><![CDATA[long]]></field-expr>
-            <field-expr><![CDATA[0]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(dateTime)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(heading)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(speed)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(lat)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(long)]]></field-expr>
           </output>
-        </window-compute>
+        </window-aggregate>
       </windows>
       <edges>
-        <edge source="Boat2" target="Compute_ID2"/>
-        <edge source="Boat1" target="Compute_ID1"/>
-        <edge source="Compute_ID2" target="Union_All_Boats"/>
-        <edge source="Compute_ID1" target="Union_All_Boats"/>
-        <edge source="Boat3" target="Compute_ID3"/>
-        <edge source="Compute_ID3" target="Union_All_Boats"/>
-        <edge source="Boat4" target="Compute_ID4"/>
-        <edge source="Compute_ID4" target="Union_All_Boats"/>
         <edge role="position" source="Union_All_Boats" target="Geofence_Area_Check"/>
         <edge role="geometry" source="Areas_Of_Interest" target="Geofence_Area_Check"/>
         <edge source="Geofence_Area_Check" target="Retention_30Min"/>
@@ -644,8 +629,12 @@ end
         <edge source="Retention_30Min" target="Filter_Speeding_In_Marina"/>
         <edge source="Filter_Speeding_In_Marina" target="Last_Speeding_Event"/>
         <edge source="Filter_Inside_Exclusion_Zone" target="Last_Exclusion_Violation"/>
-        <edge source="Score_Boat" target="Compute_ID0"/>
-        <edge source="Compute_ID0" target="Union_All_Boats"/>
+        <edge source="Retention_30Min" target="Boat_Current"/>
+        <edge source="Boat1" target="Union_All_Boats"/>
+        <edge source="Boat2" target="Union_All_Boats"/>
+        <edge source="Boat3" target="Union_All_Boats"/>
+        <edge source="Boat4" target="Union_All_Boats"/>
+        <edge source="Score_Boat" target="Union_All_Boats"/>
       </edges>
     </contquery>
   </contqueries>
