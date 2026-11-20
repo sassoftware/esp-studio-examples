@@ -303,7 +303,9 @@ To run the Source_Eventhub window, do the following:
 
 The output tab should look similar to the figure below:
 
-![image-20250709143509046](img/image-20250709143509046.png)
+
+
+![image-20261120111110084](img/image-20261120111110084.png)
 
 
 
@@ -363,4 +365,10 @@ The output tab should look similar to the figure below:
 The videos and images provided in this example are to be used only with the project provided. Using or altering these videos and images beyond the example for any other purpose is prohibited.
 
 ## Additional Resources
-For more information, see [SAS Help Center: Overview to Source Windows](https://go.documentation.sas.com/doc/en/espcdc/default/espcreatewindows/p1h7eov9msvacmn1st88y7nlun1e.htm).
+For more information, see the following:
+
+- [SAS Help Center: Overview to Source Windows](https://go.documentation.sas.com/doc/en/espcdc/default/espcreatewindows/p1h7eov9msvacmn1st88y7nlun1e.htm).
+
+- [Python Connector Example](https://github.com/sassoftware/esp-studio-examples/tree/main/InputStreams/python_connector): Shows how to use Python with connectors.
+- [Lua Connector Example](https://github.com/sassoftware/esp-studio-examples/tree/main/InputStreams/lua_connector): Shows how to use Lua with connectors.
+- [Connector Orchestration Example](https://github.com/sassoftware/esp-studio-examples/tree/main/InputStreams/connector_orchestration): Shows how to control the order and timing in which connectors start.
