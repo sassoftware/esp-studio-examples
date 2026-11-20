@@ -3,7 +3,9 @@
 
 In SAS Event Stream Processing, connectors run inside the ESP server, while adapters run in their own address space. Both are vital: they serve as the interface between external data systems and your streaming analytics engine, enabling real-time ingestion from a wide variety of sources: sensors via MQTT, logs via Kafka, files on disk, or live video streams via Real-Time Streaming Protocol (RTSP).
 
-Understanding connectors is important for new users of SAS Event Stream Processing. Nearly every real-world application begins with loading data into the system. This example project is designed to help new users visualize and explore how SAS Event Stream Processing handles this through a set of connector configurations. You can load this project into SAS Event Stream Processing Studio or deploy it directly through XML.
+In a Kubernetes environment, SAS Event Stream Processing supports all connectors. If an adapter has a corresponding connector, use the connector. Connectors are better suited to the dynamic, distributed nature of Kubernetes, where resource management and scaling are automated. For more information, see [Connectors and Adapters](https://go.documentation.sas.com/doc/en/espcdc/v_078/espca/p0is3bfhfaon4nn1wopxmcbs61nx.htm).
+
+Understanding connectors is important for new users of SAS Event Stream Processing. Nearly every real-world application begins with loading data into the system. This example project is designed to help new users visualize and explore how SAS Event Stream Processing handles this through a set of connector configurations. It covers publisher connectors only, which bring data from external systems into Source windows. Subscriber connectors, which send data out of a project, are not shown here. You can load this project into SAS Event Stream Processing Studio or deploy it directly through XML.
 
 For more information about how to install and use example projects, see [Using the Examples](https://github.com/sassoftware/esp-studio-examples#using-the-examples).  
 
@@ -303,11 +305,7 @@ To run the Source_Eventhub window, do the following:
 
 The output tab should look similar to the figure below:
 
-
-
 ![image-20261120111110084](img/image-20261120111110084.png)
-
-
 
 ### Source_video
 
